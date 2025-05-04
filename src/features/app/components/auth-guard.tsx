@@ -6,9 +6,14 @@ import { Navigate } from "react-router-dom";
 
 interface Props {
   children: JSX.Element;
+  noAuth?: boolean;
 }
-export const RequireAuth: React.FC<Props> = ({ children }) => {
+export const RequireAuth: React.FC<Props> = ({ children, noAuth }) => {
   const auth = useAuth();
+
+  if (noAuth) {
+    return children;
+  }
 
   if (!auth.isInitialized) {
     return <LoadingScreen />;

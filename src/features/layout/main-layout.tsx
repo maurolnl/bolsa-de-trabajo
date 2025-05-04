@@ -9,7 +9,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         <AppSidebar />
         <div className="flex-1">
           <SidebarTrigger />
-          <Container maxWidth="md" className="h-full">
+          <Container maxWidth="2xl" className="h-full">
             {children}
           </Container>
         </div>

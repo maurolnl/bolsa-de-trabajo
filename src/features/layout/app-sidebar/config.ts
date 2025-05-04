@@ -1,11 +1,5 @@
 import { PATHS } from "@/router/paths";
-import {
-  LayoutDashboardIcon,
-  ChartSpline,
-  ChefHat,
-  Carrot,
-  LucideIcon,
-} from "lucide-react";
+import { LayoutDashboardIcon, ChartSpline, LucideIcon } from "lucide-react";
 
 export type SidebarItem = {
   title: string;
@@ -28,16 +22,6 @@ export const sidebarConfig: SidebarConfigType = {
         title: "Home",
         icon: LayoutDashboardIcon,
         to: PATHS.main.home,
-      },
-      {
-        title: "Recetas",
-        icon: ChefHat,
-        to: PATHS.main.recipes,
-      },
-      {
-        title: "Ingredientes",
-        icon: Carrot,
-        to: PATHS.main.ingredients.list,
       },
     ],
   },
