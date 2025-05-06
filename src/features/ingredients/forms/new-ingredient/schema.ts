@@ -1,3 +1,7 @@
+import {
+  multipleFileValidation,
+  urlValidation,
+} from "@/core/utils/forms/fileValidation";
 import { z } from "zod";
 
 export const newEmployeeProfileSchema = z.object({
@@ -32,58 +36,77 @@ export const newEmployeeProfileSchema = z.object({
       { message: "Los años no pueden ser negativos" }
     )
     .optional(),
-  certifications: z.string().optional(),
-  projectLinks: z.string().optional(),
-  knownRegulations: z.string().optional(),
+  certifications: multipleFileValidation.optional(),
+  projectLinks: urlValidation.optional(),
+  knownRegulations: multipleFileValidation.optional(),
 
   // Step 2: Location
-  internetConnection: z.enum([
-    "< 10Mbps",
-    "20Mbps",
-    "30Mbps",
-    "40Mbps",
-    "50Mbps",
-    "> 50Mbps",
-  ]),
-  timeZoneCompatibility: z.enum(["< 1h", "2hs", "3hs", "4hs", "> 5hs"]),
+  internetConnection: z.enum(
+    ["< 10Mbps", "20Mbps", "30Mbps", "40Mbps", "50Mbps", "> 50Mbps"],
+    {
+      required_error: "Debe seleccionar una velocidad de conexión",
+      invalid_type_error: "Seleccione una opción válida",
+    }
+  ),
+  timeZoneCompatibility: z.enum(["< 1h", "2hs", "3hs", "4hs", "> 5hs"], {
+    required_error: "Debe seleccionar una zona horaria",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
 
   // Step 3: Resources
-  hasComputer: z.enum(["Yes", "No"]),
-  paidSoftwareCount: z.string().min(1),
+  hasComputer: z.enum(["Yes", "No"], {
+    required_error: "Debe indicar si dispone de computadora",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
+  paidSoftwareCount: z.string().min(1, "Debe ingresar la cantidad de software"),
 
   // Step 4: Availability
-  dedicationType: z.enum(["Full Time", "Part time"]).optional(),
-  flexibleHours: z.string().refine(
-    (val) => {
-      const num = parseInt(val);
-      return !isNaN(num) && num >= 1 && num <= 8;
-    },
-    { message: "Las horas deben estar entre 1 y 8" } //spanish
-  ),
-  compatibleProjects: z.string().refine(
-    (val) => {
-      const num = parseInt(val);
-      return !isNaN(num) && num >= 0;
-    },
-    { message: "No puede ser negativo" } //spanish
-  ),
-  incompatibleProjects: z.string().refine(
-    (val) => {
-      const num = parseInt(val);
-      return !isNaN(num) && num >= 0;
-    },
-    { message: "No puede ser negativo" } //spanish
-  ),
+  dedicationType: z
+    .enum(["Full Time", "Part time"], {
+      required_error: "Debe seleccionar un tipo de dedicación",
+      invalid_type_error: "Seleccione una opción válida",
+    })
+    .optional(),
+  flexibleHours: z
+    .string()
+    .refine(
+      (val) => {
+        const num = parseInt(val);
+        return !isNaN(num) && num >= 1 && num <= 8;
+      },
+      { message: "Las horas deben estar entre 1 y 8" }
+    )
+    .optional(),
+  compatibleProjects: z
+    .string()
+    .refine(
+      (val) => {
+        const num = parseInt(val);
+        return !isNaN(num) && num >= 0;
+      },
+      { message: "La cantidad no puede ser negativa" }
+    )
+    .optional(),
+  incompatibleProjects: z
+    .string()
+    .refine(
+      (val) => {
+        const num = parseInt(val);
+        return !isNaN(num) && num >= 0;
+      },
+      { message: "La cantidad no puede ser negativa" }
+    )
+    .optional(),
 
   // Step 5: Education
-  undergraduateDegree: z.string().optional(),
-  bachelorDegree: z.string().optional(),
-  specializationDegree: z.string().optional(),
-  masterDegree: z.string().optional(),
-  phdDegree: z.string().optional(),
-  tertiaryDegree: z.string().optional(),
-  highSchoolDegree: z.string().optional(),
-  relevantAreaDegree: z.string().optional(),
+  undergraduateDegree: multipleFileValidation.optional(),
+  bachelorDegree: multipleFileValidation.optional(),
+  specializationDegree: multipleFileValidation.optional(),
+  masterDegree: multipleFileValidation.optional(),
+  phdDegree: multipleFileValidation.optional(),
+  tertiaryDegree: multipleFileValidation.optional(),
+  highSchoolDegree: multipleFileValidation.optional(),
+  relevantAreaDegree: multipleFileValidation.optional(),
 });
 
 export const experienceSchema = newEmployeeProfileSchema.pick({

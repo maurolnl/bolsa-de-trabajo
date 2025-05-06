@@ -95,14 +95,37 @@ export const ExperienceForm = () => {
             <FormField
               control={control}
               name="certifications"
-              render={({ field }) => (
+              render={({
+                field: { onChange, value: certifications, ...fieldProps },
+              }) => (
                 <FormItem>
                   <FormLabel>Certificaciones</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Ingrese certificaciones relevantes"
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        {...fieldProps}
+                        type="file"
+                        multiple
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          onChange(files);
+                        }}
+                        placeholder="Suba sus certificaciones"
+                      />
+                      {certifications &&
+                        Object.values(certifications).map(
+                          (certification: unknown) => (
+                            <p
+                              key={Math.random()}
+                              className="text-sm text-muted-foreground"
+                            >
+                              Archivo seleccionado:{" "}
+                              {(certification as File).name}
+                            </p>
+                          )
+                        )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,7 +139,7 @@ export const ExperienceForm = () => {
               name="projectLinks"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Link a proyectos</FormLabel>
+                  <FormLabel>Link a proyectos (separados por comas)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -142,16 +165,39 @@ export const ExperienceForm = () => {
             <FormField
               control={control}
               name="knownRegulations"
-              render={({ field }) => (
+              render={({
+                field: { onChange, value: knownRegulations, ...fieldProps },
+              }) => (
                 <FormItem>
                   <FormLabel>
                     Cantidad de normativas relevantes conocidas
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Ingrese cantidad de normativas"
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        {...fieldProps}
+                        type="file"
+                        multiple
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          onChange(files);
+                        }}
+                        placeholder="Suba los certificados de normativas conocidas"
+                      />
+                      {knownRegulations &&
+                        Object.values(knownRegulations).map(
+                          (knownRegulation: unknown) => (
+                            <p
+                              key={Math.random()}
+                              className="text-sm text-muted-foreground"
+                            >
+                              Archivo seleccionado:{" "}
+                              {(knownRegulation as File).name}
+                            </p>
+                          )
+                        )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

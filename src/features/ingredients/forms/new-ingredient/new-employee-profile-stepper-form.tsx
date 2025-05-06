@@ -93,7 +93,10 @@ const NewEmployeeProfileStepperForm = ({
         </CardHeader>
 
         <Form {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(handleSubmit)}
+            encType="multipart/form-data"
+          >
             <CardContent>{steps[currentStep].component}</CardContent>
 
             <CardFooter className="flex justify-between">
