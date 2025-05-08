@@ -60,8 +60,6 @@ const NewEmployeeProfileStepperForm = ({
   };
 
   const handleSubmit = async (data: NewEmployeeProfileStepperFormValues) => {
-    console.log("Formulario enviado:", data);
-    // Aquí puedes enviar los datos al servidor
     await onSubmit(data);
   };
 
