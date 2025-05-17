@@ -2,7 +2,7 @@ import { unparse } from "papaparse";
 
 import NewEmployeeProfileStepperForm, {
   NewEmployeeProfileStepperFormValues,
-} from "../ingredients/forms/new-ingredient/new-employee-profile-stepper-form";
+} from "../employees/forms/new-employee/new-employee-profile-stepper-form";
 
 const HomePage = () => {
   const sanitizeData = (data: NewEmployeeProfileStepperFormValues) => {

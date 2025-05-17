@@ -11,12 +11,19 @@ export const Container = ({
   className,
   maxWidth,
 }: ContainerProps) => {
+  const maxWidthClass = {
+    "sm": "max-w-sm",
+    "md": "max-w-md",
+    "lg": "max-w-lg",
+    "xl": "max-w-xl",
+    "2xl": "max-w-2xl",
+  };
   return (
     <div
       className={cn(
         "container mx-auto",
         className,
-        maxWidth && `max-w-${maxWidth}`
+        maxWidth && maxWidthClass[maxWidth]
       )}
     >
       {children}

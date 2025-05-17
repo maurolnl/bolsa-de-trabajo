@@ -29,7 +29,6 @@ const NewEmployeeProfileStepperForm = ({
   const methods = useForm<NewEmployeeProfileStepperFormValues>({
     mode: "onBlur",
     resolver: zodResolver(newEmployeeProfileSchema),
-    // Mantiene todos los valores aunque cambies de paso
     shouldUnregister: false,
   });
 
@@ -37,7 +36,6 @@ const NewEmployeeProfileStepperForm = ({
     const currentStepSchema = steps[currentStep].schema;
 
     try {
-      // Validar solo los campos del paso actual
       const currentValues = methods.getValues();
       const result = await currentStepSchema.parseAsync(currentValues);
 
