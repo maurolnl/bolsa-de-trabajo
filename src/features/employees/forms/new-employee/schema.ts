@@ -3,50 +3,32 @@ import {
   urlValidation,
 } from "@/core/utils/forms/fileValidation";
 import { z } from "zod";
+import {
+  internetConnectionOptions,
+  typeOfPaidSoftware,
+  yearsOfExperienceOptions,
+} from "../utils";
 
 export const newEmployeeProfileSchema = z.object({
   // Step 1: Experience
-  yearsLeadingProjects: z
-    .string()
-    .refine(
-      (val) => {
-        const num = parseInt(val);
-        return !isNaN(num) && num >= 1 && num <= 8;
-      },
-      { message: "Los años no pueden ser negativos" }
-    )
-    .optional(),
-  yearsAsAssistant: z
-    .string()
-    .refine(
-      (val) => {
-        const num = parseInt(val);
-        return !isNaN(num) && num >= 0;
-      },
-      { message: "Los años no pueden ser negativos" }
-    )
-    .optional(),
-  yearsAsApprentice: z
-    .string()
-    .refine(
-      (val) => {
-        const num = parseInt(val);
-        return !isNaN(num) && num >= 0;
-      },
-      { message: "Los años no pueden ser negativos" }
-    )
-    .optional(),
-  certifications: multipleFileValidation.optional(),
+  role: z
+    .array(z.string())
+    .min(1, "Debe seleccionar al menos un rol")
+    .max(1, "Debe seleccionar solo un rol"),
+  yearsOfExperience: z.enum(yearsOfExperienceOptions, {
+    required_error: "Debe seleccionar una opción",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
+  certifications: z.string().optional(),
+  certificationsFile: multipleFileValidation.optional(),
   projectLinks: urlValidation.optional(),
-  knownRegulations: multipleFileValidation.optional(),
 
   // Step 2: Location
-  internetConnection: z.enum(
-    ["< 10Mbps", "20Mbps", "30Mbps", "40Mbps", "50Mbps", "> 50Mbps"],
-    {
+  internetConnection: z.array(
+    z.enum(internetConnectionOptions, {
       required_error: "Debe seleccionar una velocidad de conexión",
       invalid_type_error: "Seleccione una opción válida",
-    }
+    })
   ),
   timeZoneCompatibility: z.enum(["< 1h", "2hs", "3hs", "4hs", "> 5hs"], {
     required_error: "Debe seleccionar una zona horaria",
@@ -58,7 +40,12 @@ export const newEmployeeProfileSchema = z.object({
     required_error: "Debe indicar si dispone de computadora",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  paidSoftwareCount: z.string().min(1, "Debe ingresar la cantidad de software"),
+  typeOfPaidSoftware: z.enum(typeOfPaidSoftware, {
+    required_error: "Debe seleccionar al menos un tipo de software",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
+  typeOfPaidSoftwareOther: z.string().optional(),
+  paidSoftwareCount: z.string().optional(),
 
   // Step 4: Availability
   dedicationType: z
@@ -99,23 +86,23 @@ export const newEmployeeProfileSchema = z.object({
     .optional(),
 
   // Step 5: Education
-  undergraduateDegree: multipleFileValidation.optional(),
-  bachelorDegree: multipleFileValidation.optional(),
-  specializationDegree: multipleFileValidation.optional(),
-  masterDegree: multipleFileValidation.optional(),
-  phdDegree: multipleFileValidation.optional(),
-  tertiaryDegree: multipleFileValidation.optional(),
-  highSchoolDegree: multipleFileValidation.optional(),
-  relevantAreaDegree: multipleFileValidation.optional(),
+  universityTitles: z.array(z.string()),
+  postgraduateTitles: z.array(z.string()),
+  schoolStudiesOrientation: z.array(z.string()),
+  tertiaryStudies: z.string(),
+  universityTitleFiles: multipleFileValidation.optional(),
+  postgraduateTitleFiles: multipleFileValidation.optional(),
+  schoolStudiesOrientationFiles: multipleFileValidation.optional(),
+  tertiaryStudyFiles: multipleFileValidation.optional(),
+  tertiaryStudyOther: z.string().optional(),
 });
 
 export const experienceSchema = newEmployeeProfileSchema.pick({
-  yearsLeadingProjects: true,
-  yearsAsAssistant: true,
-  yearsAsApprentice: true,
+  role: true,
+  yearsOfExperience: true,
   certifications: true,
+  certificationsFile: true,
   projectLinks: true,
-  knownRegulations: true,
 });
 
 export const locationSchema = newEmployeeProfileSchema.pick({
@@ -125,7 +112,8 @@ export const locationSchema = newEmployeeProfileSchema.pick({
 
 export const resourcesSchema = newEmployeeProfileSchema.pick({
   hasComputer: true,
-  paidSoftwareCount: true,
+  typeOfPaidSoftware: true,
+  typeOfPaidSoftwareOther: true,
 });
 
 export const availabilitySchema = newEmployeeProfileSchema.pick({
@@ -133,15 +121,17 @@ export const availabilitySchema = newEmployeeProfileSchema.pick({
   flexibleHours: true,
   compatibleProjects: true,
   incompatibleProjects: true,
+  paidSoftwareCount: true,
 });
 
 export const educationSchema = newEmployeeProfileSchema.pick({
-  undergraduateDegree: true,
-  bachelorDegree: true,
-  specializationDegree: true,
-  masterDegree: true,
-  phdDegree: true,
-  tertiaryDegree: true,
-  highSchoolDegree: true,
-  relevantAreaDegree: true,
+  universityTitles: true,
+  postgraduateTitles: true,
+  schoolStudiesOrientation: true,
+  tertiaryStudies: true,
+  universityTitleFiles: true,
+  postgraduateTitleFiles: true,
+  schoolStudiesOrientationFiles: true,
+  tertiaryStudyFiles: true,
+  tertiaryStudyOther: true,
 });

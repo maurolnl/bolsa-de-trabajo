@@ -1,0 +1,4 @@
+Tesis
+- Formulario de nuevo empleado
+1. Darle un valor inicial a cada campo para evitar errores
+2. Ver que este funcionando el tema de guardarlo en el excel

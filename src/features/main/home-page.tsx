@@ -62,32 +62,6 @@ const HomePage = () => {
     };
   };
 
-  // keys of NewEmployeeProfileStepperFormValues
-  // const headers = [
-  //   { label: "yearsLeadingProjects", key: "yearsLeadingProjects" },
-  //   { label: "yearsAsAssistant", key: "yearsAsAssistant" },
-  //   { label: "yearsAsApprentice", key: "yearsAsApprentice" },
-  //   { label: "certifications", key: "certifications" },
-  //   { label: "projectLinks", key: "projectLinks" },
-  //   { label: "knownRegulations", key: "knownRegulations" },
-  //   { label: "internetConnection", key: "internetConnection" },
-  //   { label: "timeZoneCompatibility", key: "timeZoneCompatibility" },
-  //   { label: "hasComputer", key: "hasComputer" },
-  //   { label: "paidSoftwareCount", key: "paidSoftwareCount" },
-  //   { label: "dedicationType", key: "dedicationType" },
-  //   { label: "flexibleHours", key: "flexibleHours" },
-  //   { label: "compatibleProjects", key: "compatibleProjects" },
-  //   { label: "incompatibleProjects", key: "incompatibleProjects" },
-  //   { label: "undergraduateDegree", key: "undergraduateDegree" },
-  //   { label: "bachelorDegree", key: "bachelorDegree" },
-  //   { label: "specializationDegree", key: "specializationDegree" },
-  //   { label: "masterDegree", key: "masterDegree" },
-  //   { label: "phdDegree", key: "phdDegree" },
-  //   { label: "tertiaryDegree", key: "tertiaryDegree" },
-  //   { label: "highSchoolDegree", key: "highSchoolDegree" },
-  //   { label: "relevantAreaDegree", key: "relevantAreaDegree" },
-  // ];
-
   function downloadCSV(csv: string, filename = "formulario.csv") {
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -102,10 +76,6 @@ const HomePage = () => {
 
   const onSubmit = (data: NewEmployeeProfileStepperFormValues) => {
     const sanitizedData = sanitizeData(data);
-
-    console.log(sanitizedData);
-    // debugger;
-
     const csv = unparse([sanitizedData]);
 
     downloadCSV(csv);

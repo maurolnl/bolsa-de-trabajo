@@ -27,13 +27,18 @@ const NewEmployeeProfileStepperForm = ({
 }: NewEmployeeProfileStepperFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm<NewEmployeeProfileStepperFormValues>({
-    mode: "onBlur",
+    mode: "onSubmit",
+    defaultValues: {
+      internetConnection: ["< 10Mbps"],
+    },
     resolver: zodResolver(newEmployeeProfileSchema),
     shouldUnregister: false,
   });
 
   const handleNext = async () => {
     const currentStepSchema = steps[currentStep].schema;
+
+    console.log("next");
 
     try {
       const currentValues = methods.getValues();
@@ -58,6 +63,7 @@ const NewEmployeeProfileStepperForm = ({
   };
 
   const handleSubmit = async (data: NewEmployeeProfileStepperFormValues) => {
+    console.log("submit");
     await onSubmit(data);
   };
 
