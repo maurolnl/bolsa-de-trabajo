@@ -67,7 +67,7 @@ export const LoginForm: React.FC<Props> = ({ onSubmit }) => {
                 <div className="flex justify-between flex-row items-center">
                   <FormLabel>Password</FormLabel>
                   <Link
-                    to={PATHS.auth.forgotPassword}
+                    to={PATHS.main.home}
                     className="ml-auto inline-block text-sm underline"
                   >
                     Forgot your password?

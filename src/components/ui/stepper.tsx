@@ -14,7 +14,7 @@ type StepperProps = {
   onNext?: () => void;
 } & TabsPrimitive.TabsProps;
 
-export const Stepper = ({ steps, onBack, onNext, ...props }: StepperProps) => {
+export const Stepper = ({ steps, ...props }: StepperProps) => {
   const [step, setStep] = useState(steps[0].value);
 
   const currentIndex = steps.findIndex((_step) => _step.value === step);
@@ -25,11 +25,11 @@ export const Stepper = ({ steps, onBack, onNext, ...props }: StepperProps) => {
     }
   };
 
-  const handleNext = () => {
-    if (currentIndex < steps.length - 1) {
-      setStep(steps[currentIndex + 1].value);
-    }
-  };
+  // const handleNext = () => {
+  //   if (currentIndex < steps.length - 1) {
+  //     setStep(steps[currentIndex + 1].value);
+  //   }
+  // };
 
   return (
     <div className="flex flex-row gap-4">

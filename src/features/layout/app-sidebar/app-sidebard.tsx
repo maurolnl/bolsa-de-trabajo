@@ -11,19 +11,19 @@ import {
 } from "@/components/ui/sidebar";
 import { sidebarConfig } from "./config";
 import { LogOutIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { PATHS } from "@/router/paths";
+// import { useNavigate } from "react-router-dom";
+// import { PATHS } from "@/router/paths";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export const AppSidebar = () => {
   const dashboardItems = sidebarConfig.dashboard.children;
   const { isCurrent } = useSidebar();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { logout } = useAuth();
 
   const handleLogout = () => {
     logout();
-    navigate(PATHS.auth.login);
+    // navigate(PATHS.auth.login);
   };
 
   return (
