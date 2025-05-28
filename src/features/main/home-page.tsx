@@ -8,56 +8,19 @@ const HomePage = () => {
   const sanitizeData = (data: NewEmployeeProfileStepperFormValues) => {
     return {
       ...data,
-      certifications: data.certifications
-        ? Object.values(data.certifications)
-            .map((certification: any) => certification.name)
-            .join(", ")
-        : "",
-      knownRegulations: data.knownRegulations
-        ? Object.values(data.knownRegulations)
-            ?.map((regulation: any) => regulation.name)
-            .join(", ")
-        : "",
-      undergraduateDegree: data.undergraduateDegree
-        ? Object.values(data.undergraduateDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      bachelorDegree: data.bachelorDegree
-        ? Object.values(data.bachelorDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      specializationDegree: data.specializationDegree
-        ? Object.values(data.specializationDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      masterDegree: data.masterDegree
-        ? Object.values(data.masterDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      phdDegree: data.phdDegree
-        ? Object.values(data.phdDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      tertiaryDegree: data.tertiaryDegree
-        ? Object.values(data.tertiaryDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      highSchoolDegree: data.highSchoolDegree
-        ? Object.values(data.highSchoolDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
-      relevantAreaDegree: data.relevantAreaDegree
-        ? Object.values(data.relevantAreaDegree)
-            ?.map((degree: any) => degree.name)
-            .join(", ")
-        : "",
+      // Convert arrays to comma-separated strings for CSV
+      role: data.role.join(", "),
+      universityTitles: data.universityTitles.join(", "),
+      postgraduateTitles: data.postgraduateTitles.join(", "),
+      schoolStudiesOrientation: data.schoolStudiesOrientation.join(", "),
+      // Flatten internet connection array
+      internetConnection: data.internetConnection
+        .map((conn) => `${conn.type}: ${conn.speed}`)
+        .join("; "),
+      // Flatten paid software object
+      paidSoftwareType: data.paidSoftware.typeOfPaidSoftware,
+      paidSoftwareOther: data.paidSoftware.typeOfPaidSoftwareOther || "",
+      paidSoftwareCount: data.paidSoftware.paidSoftwareCount || "",
       createdAt: new Date().toISOString(),
     };
   };
@@ -75,6 +38,7 @@ const HomePage = () => {
   }
 
   const onSubmit = (data: NewEmployeeProfileStepperFormValues) => {
+    console.log(data, "data");
     const sanitizedData = sanitizeData(data);
     const csv = unparse([sanitizedData]);
 

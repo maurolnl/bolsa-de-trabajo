@@ -15,7 +15,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { internetConnectionOptions } from "../../utils";
+import {
+  internetConnectionOptions,
+  internetConnectionTypeOptions,
+  timeZoneCompatibilityOptions,
+} from "../../utils";
 import { Button } from "@/components/ui/button";
 import { XIcon, PlusIcon } from "lucide-react";
 
@@ -29,17 +33,16 @@ export const LocationForm = () => {
       ? watch("internetConnection")
       : [];
 
-    // Find the first option that's not already selected
-    const availableOption = internetConnectionOptions.find(
-      (option) => !currentValues.includes(option)
-    );
+    // Default values for new connection
+    const newConnection = {
+      type: internetConnectionTypeOptions[0],
+      speed: internetConnectionOptions[0],
+    };
 
-    // If we found an available option, add it to the array
-    if (availableOption) {
-      setValue("internetConnection", [...currentValues, availableOption], {
-        shouldValidate: false,
-      });
-    }
+    // Add the new connection to the array
+    setValue("internetConnection", [...currentValues, newConnection], {
+      shouldValidate: false,
+    });
   };
 
   return (
@@ -60,35 +63,61 @@ export const LocationForm = () => {
               </Button>
             </div>
             <FormDescription>
-              Presione el boton + para agregar más velocidades de conexión
+              Presione el boton + para agregar más conexiones
             </FormDescription>
             <div className="space-y-2">
               {Array.isArray(field.value) && field.value.length > 0
-                ? field.value.map((value, index) => (
+                ? field.value.map((connection, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <div className="flex-grow">
-                        <Select
-                          value={value}
-                          onValueChange={(newValue) => {
-                            const updatedValues = [...field.value];
-                            updatedValues[index] = newValue as any;
-                            field.onChange(updatedValues);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {internetConnectionOptions.map((option) => (
-                              <SelectItem key={option} value={option}>
-                                {option}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="> 50Mbps">
-                              &gt; 50Mbps
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <div className="flex-grow flex gap-2">
+                        <div className="flex-1">
+                          <Select
+                            value={connection.type}
+                            onValueChange={(newValue) => {
+                              const updatedValues = [...field.value];
+                              updatedValues[index] = {
+                                ...updatedValues[index],
+                                type: newValue as any,
+                              };
+                              field.onChange(updatedValues);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Tipo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {internetConnectionTypeOptions.map((option) => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="flex-1">
+                          <Select
+                            value={connection.speed}
+                            onValueChange={(newValue) => {
+                              const updatedValues = [...field.value];
+                              updatedValues[index] = {
+                                ...updatedValues[index],
+                                speed: newValue as any,
+                              };
+                              field.onChange(updatedValues);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Velocidad" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {internetConnectionOptions.map((option) => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                       <Button
                         variant="ghost"
@@ -122,11 +151,11 @@ export const LocationForm = () => {
                   <SelectValue placeholder="Seleccione diferencia horaria" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="< 1h">&lt; 1h</SelectItem>
-                  <SelectItem value="2hs">2hs</SelectItem>
-                  <SelectItem value="3hs">3hs</SelectItem>
-                  <SelectItem value="4hs">4hs</SelectItem>
-                  <SelectItem value="> 5hs">&gt; 5hs</SelectItem>
+                  {timeZoneCompatibilityOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </FormControl>

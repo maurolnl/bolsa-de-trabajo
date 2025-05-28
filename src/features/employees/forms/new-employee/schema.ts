@@ -4,7 +4,11 @@ import {
 } from "@/core/utils/forms/fileValidation";
 import { z } from "zod";
 import {
+  dedicationTypeOptions,
+  haveComputerOptions,
   internetConnectionOptions,
+  internetConnectionTypeOptions,
+  timeZoneCompatibilityOptions,
   typeOfPaidSoftware,
   yearsOfExperienceOptions,
 } from "../utils";
@@ -23,33 +27,40 @@ export const newEmployeeProfileSchema = z.object({
   certificationsFile: multipleFileValidation.optional(),
   projectLinks: urlValidation.optional(),
 
-  // Step 2: Location
   internetConnection: z.array(
-    z.enum(internetConnectionOptions, {
-      required_error: "Debe seleccionar una velocidad de conexión",
-      invalid_type_error: "Seleccione una opción válida",
+    z.object({
+      speed: z.enum(internetConnectionOptions, {
+        required_error: "Debe seleccionar una velocidad de conexión",
+        invalid_type_error: "Seleccione una opción válida",
+      }),
+      type: z.enum(internetConnectionTypeOptions, {
+        required_error: "Debe seleccionar un tipo de conexión",
+        invalid_type_error: "Seleccione una opción válida",
+      }),
     })
   ),
-  timeZoneCompatibility: z.enum(["< 1h", "2hs", "3hs", "4hs", "> 5hs"], {
+  timeZoneCompatibility: z.enum(timeZoneCompatibilityOptions, {
     required_error: "Debe seleccionar una zona horaria",
     invalid_type_error: "Seleccione una opción válida",
   }),
 
   // Step 3: Resources
-  hasComputer: z.enum(["Yes", "No"], {
+  hasComputer: z.enum(haveComputerOptions, {
     required_error: "Debe indicar si dispone de computadora",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  typeOfPaidSoftware: z.enum(typeOfPaidSoftware, {
-    required_error: "Debe seleccionar al menos un tipo de software",
-    invalid_type_error: "Seleccione una opción válida",
+  paidSoftware: z.object({
+    typeOfPaidSoftware: z.enum(typeOfPaidSoftware, {
+      required_error: "Debe seleccionar al menos un tipo de software",
+      invalid_type_error: "Seleccione una opción válida",
+    }),
+    typeOfPaidSoftwareOther: z.string().optional(),
+    paidSoftwareCount: z.string().optional(),
   }),
-  typeOfPaidSoftwareOther: z.string().optional(),
-  paidSoftwareCount: z.string().optional(),
 
   // Step 4: Availability
   dedicationType: z
-    .enum(["Full Time", "Part time"], {
+    .enum(dedicationTypeOptions, {
       required_error: "Debe seleccionar un tipo de dedicación",
       invalid_type_error: "Seleccione una opción válida",
     })
@@ -112,8 +123,7 @@ export const locationSchema = newEmployeeProfileSchema.pick({
 
 export const resourcesSchema = newEmployeeProfileSchema.pick({
   hasComputer: true,
-  typeOfPaidSoftware: true,
-  typeOfPaidSoftwareOther: true,
+  paidSoftware: true,
 });
 
 export const availabilitySchema = newEmployeeProfileSchema.pick({
@@ -121,7 +131,6 @@ export const availabilitySchema = newEmployeeProfileSchema.pick({
   flexibleHours: true,
   compatibleProjects: true,
   incompatibleProjects: true,
-  paidSoftwareCount: true,
 });
 
 export const educationSchema = newEmployeeProfileSchema.pick({

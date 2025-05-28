@@ -20,13 +20,13 @@ export const steps = [
   },
   {
     id: "step-2",
-    title: "Locacion",
+    title: "Locación",
     component: <LocationForm />,
     schema: locationSchema,
   },
   {
     id: "step-3",
-    title: "Recursos, Herramientas, Dispositivos",
+    title: "Recursos, Herramientas y Dispositivos",
     component: <ResourcesForm />,
     schema: resourcesSchema,
   },
@@ -38,7 +38,7 @@ export const steps = [
   },
   {
     id: "step-5",
-    title: "Educacion",
+    title: "Educación",
     component: <EducationForm />,
     schema: educationSchema,
   },

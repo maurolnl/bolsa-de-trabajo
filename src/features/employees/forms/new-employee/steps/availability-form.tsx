@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TypographyH3 } from "@/components/ui/typography/typography-h3";
+import { dedicationTypeOptions } from "../../utils";
 
 export const AvailabilityForm = () => {
-  const { control } = useFormContext<NewEmployeeProfileStepperFormValues>();
+  const { control, watch } =
+    useFormContext<NewEmployeeProfileStepperFormValues>();
 
   return (
     <div className="space-y-6">
@@ -38,8 +40,11 @@ export const AvailabilityForm = () => {
                     <SelectValue placeholder="Seleccione tipo de dedicación" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Full Time">Full Time</SelectItem>
-                    <SelectItem value="Part time">Part time</SelectItem>
+                    {dedicationTypeOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -48,25 +53,27 @@ export const AvailabilityForm = () => {
           )}
         />
 
-        <FormField
-          control={control}
-          name="flexibleHours"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Dediacion horaria flexible</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  type="number"
-                  min="1"
-                  max="8"
-                  placeholder="Horas disponibles (1-8)"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {watch("dedicationType") === "Flexible" && (
+          <FormField
+            control={control}
+            name="flexibleHours"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Dediacion horaria flexible</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="number"
+                    min="1"
+                    max="8"
+                    placeholder="Horas disponibles (1-8)"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
       </div>
 
       <div>

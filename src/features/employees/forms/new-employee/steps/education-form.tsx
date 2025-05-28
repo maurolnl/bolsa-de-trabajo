@@ -58,42 +58,50 @@ export const EducationForm = () => {
                   Seleccione el título universitario que posee
                 </FormDescription>
               </div>
-              {universityTitlesOptions.map((title) => (
-                <FormField
-                  key={title.value}
-                  control={control}
-                  name="universityTitles"
-                  render={({ field }) => {
-                    return (
-                      <FormItem key={title.value} className="flex items-center">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(title.value)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                if (field.value) {
-                                  field.onChange([...field.value, title.value]);
+              <div className="grid grid-cols-2 gap-2">
+                {universityTitlesOptions.map((title) => (
+                  <FormField
+                    key={title.value}
+                    control={control}
+                    name="universityTitles"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={title.value}
+                          className="flex items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(title.value)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  if (field.value) {
+                                    field.onChange([
+                                      ...field.value,
+                                      title.value,
+                                    ]);
+                                  } else {
+                                    field.onChange([title.value]);
+                                  }
                                 } else {
-                                  field.onChange([title.value]);
+                                  field.onChange(
+                                    field.value?.filter(
+                                      (value) => value !== title.value
+                                    )
+                                  );
                                 }
-                              } else {
-                                field.onChange(
-                                  field.value?.filter(
-                                    (value) => value !== title.value
-                                  )
-                                );
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal ml-2">
-                          {title.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal ml-2">
+                            {title.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
             </FormItem>
           )}
         />
@@ -145,42 +153,50 @@ export const EducationForm = () => {
                   Seleccione el título de posgrado que posee
                 </FormDescription>
               </div>
-              {postgraduateTitlesOptions.map((title) => (
-                <FormField
-                  key={title.value}
-                  control={control}
-                  name="postgraduateTitles"
-                  render={({ field }) => {
-                    return (
-                      <FormItem key={title.value} className="flex items-center">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(title.value)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                if (field.value) {
-                                  field.onChange([...field.value, title.value]);
+              <div className="grid grid-cols-2 gap-2">
+                {postgraduateTitlesOptions.map((title) => (
+                  <FormField
+                    key={title.value}
+                    control={control}
+                    name="postgraduateTitles"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={title.value}
+                          className="flex items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(title.value)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  if (field.value) {
+                                    field.onChange([
+                                      ...field.value,
+                                      title.value,
+                                    ]);
+                                  } else {
+                                    field.onChange([title.value]);
+                                  }
                                 } else {
-                                  field.onChange([title.value]);
+                                  field.onChange(
+                                    field.value.filter(
+                                      (value) => value !== title.value
+                                    )
+                                  );
                                 }
-                              } else {
-                                field.onChange(
-                                  field.value.filter(
-                                    (value) => value !== title.value
-                                  )
-                                );
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal ml-2">
-                          {title.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal ml-2">
+                            {title.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
             </FormItem>
           )}
         />
@@ -232,42 +248,50 @@ export const EducationForm = () => {
                   Seleccione la orientación de estudios que posee
                 </FormDescription>
               </div>
-              {schoolStudiesOrientationOptions.map((title) => (
-                <FormField
-                  key={title.value}
-                  control={control}
-                  name="schoolStudiesOrientation"
-                  render={({ field }) => {
-                    return (
-                      <FormItem key={title.value} className="flex items-center">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(title.value)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                if (field.value) {
-                                  field.onChange([...field.value, title.value]);
+              <div className="grid grid-cols-2 gap-2">
+                {schoolStudiesOrientationOptions.map((title) => (
+                  <FormField
+                    key={title.value}
+                    control={control}
+                    name="schoolStudiesOrientation"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={title.value}
+                          className="flex items-center"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(title.value)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  if (field.value) {
+                                    field.onChange([
+                                      ...field.value,
+                                      title.value,
+                                    ]);
+                                  } else {
+                                    field.onChange([title.value]);
+                                  }
                                 } else {
-                                  field.onChange([title.value]);
+                                  field.onChange(
+                                    field.value.filter(
+                                      (value) => value !== title.value
+                                    )
+                                  );
                                 }
-                              } else {
-                                field.onChange(
-                                  field.value.filter(
-                                    (value) => value !== title.value
-                                  )
-                                );
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal ml-2">
-                          {title.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal ml-2">
+                            {title.label}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
             </FormItem>
           )}
         />

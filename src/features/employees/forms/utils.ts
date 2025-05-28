@@ -63,7 +63,23 @@ export const internetConnectionOptions = [
   "20Mbps",
   "30Mbps",
   "40Mbps",
-  "50Mbps",
+  "> 50Mbps",
+] as const;
+
+export const internetConnectionTypeOptions = [
+  "Fibra",
+  "Aire / Wifi",
+  "Cable coaxial",
+  "ADSL",
+  "Móvil",
+] as const;
+
+export const timeZoneCompatibilityOptions = [
+  "< 1h",
+  "2hs",
+  "3hs",
+  "4hs",
+  "> 5hs",
 ] as const;
 
 export const typeOfPaidSoftware = [
@@ -73,6 +89,14 @@ export const typeOfPaidSoftware = [
   "Adobe",
   "Autocad",
   "Otro",
+] as const;
+
+export const haveComputerOptions = ["Si", "No"] as const;
+
+export const dedicationTypeOptions = [
+  "Full Time (8hs)",
+  "Part time (4hs)",
+  "Flexible",
 ] as const;
 
 export const universityTitlesOptions = universityTitles.map((title) => ({

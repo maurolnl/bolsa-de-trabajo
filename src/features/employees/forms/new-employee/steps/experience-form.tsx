@@ -18,8 +18,6 @@ export const ExperienceForm = () => {
   const { control, formState, watch } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
 
-  console.log(formState.errors);
-
   const certifications = watch("certifications");
 
   return (
@@ -192,15 +190,16 @@ export const ExperienceForm = () => {
                 <div className="space-y-1">
                   <FormLabel>Link a productos digitales</FormLabel>
                   <FormDescription>
-                    Escriba el link a productos digitales
+                    Escriba los links a productos digitales separados por comas
                   </FormDescription>
                 </div>
                 <Input
                   {...field}
-                  placeholder="Escriba el link a productos digitales"
+                  placeholder="Escriba los links a productos digitales separados por comas"
                 />
               </div>
             </FormControl>
+            <FormMessage />
           </FormItem>
         )}
       />

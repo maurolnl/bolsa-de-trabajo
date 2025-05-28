@@ -14,12 +14,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { typeOfPaidSoftware } from "../../utils";
+import { haveComputerOptions, typeOfPaidSoftware } from "../../utils";
 import { Input } from "@/components/ui/input";
 
 export const ResourcesForm = () => {
-  const { control, watch } =
+  const { control, watch, formState } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
+
+  const isOtherSoftware = watch("paidSoftware.typeOfPaidSoftware") === "Otro";
+  const isSoftwareSelected =
+    watch("paidSoftware.typeOfPaidSoftware") &&
+    watch("paidSoftware.typeOfPaidSoftware").length > 0;
+
+  console.log(formState.errors);
 
   return (
     <div className="space-y-4">
@@ -35,8 +42,11 @@ export const ResourcesForm = () => {
                   <SelectValue placeholder="Seleccione una opción" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Yes">Sí</SelectItem>
-                  <SelectItem value="No">No</SelectItem>
+                  {haveComputerOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </FormControl>
@@ -47,7 +57,7 @@ export const ResourcesForm = () => {
 
       <FormField
         control={control}
-        name="typeOfPaidSoftware"
+        name="paidSoftware.typeOfPaidSoftware"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Software de pago que dispone</FormLabel>
@@ -69,10 +79,10 @@ export const ResourcesForm = () => {
           </FormItem>
         )}
       />
-      {watch("typeOfPaidSoftware") === "Otro" && (
+      {isOtherSoftware && (
         <FormField
           control={control}
-          name="typeOfPaidSoftwareOther"
+          name="paidSoftware.typeOfPaidSoftwareOther"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Otro software de pago</FormLabel>
@@ -87,10 +97,10 @@ export const ResourcesForm = () => {
           )}
         />
       )}
-      {watch("typeOfPaidSoftware").length > 0 && (
+      {isSoftwareSelected && (
         <FormField
           control={control}
-          name="paidSoftwareCount"
+          name="paidSoftware.paidSoftwareCount"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cantidad de software de pago</FormLabel>

@@ -10,9 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { newEmployeeProfileSchema } from "./schema";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { steps } from "./config";
+import {
+  internetConnectionOptions,
+  internetConnectionTypeOptions,
+} from "../utils";
 
 export type NewEmployeeProfileStepperFormValues = z.infer<
   typeof newEmployeeProfileSchema
@@ -27,9 +31,14 @@ const NewEmployeeProfileStepperForm = ({
 }: NewEmployeeProfileStepperFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const methods = useForm<NewEmployeeProfileStepperFormValues>({
-    mode: "onSubmit",
+    mode: "onChange",
     defaultValues: {
-      internetConnection: ["< 10Mbps"],
+      internetConnection: [
+        {
+          type: internetConnectionTypeOptions[0],
+          speed: internetConnectionOptions[0],
+        },
+      ],
     },
     resolver: zodResolver(newEmployeeProfileSchema),
     shouldUnregister: false,
@@ -38,23 +47,28 @@ const NewEmployeeProfileStepperForm = ({
   const handleNext = async () => {
     const currentStepSchema = steps[currentStep].schema;
 
-    console.log("next");
-
     try {
       const currentValues = methods.getValues();
-      const result = await currentStepSchema.parseAsync(currentValues);
-
-      console.log("result", result);
+      await currentStepSchema.parseAsync(currentValues);
 
       // Si la validación es exitosa, avanzamos al siguiente paso
       setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
     } catch (error) {
       // Si hay errores de validación, activamos la validación de RHF
       // para mostrar los errores en la UI
-      const fields = Object.keys(currentStepSchema.shape);
-      fields.forEach((field) => {
-        methods.trigger(field as any);
-      });
+      try {
+        currentStepSchema.parse({});
+      } catch (zodError: unknown) {
+        if (zodError instanceof ZodError) {
+          zodError.errors.forEach((error) => {
+            if (error.path && error.path.length > 0) {
+              methods.trigger(
+                error.path[0] as keyof NewEmployeeProfileStepperFormValues
+              );
+            }
+          });
+        }
+      }
     }
   };
 
