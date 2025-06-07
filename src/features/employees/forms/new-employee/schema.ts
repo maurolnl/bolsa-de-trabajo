@@ -100,7 +100,7 @@ export const newEmployeeProfileSchema = z.object({
   universityTitles: z.array(z.string()),
   postgraduateTitles: z.array(z.string()),
   schoolStudiesOrientation: z.array(z.string()),
-  tertiaryStudies: z.string(),
+  tertiaryStudies: z.array(z.string()),
   universityTitleFiles: multipleFileValidation.optional(),
   postgraduateTitleFiles: multipleFileValidation.optional(),
   schoolStudiesOrientationFiles: multipleFileValidation.optional(),

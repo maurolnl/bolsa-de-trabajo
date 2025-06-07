@@ -14,14 +14,15 @@ import {
   universityTitlesOptions,
 } from "../../utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export const EducationForm = () => {
   const {
@@ -32,16 +33,16 @@ export const EducationForm = () => {
     setValue,
   } = useFormContext<NewEmployeeProfileStepperFormValues>();
 
-  const handleTertiaryStudyChange = (value: string) => {
-    if (value === "Otro") {
+  const handleTertiaryStudyChange = (value: string[]) => {
+    if (value.includes("Otro")) {
       setValue("tertiaryStudyOther", "");
       setError("tertiaryStudyOther", {
         message: "Debe ingresar un título",
       });
-      setValue("tertiaryStudies", value);
+      setValue("tertiaryStudies", value, { shouldValidate: false });
       return;
     }
-    setValue("tertiaryStudies", value);
+    setValue("tertiaryStudies", value, { shouldValidate: false });
   };
 
   return (
@@ -348,28 +349,21 @@ export const EducationForm = () => {
                 name="tertiaryStudies"
                 render={({ field }) => {
                   return (
-                    <Select
+                    <MultiSelect
+                      options={tertiaryStudies.map((study) => ({
+                        label: study,
+                        value: study,
+                      }))}
                       onValueChange={handleTertiaryStudyChange}
                       value={field.value}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un título" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {tertiaryStudies.map((study) => (
-                          <SelectItem key={study} value={study}>
-                            {study}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                   );
                 }}
               />
             </FormItem>
           )}
         />
-        {watch("tertiaryStudies") === "Otro" && (
+        {watch("tertiaryStudies")?.includes("Otro") && (
           <FormField
             control={control}
             name="tertiaryStudyOther"
