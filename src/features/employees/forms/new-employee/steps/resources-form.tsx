@@ -18,15 +18,13 @@ import { haveComputerOptions, typeOfPaidSoftware } from "../../utils";
 import { Input } from "@/components/ui/input";
 
 export const ResourcesForm = () => {
-  const { control, watch, formState } =
+  const { control, watch } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
 
   const isOtherSoftware = watch("paidSoftware.typeOfPaidSoftware") === "Otro";
   const isSoftwareSelected =
     watch("paidSoftware.typeOfPaidSoftware") &&
     watch("paidSoftware.typeOfPaidSoftware").length > 0;
-
-  console.log(formState.errors);
 
   return (
     <div className="space-y-4">

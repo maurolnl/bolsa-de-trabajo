@@ -63,8 +63,7 @@ export const newEmployeeProfileSchema = z.object({
     .enum(dedicationTypeOptions, {
       required_error: "Debe seleccionar un tipo de dedicación",
       invalid_type_error: "Seleccione una opción válida",
-    })
-    .optional(),
+    }),
   flexibleHours: z
     .string()
     .refine(

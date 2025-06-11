@@ -14,13 +14,6 @@ import {
   universityTitlesOptions,
 } from "../../utils";
 import { Checkbox } from "@/components/ui/checkbox";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
 
@@ -69,7 +62,7 @@ export const EducationForm = () => {
                       return (
                         <FormItem
                           key={title.value}
-                          className="flex items-center"
+                          className="flex items-center space-x-2 space-y-0"
                         >
                           <FormControl>
                             <Checkbox
@@ -164,7 +157,7 @@ export const EducationForm = () => {
                       return (
                         <FormItem
                           key={title.value}
-                          className="flex items-center"
+                          className="flex items-center space-x-2 space-y-0"
                         >
                           <FormControl>
                             <Checkbox
@@ -259,7 +252,7 @@ export const EducationForm = () => {
                       return (
                         <FormItem
                           key={title.value}
-                          className="flex items-center"
+                          className="flex items-center space-x-2 space-y-0"
                         >
                           <FormControl>
                             <Checkbox
@@ -356,6 +349,7 @@ export const EducationForm = () => {
                       }))}
                       onValueChange={handleTertiaryStudyChange}
                       value={field.value}
+                      placeholder="Seleccione los títulos"
                     />
                   );
                 }}

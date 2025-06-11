@@ -30,7 +30,7 @@ const NewEmployeeProfileStepperForm = ({
   onSubmit,
 }: NewEmployeeProfileStepperFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const methods = useForm<NewEmployeeProfileStepperFormValues>({
+  const hf = useForm<NewEmployeeProfileStepperFormValues>({
     mode: "onChange",
     defaultValues: {
       internetConnection: [
@@ -45,31 +45,20 @@ const NewEmployeeProfileStepperForm = ({
   });
 
   const handleNext = async () => {
-    const currentStepSchema = steps[currentStep].schema;
+    const currentStepFields = Object.keys(steps[currentStep].schema.shape);
+    
+    // Trigger validation only for current step fields
+    const isValid = await hf.trigger(
+      currentStepFields as (keyof NewEmployeeProfileStepperFormValues)[]
+    );
+    
 
-    try {
-      const currentValues = methods.getValues();
-      await currentStepSchema.parseAsync(currentValues);
-
+    if (isValid) {
       // Si la validación es exitosa, avanzamos al siguiente paso
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-    } catch (error) {
-      // Si hay errores de validación, activamos la validación de RHF
-      // para mostrar los errores en la UI
-      try {
-        currentStepSchema.parse({});
-      } catch (zodError: unknown) {
-        if (zodError instanceof ZodError) {
-          zodError.errors.forEach((error) => {
-            if (error.path && error.path.length > 0) {
-              methods.trigger(
-                error.path[0] as keyof NewEmployeeProfileStepperFormValues
-              );
-            }
-          });
-        }
-      }
+      const nextStep = Math.min(currentStep + 1, steps.length - 1);
+      setCurrentStep(nextStep);
     }
+    // Los errores se muestran automáticamente por React Hook Form
   };
 
   const handlePrevious = () => {
@@ -77,8 +66,23 @@ const NewEmployeeProfileStepperForm = ({
   };
 
   const handleSubmit = async (data: NewEmployeeProfileStepperFormValues) => {
-    console.log("submit");
-    await onSubmit(data);
+    try {
+      console.log(data, "data");
+      const validatedData = await newEmployeeProfileSchema.parseAsync(data);
+      console.log("submit");
+      await onSubmit(validatedData);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        error.errors.forEach((validationError) => {
+          if (validationError.path && validationError.path.length > 0) {
+            hf.setError(
+              validationError.path[0] as keyof NewEmployeeProfileStepperFormValues,
+              { message: validationError.message }
+            );
+          }
+        });
+      }
+    }
   };
 
   // Función para saltar a un paso específico
@@ -87,7 +91,7 @@ const NewEmployeeProfileStepperForm = ({
   };
 
   return (
-    <FormProvider {...methods}>
+    <FormProvider {...hf}>
       <Card className="w-full">
         <CardHeader className="gap-3">
           <div className="flex justify-center gap-2">
@@ -108,9 +112,9 @@ const NewEmployeeProfileStepperForm = ({
           </CardTitle>
         </CardHeader>
 
-        <Form {...methods}>
+        <Form {...hf}>
           <form
-            onSubmit={methods.handleSubmit(handleSubmit)}
+            onSubmit={hf.handleSubmit(handleSubmit)}
             encType="multipart/form-data"
           >
             <CardContent>{steps[currentStep].component}</CardContent>
@@ -126,7 +130,7 @@ const NewEmployeeProfileStepperForm = ({
               </Button>
 
               {currentStep === steps.length - 1 ? (
-                <Button type="submit">Enviar</Button>
+                <Button type="button" onClick={hf.handleSubmit(handleSubmit)}>Enviar</Button>
               ) : (
                 <Button type="button" onClick={handleNext}>
                   Siguiente
