@@ -23,8 +23,7 @@ export const ResourcesForm = () => {
 
   const isOtherSoftware = watch("paidSoftware.typeOfPaidSoftware") === "Otro";
   const isSoftwareSelected =
-    watch("paidSoftware.typeOfPaidSoftware") &&
-    watch("paidSoftware.typeOfPaidSoftware").length > 0;
+    (watch("paidSoftware.typeOfPaidSoftware")?.length ?? 0) > 0;
 
   return (
     <div className="space-y-4">
@@ -106,7 +105,7 @@ export const ResourcesForm = () => {
                 <Input
                   {...field}
                   type="number"
-                  min={0}
+                  min={1}
                   placeholder="Ingrese la cantidad"
                 />
               </FormControl>

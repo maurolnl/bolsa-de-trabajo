@@ -51,20 +51,20 @@ export const newEmployeeProfileSchema = z.object({
     invalid_type_error: "Seleccione una opción válida",
   }),
   paidSoftware: z.object({
-    typeOfPaidSoftware: z.enum(typeOfPaidSoftware, {
-      required_error: "Debe seleccionar al menos un tipo de software",
-      invalid_type_error: "Seleccione una opción válida",
-    }),
+    typeOfPaidSoftware: z
+      .enum(typeOfPaidSoftware, {
+        invalid_type_error: "Seleccione una opción válida",
+      })
+      .optional(),
     typeOfPaidSoftwareOther: z.string().optional(),
     paidSoftwareCount: z.string().optional(),
   }),
 
   // Step 4: Availability
-  dedicationType: z
-    .enum(dedicationTypeOptions, {
-      required_error: "Debe seleccionar un tipo de dedicación",
-      invalid_type_error: "Seleccione una opción válida",
-    }),
+  dedicationType: z.enum(dedicationTypeOptions, {
+    required_error: "Debe seleccionar un tipo de dedicación",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
   flexibleHours: z
     .string()
     .refine(
