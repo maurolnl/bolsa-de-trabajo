@@ -47,7 +47,7 @@ export const EducationForm = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel>Título Universitario</FormLabel>
+                <FormLabel>Título/s Universitario/s</FormLabel>
                 <FormDescription>
                   Seleccione el título universitario que posee
                 </FormDescription>
@@ -99,7 +99,7 @@ export const EducationForm = () => {
             </FormItem>
           )}
         />
-        {watch("universityTitles")?.length > 0 ? (
+        {watch("universityTitles")?.length ?? 0 > 0 ? (
           <FormField
             control={control}
             name="universityTitleFiles"
@@ -108,7 +108,7 @@ export const EducationForm = () => {
                 <FormControl>
                   <div className="space-y-2 mb-4">
                     <FormDescription>
-                      Suba los documentos del título universitario
+                      Suba los documentos del/los título/s universitario/s
                     </FormDescription>
                     <Input
                       {...fieldProps}
@@ -119,7 +119,7 @@ export const EducationForm = () => {
                         const files = e.target.files;
                         onChange(files);
                       }}
-                      placeholder="Suba documentos del título"
+                      placeholder="Suba documentos del/los título/s"
                     />
                     {value &&
                       Object.values(value).map((file: unknown) => (
@@ -142,9 +142,9 @@ export const EducationForm = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel>Título de Posgrado</FormLabel>
+                <FormLabel>Título/s de Posgrado</FormLabel>
                 <FormDescription>
-                  Seleccione el título de posgrado que posee
+                  Seleccione el/los título/s de posgrado que posee
                 </FormDescription>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -174,7 +174,7 @@ export const EducationForm = () => {
                                   }
                                 } else {
                                   field.onChange(
-                                    field.value.filter(
+                                    field.value?.filter(
                                       (value) => value !== title.value
                                     )
                                   );
@@ -194,7 +194,7 @@ export const EducationForm = () => {
             </FormItem>
           )}
         />
-        {watch("postgraduateTitles")?.length > 0 ? (
+        {(watch("postgraduateTitles")?.length ?? 0) > 0 ? (
           <FormField
             control={control}
             name="postgraduateTitleFiles"
@@ -203,7 +203,7 @@ export const EducationForm = () => {
                 <FormControl>
                   <div className="space-y-2 mb-4">
                     <FormDescription>
-                      Suba los documentos del título de posgrado
+                      Suba los documentos del/los título/s de posgrado
                     </FormDescription>
                     <Input
                       {...fieldProps}
@@ -214,7 +214,7 @@ export const EducationForm = () => {
                         const files = e.target.files;
                         onChange(files);
                       }}
-                      placeholder="Suba documentos del título"
+                      placeholder="Suba documentos del/los título/s"
                     />
                     {value &&
                       Object.values(value).map((file: unknown) => (
@@ -269,7 +269,7 @@ export const EducationForm = () => {
                                   }
                                 } else {
                                   field.onChange(
-                                    field.value.filter(
+                                    field.value?.filter(
                                       (value) => value !== title.value
                                     )
                                   );
@@ -289,7 +289,7 @@ export const EducationForm = () => {
             </FormItem>
           )}
         />
-        {watch("schoolStudiesOrientation")?.length > 0 ? (
+        {(watch("schoolStudiesOrientation")?.length ?? 0) > 0 ? (
           <FormField
             control={control}
             name="schoolStudiesOrientationFiles"
@@ -377,7 +377,7 @@ export const EducationForm = () => {
             )}
           />
         )}
-        {watch("tertiaryStudies")?.length > 0 ? (
+        {(watch("tertiaryStudies")?.length ?? 0) > 0 ? (
           <FormField
             control={control}
             name="tertiaryStudyFiles"

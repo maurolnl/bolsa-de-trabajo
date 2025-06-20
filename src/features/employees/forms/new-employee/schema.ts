@@ -97,10 +97,10 @@ export const newEmployeeProfileSchema = z.object({
     .optional(),
 
   // Step 5: Education
-  universityTitles: z.array(z.string()),
-  postgraduateTitles: z.array(z.string()),
-  schoolStudiesOrientation: z.array(z.string()),
-  tertiaryStudies: z.array(z.string()),
+  universityTitles: z.array(z.string()).optional(),
+  postgraduateTitles: z.array(z.string()).optional(),
+  schoolStudiesOrientation: z.array(z.string()).optional(),
+  tertiaryStudies: z.array(z.string()).optional(),
   universityTitleFiles: multipleFileValidation.optional(),
   postgraduateTitleFiles: multipleFileValidation.optional(),
   schoolStudiesOrientationFiles: multipleFileValidation.optional(),
