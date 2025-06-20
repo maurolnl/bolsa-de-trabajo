@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +11,13 @@ import { Form } from "@/components/ui/form";
 import { newEmployeeProfileSchema } from "./schema";
 import { z, ZodError } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { steps } from "./config";
 import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
 } from "../utils";
+import { Progress } from "@/components/ui/progress";
+import { useCreateEmployeeProgress } from "./useProgress";
+import { TypographyP } from "@/components/ui/typography/typography-p";
 
 export type NewEmployeeProfileStepperFormValues = z.infer<
   typeof newEmployeeProfileSchema
@@ -29,7 +30,18 @@ type NewEmployeeProfileStepperFormProps = {
 const NewEmployeeProfileStepperForm = ({
   onSubmit,
 }: NewEmployeeProfileStepperFormProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const {
+    currentStep,
+    progress,
+    handleAddProgress,
+    handleSubtractProgress,
+    firstStep,
+    lastStep,
+  } = useCreateEmployeeProgress();
+
+  const isFirstStep = currentStep.id === firstStep.id;
+  const isLastStep = currentStep.id === lastStep.id;
+
   const hf = useForm<NewEmployeeProfileStepperFormValues>({
     mode: "onChange",
     defaultValues: {
@@ -45,24 +57,19 @@ const NewEmployeeProfileStepperForm = ({
   });
 
   const handleNext = async () => {
-    const currentStepFields = Object.keys(steps[currentStep].schema.shape);
-    
-    // Trigger validation only for current step fields
+    const currentStepFields = Object.keys(currentStep.schema.shape);
+
     const isValid = await hf.trigger(
       currentStepFields as (keyof NewEmployeeProfileStepperFormValues)[]
     );
-    
 
     if (isValid) {
-      // Si la validación es exitosa, avanzamos al siguiente paso
-      const nextStep = Math.min(currentStep + 1, steps.length - 1);
-      setCurrentStep(nextStep);
+      handleAddProgress();
     }
-    // Los errores se muestran automáticamente por React Hook Form
   };
 
   const handlePrevious = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    handleSubtractProgress();
   };
 
   const handleSubmit = async (data: NewEmployeeProfileStepperFormValues) => {
@@ -76,7 +83,8 @@ const NewEmployeeProfileStepperForm = ({
         error.errors.forEach((validationError) => {
           if (validationError.path && validationError.path.length > 0) {
             hf.setError(
-              validationError.path[0] as keyof NewEmployeeProfileStepperFormValues,
+              validationError
+                .path[0] as keyof NewEmployeeProfileStepperFormValues,
               { message: validationError.message }
             );
           }
@@ -85,30 +93,23 @@ const NewEmployeeProfileStepperForm = ({
     }
   };
 
-  // Función para saltar a un paso específico
-  const goToStep = (step: number) => {
-    setCurrentStep(step);
-  };
-
   return (
     <FormProvider {...hf}>
       <Card className="w-full">
-        <CardHeader className="gap-3">
-          <div className="flex justify-center gap-2">
-            {steps.map((step, index) => (
-              <Button
-                key={step.id}
-                variant={index === currentStep ? "default" : "outline"}
-                size="sm"
-                onClick={() => goToStep(index)}
-                className="mx-1"
-              >
-                {index + 1}
-              </Button>
-            ))}
+        <CardHeader className="gap-6">
+          <div className="w-full md:w-96 mx-auto flex flex-col gap-1">
+            <div className="flex flex-row justify-between">
+              <TypographyP className="text-xs font-thin text-muted-foreground">
+                0%
+              </TypographyP>
+              <TypographyP className="text-xs font-thin text-muted-foreground">
+                100%
+              </TypographyP>
+            </div>
+            <Progress value={progress} className="h-2 " />
           </div>
           <CardTitle className="text-center text-2xl font-medium">
-            {`${currentStep + 1}. ${steps[currentStep].title}`}
+            {`${currentStep.id}. ${currentStep.title}`}
           </CardTitle>
         </CardHeader>
 
@@ -117,20 +118,22 @@ const NewEmployeeProfileStepperForm = ({
             onSubmit={hf.handleSubmit(handleSubmit)}
             encType="multipart/form-data"
           >
-            <CardContent>{steps[currentStep].component}</CardContent>
+            <CardContent>{currentStep.component}</CardContent>
 
             <CardFooter className="flex justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handlePrevious}
-                disabled={currentStep === 0}
+                disabled={isFirstStep}
               >
                 Anterior
               </Button>
 
-              {currentStep === steps.length - 1 ? (
-                <Button type="button" onClick={hf.handleSubmit(handleSubmit)}>Enviar</Button>
+              {isLastStep ? (
+                <Button type="button" onClick={hf.handleSubmit(handleSubmit)}>
+                  Enviar
+                </Button>
               ) : (
                 <Button type="button" onClick={handleNext}>
                   Siguiente

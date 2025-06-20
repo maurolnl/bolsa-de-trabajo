@@ -13,31 +13,31 @@ import { EducationForm } from "./steps/education-form";
 
 export const steps = [
   {
-    id: "step-1",
+    id: 1,
     title: "Experiencia",
     component: <ExperienceForm />,
     schema: experienceSchema,
   },
   {
-    id: "step-2",
+    id: 2,
     title: "Locación",
     component: <LocationForm />,
     schema: locationSchema,
   },
   {
-    id: "step-3",
+    id: 3,
     title: "Recursos, Herramientas y Dispositivos",
     component: <ResourcesForm />,
     schema: resourcesSchema,
   },
   {
-    id: "step-4",
+    id: 4,
     title: "Disponibilidad y flexibilidad horaria",
     component: <AvailabilityForm />,
     schema: availabilitySchema,
   },
   {
-    id: "step-5",
+    id: 5,
     title: "Educación",
     component: <EducationForm />,
     schema: educationSchema,
