@@ -18,9 +18,23 @@ import { Input } from "@/components/ui/input";
 import { TypographyH3 } from "@/components/ui/typography/typography-h3";
 import { dedicationTypeOptions } from "../../utils";
 
+type DedicationType = (typeof dedicationTypeOptions)[number];
+
 export const AvailabilityForm = () => {
-  const { control, watch } =
+  const { control, watch, setValue, setError } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
+
+  const isFlexibleDedication = watch("dedicationType") === "Flexible";
+
+  const handleDedicationTypeChange = (value: DedicationType) => {
+    if (value === "Flexible") {
+      setValue("flexibleHours", "");
+      setError("flexibleHours", {
+        message: "Debe ingresar una cantidad de horas",
+      });
+    }
+    setValue("dedicationType", value, { shouldValidate: false });
+  };
 
   return (
     <div className="space-y-6">
@@ -33,7 +47,7 @@ export const AvailabilityForm = () => {
               <FormLabel>Dedicacion horaria fija</FormLabel>
               <FormControl>
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={handleDedicationTypeChange}
                   defaultValue={field.value}
                 >
                   <SelectTrigger className="w-full">
@@ -53,7 +67,7 @@ export const AvailabilityForm = () => {
           )}
         />
 
-        {watch("dedicationType") === "Flexible" && (
+        {isFlexibleDedication && (
           <FormField
             control={control}
             name="flexibleHours"
