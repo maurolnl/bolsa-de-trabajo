@@ -249,15 +249,13 @@ export const ExperienceForm = () => {
             <FormControl>
               <div className="space-y-2">
                 <div className="space-y-1">
-                  <FormLabel>Link a productos digitales</FormLabel>
+                  <FormLabel>Portafolio</FormLabel>
                   <FormDescription>
-                    Escriba los links a productos digitales separados por comas
+                    Ingrese el link a su portafolio que muestre sus productos
+                    digitales
                   </FormDescription>
                 </div>
-                <Input
-                  {...field}
-                  placeholder="Escriba los links a productos digitales separados por comas"
-                />
+                <Input {...field} placeholder="https://www.my-portfolio.com" />
               </div>
             </FormControl>
             <FormMessage />

@@ -127,6 +127,7 @@ export const LocationForm = () => {
                           updatedValues.splice(index, 1);
                           field.onChange(updatedValues);
                         }}
+                        disabled={index === 0}
                       >
                         <XIcon className="w-4 h-4" />
                       </Button>
