@@ -11,9 +11,9 @@ const HomePage = () => {
       // Convert arrays to comma-separated strings for CSV
       role: data.role,
       certifications: data.certifications?.join(", ") || "",
-      universityTitles: data.universityTitles.join(", "),
-      postgraduateTitles: data.postgraduateTitles.join(", "),
-      schoolStudiesOrientation: data.schoolStudiesOrientation.join(", "),
+      universityTitles: data.universityTitles?.join(", ") || "",
+      postgraduateTitles: data.postgraduateTitles?.join(", ") || "",
+      schoolStudiesOrientation: data.schoolStudiesOrientation?.join(", ") || "",
       // Flatten internet connection array
       internetConnection: data.internetConnection
         .map((conn) => `${conn.type}: ${conn.speed}`)
