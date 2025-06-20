@@ -8,6 +8,7 @@ import {
   haveComputerOptions,
   internetConnectionOptions,
   internetConnectionTypeOptions,
+  roleOptions,
   timeZoneCompatibilityOptions,
   typeOfPaidSoftware,
   yearsOfExperienceOptions,
@@ -15,15 +16,15 @@ import {
 
 export const newEmployeeProfileSchema = z.object({
   // Step 1: Experience
-  role: z
-    .array(z.string())
-    .min(1, "Debe seleccionar al menos un rol")
-    .max(1, "Debe seleccionar solo un rol"),
+  role: z.enum(roleOptions, {
+    required_error: "Debe seleccionar un rol",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
   yearsOfExperience: z.enum(yearsOfExperienceOptions, {
     required_error: "Debe seleccionar una opción",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  certifications: z.string().optional(),
+  certifications: z.array(z.string()).optional(),
   certificationsFile: multipleFileValidation.optional(),
   projectLinks: urlValidation.optional(),
 

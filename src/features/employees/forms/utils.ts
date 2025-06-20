@@ -49,6 +49,7 @@ export const tertiaryStudies = [
 ];
 
 export const roles = ["Lider de proyecto", "Adjunto", "Aprendiz/Auxiliar"];
+export const roleOptions = ["Lider de proyecto", "Adjunto", "Aprendiz/Auxiliar"] as const;
 
 export const yearsOfExperienceOptions = [
   "Menos de 1 año",

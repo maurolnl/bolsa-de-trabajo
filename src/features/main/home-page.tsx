@@ -9,7 +9,8 @@ const HomePage = () => {
     return {
       ...data,
       // Convert arrays to comma-separated strings for CSV
-      role: data.role.join(", "),
+      role: data.role,
+      certifications: data.certifications?.join(", ") || "",
       universityTitles: data.universityTitles.join(", "),
       postgraduateTitles: data.postgraduateTitles.join(", "),
       schoolStudiesOrientation: data.schoolStudiesOrientation.join(", "),
