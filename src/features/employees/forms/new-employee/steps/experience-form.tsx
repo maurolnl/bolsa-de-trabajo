@@ -91,9 +91,10 @@ const CertificationInput = ({
 };
 
 export const ExperienceForm = () => {
-  const { control, formState, watch } =
+  const { control, formState, watch, getValues } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
 
+  console.log(getValues(), "getValues");
   const certifications = watch("certifications");
 
   return (
@@ -114,6 +115,7 @@ export const ExperienceForm = () => {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
+                    value={field.value}
                     className="flex flex-col space-y-1"
                   >
                     {roleOptions.map((title) => (
@@ -150,6 +152,7 @@ export const ExperienceForm = () => {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
+                    value={field.value}
                     className="flex flex-col space-y-1"
                   >
                     {yearsOfExperienceOptions.map((title) => (
