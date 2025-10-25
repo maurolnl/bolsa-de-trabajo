@@ -28,6 +28,7 @@ export const newEmployeeProfileSchema = z.object({
   certificationsFile: multipleFileValidation.optional(),
   projectLinks: urlValidation.optional(),
 
+  // Step 2: Connections
   internetConnection: z.array(
     z.object({
       speed: z.enum(internetConnectionOptions, {
