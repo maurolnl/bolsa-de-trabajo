@@ -27,7 +27,7 @@ type NewEmployeeProfileStepperFormProps = {
   onSubmit: (data: NewEmployeeProfileStepperFormValues) => Promise<void>;
 };
 
-const NewEmployeeProfileStepperForm = ({
+export const NewEmployeeProfileStepperForm = ({
   onSubmit,
 }: NewEmployeeProfileStepperFormProps) => {
   const {
@@ -60,7 +60,7 @@ const NewEmployeeProfileStepperForm = ({
     const currentStepFields = Object.keys(currentStep.schema.shape);
 
     const isValid = await hf.trigger(
-      currentStepFields as (keyof NewEmployeeProfileStepperFormValues)[]
+      currentStepFields as (keyof NewEmployeeProfileStepperFormValues)[],
     );
 
     if (isValid) {
@@ -74,9 +74,7 @@ const NewEmployeeProfileStepperForm = ({
 
   const handleSubmit = async (data: NewEmployeeProfileStepperFormValues) => {
     try {
-      console.log(data, "data");
       const validatedData = await newEmployeeProfileSchema.parseAsync(data);
-      console.log("submit");
       await onSubmit(validatedData);
     } catch (error) {
       if (error instanceof ZodError) {
@@ -85,7 +83,7 @@ const NewEmployeeProfileStepperForm = ({
             hf.setError(
               validationError
                 .path[0] as keyof NewEmployeeProfileStepperFormValues,
-              { message: validationError.message }
+              { message: validationError.message },
             );
           }
         });
@@ -146,5 +144,3 @@ const NewEmployeeProfileStepperForm = ({
     </FormProvider>
   );
 };
-
-export default NewEmployeeProfileStepperForm;
