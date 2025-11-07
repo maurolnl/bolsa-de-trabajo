@@ -9,10 +9,9 @@ import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
   roleOptions,
-  timeZoneCompatibilityOptions,
-  typeOfPaidSoftware,
   yearsOfExperienceOptions,
 } from "../utils";
+import { timezoneOptions } from "@/lib/timezones";
 
 export const newEmployeeProfileSchema = z.object({
   // Step 1: Experience
@@ -39,9 +38,9 @@ export const newEmployeeProfileSchema = z.object({
         required_error: "Debe seleccionar un tipo de conexión",
         invalid_type_error: "Seleccione una opción válida",
       }),
-    })
+    }),
   ),
-  timeZoneCompatibility: z.enum(timeZoneCompatibilityOptions, {
+  timeZoneCompatibility: z.enum(timezoneOptions, {
     required_error: "Debe seleccionar una zona horaria",
     invalid_type_error: "Seleccione una opción válida",
   }),
@@ -51,15 +50,7 @@ export const newEmployeeProfileSchema = z.object({
     required_error: "Debe indicar si dispone de computadora",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  paidSoftware: z.object({
-    typeOfPaidSoftware: z
-      .enum(typeOfPaidSoftware, {
-        invalid_type_error: "Seleccione una opción válida",
-      })
-      .optional(),
-    typeOfPaidSoftwareOther: z.string().optional(),
-    paidSoftwareCount: z.string().optional(),
-  }),
+  paidSoftware: z.array(z.string()).optional(),
 
   // Step 4: Availability
   dedicationType: z.enum(dedicationTypeOptions, {
@@ -73,7 +64,7 @@ export const newEmployeeProfileSchema = z.object({
         const num = parseInt(val);
         return !isNaN(num) && num >= 1 && num <= 8;
       },
-      { message: "Las horas deben estar entre 1 y 8" }
+      { message: "Las horas deben estar entre 1 y 8" },
     )
     .optional(),
   compatibleProjects: z
@@ -83,7 +74,7 @@ export const newEmployeeProfileSchema = z.object({
         const num = parseInt(val);
         return !isNaN(num) && num >= 0;
       },
-      { message: "La cantidad no puede ser negativa" }
+      { message: "La cantidad no puede ser negativa" },
     )
     .optional(),
   incompatibleProjects: z
@@ -93,7 +84,7 @@ export const newEmployeeProfileSchema = z.object({
         const num = parseInt(val);
         return !isNaN(num) && num >= 0;
       },
-      { message: "La cantidad no puede ser negativa" }
+      { message: "La cantidad no puede ser negativa" },
     )
     .optional(),
 

@@ -2,10 +2,10 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 
 import { PATHS } from "./paths";
 import { MainLayout } from "@/features/layout/main-layout";
-import HomePage from "@/features/main/home-page";
 import { MainErrorPage } from "@/features/app/pages/main-error-page";
 import { Suspense } from "react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
+import { NewEmployeePage } from "@/features/employees/pages/new-employee-page";
 
 export const router = createBrowserRouter([
   // {
@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "home",
-        element: <HomePage />,
+        element: <NewEmployeePage />,
         errorElement: <MainErrorPage />,
       },
       {

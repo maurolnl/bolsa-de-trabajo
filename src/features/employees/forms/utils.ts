@@ -49,7 +49,11 @@ export const tertiaryStudies = [
 ];
 
 export const roles = ["Lider de proyecto", "Adjunto", "Aprendiz/Auxiliar"];
-export const roleOptions = ["Lider de proyecto", "Adjunto", "Aprendiz/Auxiliar"] as const;
+export const roleOptions = [
+  "Lider de proyecto",
+  "Adjunto",
+  "Aprendiz/Auxiliar",
+] as const;
 
 export const yearsOfExperienceOptions = [
   "Menos de 1 año",
@@ -114,7 +118,7 @@ export const schoolStudiesOrientationOptions = schoolStudiesOrientation.map(
   (title) => ({
     label: title,
     value: title,
-  })
+  }),
 );
 
 export const tertiaryStudiesOptions = tertiaryStudies.map((title) => ({

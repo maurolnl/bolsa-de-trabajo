@@ -18,14 +18,24 @@ import {
 import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
-  timeZoneCompatibilityOptions,
 } from "../../utils";
 import { Button } from "@/components/ui/button";
 import { XIcon, PlusIcon } from "lucide-react";
+import { timezones } from "@/lib/timezones";
+import { useEffect } from "react";
 
 export const LocationForm = () => {
   const { control, watch, setValue } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // const offset = getTimezoneOffset();
+  const userTimezone = timezones.find((tz) => tz.id === browserTimezone);
+
+  useEffect(() => {
+    if (userTimezone) {
+      setValue("timeZoneCompatibility", userTimezone.id);
+    }
+  }, [setValue, userTimezone]);
 
   const handleAddInternetConnection = () => {
     // Add new internet connection to the form
@@ -101,7 +111,8 @@ export const LocationForm = () => {
                               const updatedValues = [...field.value];
                               updatedValues[index] = {
                                 ...updatedValues[index],
-                                speed: newValue as any,
+                                speed:
+                                  newValue as (typeof internetConnectionOptions)[number],
                               };
                               field.onChange(updatedValues);
                             }}
@@ -147,14 +158,14 @@ export const LocationForm = () => {
           <FormItem>
             <FormLabel>Zona horaria acorde</FormLabel>
             <FormControl>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Seleccione diferencia horaria" />
                 </SelectTrigger>
                 <SelectContent>
-                  {timeZoneCompatibilityOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
+                  {timezones.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -25,14 +25,29 @@ export const AvailabilityForm = () => {
     useFormContext<NewEmployeeProfileStepperFormValues>();
 
   const isFlexibleDedication = watch("dedicationType") === "Flexible";
+  const fullTimeDedication = dedicationTypeOptions[0];
+  const partTimeDedication = dedicationTypeOptions[1];
+  const flexibleDedication = dedicationTypeOptions[2];
 
   const handleDedicationTypeChange = (value: DedicationType) => {
-    if (value === "Flexible") {
-      setValue("flexibleHours", "");
-      setError("flexibleHours", {
-        message: "Debe ingresar una cantidad de horas",
-      });
+    switch (value) {
+      case flexibleDedication:
+        setValue("flexibleHours", "");
+        setError("flexibleHours", {
+          message: "Debe ingresar una cantidad de horas",
+        });
+        break;
+      case fullTimeDedication:
+        setValue("flexibleHours", "8", { shouldValidate: true });
+        break;
+      case partTimeDedication:
+        setValue("flexibleHours", "4", { shouldValidate: true });
+        break;
+      default:
+        setValue("flexibleHours", "4", { shouldValidate: true });
+        break;
     }
+
     setValue("dedicationType", value, { shouldValidate: false });
   };
 
@@ -48,7 +63,7 @@ export const AvailabilityForm = () => {
               <FormControl>
                 <Select
                   onValueChange={handleDedicationTypeChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccione tipo de dedicación" />

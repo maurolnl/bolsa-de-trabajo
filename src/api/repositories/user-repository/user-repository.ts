@@ -14,11 +14,6 @@ type InternetConnection = {
   speed: (typeof internetConnectionOptions)[number];
 };
 
-type AvailableSoftware = {
-  type: string;
-  count: number;
-};
-
 type Dedication = {
   label: string;
   hours: number;
@@ -56,14 +51,19 @@ export type User = {
   internet_connections: InternetConnection[];
   time_zone: string;
   computer: boolean;
-  available_software: AvailableSoftware;
+  available_software: string[];
   dedication: Dedication;
-  projects: Project[];
+  projects: Project;
   university_degrees: UniversityDegrees;
   postgraduate_degrees: PostgraduateDegrees;
-  study_orientations: StudyOrientations;
+  study_orientation: StudyOrientations;
   tertiary_studies: TertiaryStudies;
   created_at: Moment;
+};
+
+export type Timezone = {
+  name: string;
+  utc_offset: number;
 };
 
 export type CreateUser = Omit<User, "id" | "created_at">;
@@ -72,4 +72,5 @@ export type UserRepository = {
   getAll: () => Promise<User[]>;
   getById(id: number): Promise<User | null>;
   create(user: CreateUser): Promise<void>;
+  timezones: () => Promise<Timezone[]>;
 };

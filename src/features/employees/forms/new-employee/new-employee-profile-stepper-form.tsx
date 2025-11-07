@@ -18,6 +18,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useCreateEmployeeProgress } from "./useProgress";
 import { TypographyP } from "@/components/ui/typography/typography-p";
+import { LoadingSpinner } from "@/components/ui/loading-screen";
 
 export type NewEmployeeProfileStepperFormValues = z.infer<
   typeof newEmployeeProfileSchema
@@ -130,6 +131,11 @@ export const NewEmployeeProfileStepperForm = ({
 
               {isLastStep ? (
                 <Button type="button" onClick={hf.handleSubmit(handleSubmit)}>
+                  {hf.formState.isSubmitting ? (
+                    <LoadingSpinner size={18} />
+                  ) : (
+                    ""
+                  )}
                   Enviar
                 </Button>
               ) : (

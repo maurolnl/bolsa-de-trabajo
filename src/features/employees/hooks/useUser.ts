@@ -26,3 +26,10 @@ export function useCreateUser() {
     },
   });
 }
+
+export function useTimezones() {
+  return useQuery({
+    queryKey: ["timezones"],
+    queryFn: () => userRepository.timezones(),
+  });
+}

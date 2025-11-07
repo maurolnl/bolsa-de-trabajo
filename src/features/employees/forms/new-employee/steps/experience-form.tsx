@@ -12,89 +12,12 @@ import { roleOptions, yearsOfExperienceOptions } from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
-import { useState } from "react";
-
-// Custom component for certification input with badges
-const CertificationInput = ({
-  value = [],
-  onChange,
-}: {
-  value?: string[];
-  onChange: (value: string[]) => void;
-}) => {
-  const [inputValue, setInputValue] = useState("");
-
-  const addCertification = () => {
-    if (inputValue.trim() && !value.includes(inputValue.trim())) {
-      onChange([...value, inputValue.trim()]);
-      setInputValue("");
-    }
-  };
-
-  const removeCertification = (certificationToRemove: string) => {
-    onChange(value.filter((cert) => cert !== certificationToRemove));
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addCertification();
-    }
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex gap-2">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Escriba el título de la certificación"
-          className="flex-1"
-        />
-        <Button
-          type="button"
-          onClick={addCertification}
-          disabled={!inputValue.trim()}
-          size="sm"
-        >
-          <Plus className="h-3 w-3" />
-          Agregar
-        </Button>
-      </div>
-      {value.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {value.map((certification, index) => (
-            <Badge
-              key={index}
-              variant="secondary"
-              className="flex items-center gap-1"
-            >
-              {certification}
-              <button
-                type="button"
-                onClick={() => removeCertification(certification)}
-                className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <X className="h-3 w-3" />
-                <span className="sr-only">Remove</span>
-              </button>
-            </Badge>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+import { AutocompleteInput } from "@/components/ui/autocomplete-input";
 
 export const ExperienceForm = () => {
-  const { control, formState, watch, getValues } =
+  const { control, formState, watch } =
     useFormContext<NewEmployeeProfileStepperFormValues>();
 
-  console.log(getValues(), "getValues");
   const certifications = watch("certifications");
 
   return (
@@ -197,9 +120,11 @@ export const ExperienceForm = () => {
                     Agregue las certificaciones profesionales que posee
                   </FormDescription>
                 </div>
-                <CertificationInput
+                <AutocompleteInput
                   value={field.value}
                   onChange={field.onChange}
+                  placeholder="Escriba el título de la certificación"
+                  addButtonLabel="Agregar"
                 />
               </div>
             </FormControl>
