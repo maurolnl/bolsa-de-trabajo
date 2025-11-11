@@ -15,6 +15,7 @@ import { timezoneOptions } from "@/lib/timezones";
 
 export const newEmployeeProfileSchema = z.object({
   // Step 1: Experience
+  position: z.string(),
   role: z.enum(roleOptions, {
     required_error: "Debe seleccionar un rol",
     invalid_type_error: "Seleccione una opción válida",
@@ -101,6 +102,7 @@ export const newEmployeeProfileSchema = z.object({
 });
 
 export const experienceSchema = newEmployeeProfileSchema.pick({
+  position: true,
   role: true,
   yearsOfExperience: true,
   certifications: true,

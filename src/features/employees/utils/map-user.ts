@@ -5,6 +5,7 @@ export function mapFormValuesToUser(
   data: NewEmployeeProfileStepperFormValues,
 ): CreateUser {
   return {
+    position: data.position,
     role: data.role,
     years_of_experience: data.yearsOfExperience,
     certifications: {

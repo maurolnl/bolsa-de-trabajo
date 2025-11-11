@@ -25,6 +25,26 @@ export const ExperienceForm = () => {
       <div className="space-y-4">
         <FormField
           control={control}
+          name="position"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormControl>
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <FormLabel>Posición pretendida</FormLabel>
+                    <FormDescription>
+                      Ingrese el nombre de la posición que está buscando
+                    </FormDescription>
+                  </div>
+                  <Input {...field} placeholder="FullStack Developer" />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
           name="role"
           render={({ field }) => (
             <FormItem className="space-y-3">

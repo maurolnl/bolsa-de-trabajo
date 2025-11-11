@@ -44,6 +44,7 @@ type TertiaryStudies = {
 
 export type User = {
   id: number;
+  position: string;
   role: string;
   years_of_experience: string;
   certifications: Certifications; //it can be null from backend
