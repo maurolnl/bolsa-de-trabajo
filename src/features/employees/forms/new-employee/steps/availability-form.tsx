@@ -115,7 +115,7 @@ export const AvailabilityForm = () => {
             name="compatibleProjects"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Proyectos compatibles</FormLabel>
+                <FormLabel>Proyectos compatibles (Opcional)</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -134,7 +134,7 @@ export const AvailabilityForm = () => {
             name="incompatibleProjects"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Proyectos incompatibles</FormLabel>
+                <FormLabel>Proyectos incompatibles (Opcional)</FormLabel>
                 <FormControl>
                   <Input
                     {...field}

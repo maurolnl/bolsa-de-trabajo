@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { useCreateEmployeeProgress } from "./useProgress";
 import { TypographyP } from "@/components/ui/typography/typography-p";
 import { LoadingSpinner } from "@/components/ui/loading-screen";
+import { ArrowLeftIcon } from "lucide-react";
 
 export type NewEmployeeProfileStepperFormValues = z.infer<
   typeof newEmployeeProfileSchema
@@ -126,17 +127,22 @@ export const NewEmployeeProfileStepperForm = ({
                 onClick={handlePrevious}
                 disabled={isFirstStep}
               >
-                Anterior
+                <ArrowLeftIcon size={20} />
+                Volver
               </Button>
 
               {isLastStep ? (
-                <Button type="button" onClick={hf.handleSubmit(handleSubmit)}>
+                <Button
+                  type="button"
+                  onClick={hf.handleSubmit(handleSubmit)}
+                  disabled={hf.formState.isSubmitting}
+                >
                   {hf.formState.isSubmitting ? (
-                    <LoadingSpinner size={18} />
+                    <LoadingSpinner size={20} />
                   ) : (
                     ""
                   )}
-                  Enviar
+                  Crear Usuario
                 </Button>
               ) : (
                 <Button type="button" onClick={handleNext}>
