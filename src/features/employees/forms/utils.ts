@@ -53,6 +53,7 @@ export const roleOptions = [
   "Lider de proyecto",
   "Adjunto",
   "Aprendiz/Auxiliar",
+  "Freelance",
 ] as const;
 
 export const yearsOfExperienceOptions = [

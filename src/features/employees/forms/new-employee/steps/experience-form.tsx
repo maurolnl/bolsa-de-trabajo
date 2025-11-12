@@ -90,6 +90,9 @@ export const ExperienceForm = () => {
             <FormItem className="space-y-3">
               <div className="mb-4">
                 <FormLabel>Años de experiencia</FormLabel>
+                <FormDescription>
+                  Años de expereiencia en el rol seleccionado
+                </FormDescription>
               </div>
               <FormItem>
                 <FormControl>
