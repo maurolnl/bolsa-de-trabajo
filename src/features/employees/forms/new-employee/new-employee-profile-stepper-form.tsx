@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
+  operatingSystemOptions,
 } from "../utils";
 import { Progress } from "@/components/ui/progress";
 import { useCreateEmployeeProgress } from "./useProgress";
@@ -53,13 +54,18 @@ export const NewEmployeeProfileStepperForm = ({
           speed: internetConnectionOptions[0],
         },
       ],
+      operatingSystem: operatingSystemOptions[0],
     },
     resolver: zodResolver(newEmployeeProfileSchema),
     shouldUnregister: false,
   });
 
   const handleNext = async () => {
-    const currentStepFields = Object.keys(currentStep.schema.shape);
+    const currentStepSchema =
+      currentStep.schema instanceof z.ZodEffects
+        ? currentStep.schema.innerType()
+        : currentStep.schema;
+    const currentStepFields = Object.keys(currentStepSchema.shape);
 
     const isValid = await hf.trigger(
       currentStepFields as (keyof NewEmployeeProfileStepperFormValues)[],

@@ -8,12 +8,13 @@ import {
   haveComputerOptions,
   internetConnectionOptions,
   internetConnectionTypeOptions,
+  operatingSystemOptions,
   roleOptions,
   yearsOfExperienceOptions,
 } from "../utils";
 import { timezoneOptions } from "@/lib/timezones";
 
-export const newEmployeeProfileSchema = z.object({
+const newEmployeeProfileSchemaBase = z.object({
   // Step 1: Experience
   position: z.string(),
   role: z.enum(roleOptions, {
@@ -51,6 +52,7 @@ export const newEmployeeProfileSchema = z.object({
     required_error: "Debe indicar si dispone de computadora",
     invalid_type_error: "Seleccione una opción válida",
   }),
+  operatingSystem: z.enum(operatingSystemOptions).optional(),
   paidSoftware: z.array(z.string()).optional(),
 
   // Step 4: Availability
@@ -101,7 +103,19 @@ export const newEmployeeProfileSchema = z.object({
   tertiaryStudyOther: z.string().optional(),
 });
 
-export const experienceSchema = newEmployeeProfileSchema.pick({
+export const newEmployeeProfileSchema = newEmployeeProfileSchemaBase.superRefine(
+  (data, ctx) => {
+    if (data.hasComputer === "Si" && !data.operatingSystem) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["operatingSystem"],
+        message: "Debe seleccionar un sistema operativo",
+      });
+    }
+  },
+);
+
+export const experienceSchema = newEmployeeProfileSchemaBase.pick({
   position: true,
   role: true,
   yearsOfExperience: true,
@@ -110,24 +124,35 @@ export const experienceSchema = newEmployeeProfileSchema.pick({
   projectLinks: true,
 });
 
-export const locationSchema = newEmployeeProfileSchema.pick({
+export const locationSchema = newEmployeeProfileSchemaBase.pick({
   internetConnection: true,
   timeZoneCompatibility: true,
 });
 
-export const resourcesSchema = newEmployeeProfileSchema.pick({
-  hasComputer: true,
-  paidSoftware: true,
-});
+export const resourcesSchema = newEmployeeProfileSchemaBase
+  .pick({
+    hasComputer: true,
+    operatingSystem: true,
+    paidSoftware: true,
+  })
+  .superRefine((data, ctx) => {
+    if (data.hasComputer === "Si" && !data.operatingSystem) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["operatingSystem"],
+        message: "Debe seleccionar un sistema operativo",
+      });
+    }
+  });
 
-export const availabilitySchema = newEmployeeProfileSchema.pick({
+export const availabilitySchema = newEmployeeProfileSchemaBase.pick({
   dedicationType: true,
   flexibleHours: true,
   compatibleProjects: true,
   incompatibleProjects: true,
 });
 
-export const educationSchema = newEmployeeProfileSchema.pick({
+export const educationSchema = newEmployeeProfileSchemaBase.pick({
   universityTitles: true,
   postgraduateTitles: true,
   schoolStudiesOrientation: true,

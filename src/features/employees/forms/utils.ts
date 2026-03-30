@@ -99,6 +99,13 @@ export const typeOfPaidSoftware = [
 
 export const haveComputerOptions = ["Si", "No"] as const;
 
+export const operatingSystemOptions = [
+  "Windows",
+  "iOS",
+  "Linux Distribution",
+  "Otro",
+] as const;
+
 export const dedicationTypeOptions = [
   "Full Time (8hs)",
   "Part time (4hs)",

@@ -6,13 +6,15 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
-import { haveComputerOptions } from "../../utils";
+import { haveComputerOptions, operatingSystemOptions } from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
 
 export const ResourcesForm = () => {
-  const { control } = useFormContext<NewEmployeeProfileStepperFormValues>();
+  const { control, watch } = useFormContext<NewEmployeeProfileStepperFormValues>();
+  const hasComputer = watch("hasComputer") === "Si";
 
   return (
     <div className="space-y-4">
@@ -48,6 +50,43 @@ export const ResourcesForm = () => {
           </FormItem>
         )}
       />
+
+      {hasComputer && (
+        <FormField
+          control={control}
+          name="operatingSystem"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <div className="mb-4">
+                <FormLabel>Sistema operativo disponible</FormLabel>
+                <FormDescription>
+                  Seleccione el sistema operativo de la computadora
+                </FormDescription>
+              </div>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  {operatingSystemOptions.map((option) => (
+                    <FormItem
+                      key={option}
+                      className="flex items-center space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <RadioGroupItem value={option} />
+                      </FormControl>
+                      <FormLabel className="font-normal">{option}</FormLabel>
+                    </FormItem>
+                  ))}
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <FormField
         control={control}
