@@ -47,7 +47,12 @@ export const EducationForm = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel>Título/s Universitario/s</FormLabel>
+                <FormLabel>
+                  Título/s Universitario/s{" "}
+                  <span className="text-sm text-muted-foreground font-normal">
+                    (Opcional)
+                  </span>
+                </FormLabel>
                 <FormDescription>
                   Seleccione el título universitario que posee
                 </FormDescription>
@@ -80,8 +85,8 @@ export const EducationForm = () => {
                                 } else {
                                   field.onChange(
                                     field.value?.filter(
-                                      (value) => value !== title.value
-                                    )
+                                      (value) => value !== title.value,
+                                    ),
                                   );
                                 }
                               }}
@@ -99,7 +104,7 @@ export const EducationForm = () => {
             </FormItem>
           )}
         />
-        {watch("universityTitles")?.length ?? 0 > 0 ? (
+        {(watch("universityTitles")?.length ?? 0 > 0) ? (
           <FormField
             control={control}
             name="universityTitleFiles"
@@ -136,64 +141,71 @@ export const EducationForm = () => {
             )}
           />
         ) : null}
-        <FormField
-          control={control}
-          name="postgraduateTitles"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel>Título/s de Posgrado</FormLabel>
-                <FormDescription>
-                  Seleccione el/los título/s de posgrado que posee
-                </FormDescription>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {postgraduateTitlesOptions.map((title) => (
-                  <FormField
-                    key={title.value}
-                    control={control}
-                    name="postgraduateTitles"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={title.value}
-                          className="flex items-center space-x-2 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(title.value)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  if (field.value) {
-                                    field.onChange([
-                                      ...field.value,
-                                      title.value,
-                                    ]);
+        {(watch("universityTitles")?.length ?? 0 > 0) ? (
+          <FormField
+            control={control}
+            name="postgraduateTitles"
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel>
+                    Título/s de Posgrado{" "}
+                    <span className="text-sm text-muted-foreground font-normal">
+                      (Opcional)
+                    </span>
+                  </FormLabel>
+                  <FormDescription>
+                    Seleccione el/los título/s de posgrado que posee
+                  </FormDescription>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {postgraduateTitlesOptions.map((title) => (
+                    <FormField
+                      key={title.value}
+                      control={control}
+                      name="postgraduateTitles"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={title.value}
+                            className="flex items-center space-x-2 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(title.value)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    if (field.value) {
+                                      field.onChange([
+                                        ...field.value,
+                                        title.value,
+                                      ]);
+                                    } else {
+                                      field.onChange([title.value]);
+                                    }
                                   } else {
-                                    field.onChange([title.value]);
+                                    field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== title.value,
+                                      ),
+                                    );
                                   }
-                                } else {
-                                  field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== title.value
-                                    )
-                                  );
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="text-sm font-normal ml-2">
-                            {title.label}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-              </div>
-            </FormItem>
-          )}
-        />
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal ml-2">
+                              {title.label}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
+        ) : null}
         {(watch("postgraduateTitles")?.length ?? 0) > 0 ? (
           <FormField
             control={control}
@@ -237,7 +249,12 @@ export const EducationForm = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel>Orientación de Estudios</FormLabel>
+                <FormLabel>
+                  Orientación de Estudios{" "}
+                  <span className="text-sm text-muted-foreground font-normal">
+                    (Opcional)
+                  </span>
+                </FormLabel>
                 <FormDescription>
                   Seleccione la orientación de estudios que posee
                 </FormDescription>
@@ -270,8 +287,8 @@ export const EducationForm = () => {
                                 } else {
                                   field.onChange(
                                     field.value?.filter(
-                                      (value) => value !== title.value
-                                    )
+                                      (value) => value !== title.value,
+                                    ),
                                   );
                                 }
                               }}
@@ -332,7 +349,12 @@ export const EducationForm = () => {
           render={() => (
             <FormItem>
               <div className="mb-4">
-                <FormLabel>Título Terciario</FormLabel>
+                <FormLabel>
+                  Título Terciario{" "}
+                  <span className="text-sm text-muted-foreground font-normal">
+                    (Opcional)
+                  </span>
+                </FormLabel>
                 <FormDescription>
                   Seleccione el título terciario que posee
                 </FormDescription>

@@ -135,8 +135,8 @@ export const ExperienceForm = () => {
                 <div className="space-y-1">
                   <FormLabel>
                     Certificaciones profesionales{" "}
-                    <span className="text-sm text-muted-foreground">
-                      (opcional)
+                    <span className="text-sm text-muted-foreground font-normal">
+                      (Opcional)
                     </span>
                   </FormLabel>
                   <FormDescription>
@@ -200,7 +200,12 @@ export const ExperienceForm = () => {
             <FormControl>
               <div className="space-y-2">
                 <div className="space-y-1">
-                  <FormLabel>Portafolio</FormLabel>
+                  <FormLabel>
+                    Portafolio{" "}
+                    <span className="text-sm text-muted-foreground font-normal">
+                      (Opcional)
+                    </span>
+                  </FormLabel>
                   <FormDescription>
                     Ingrese el link a su portafolio que muestre sus productos
                     digitales

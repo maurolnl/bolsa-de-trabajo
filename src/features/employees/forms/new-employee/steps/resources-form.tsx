@@ -13,7 +13,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
 
 export const ResourcesForm = () => {
-  const { control, watch } = useFormContext<NewEmployeeProfileStepperFormValues>();
+  const { control, watch } =
+    useFormContext<NewEmployeeProfileStepperFormValues>();
   const hasComputer = watch("hasComputer") === "Si";
 
   return (
@@ -98,8 +99,8 @@ export const ResourcesForm = () => {
                 <div className="space-y-1">
                   <FormLabel>
                     Software de pago{" "}
-                    <span className="text-sm text-muted-foreground">
-                      (opcional)
+                    <span className="text-sm text-muted-foreground font-normal">
+                      (Opcional)
                     </span>
                   </FormLabel>
                   <FormDescription>

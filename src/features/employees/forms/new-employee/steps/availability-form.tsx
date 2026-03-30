@@ -115,7 +115,12 @@ export const AvailabilityForm = () => {
             name="compatibleProjects"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Proyectos compatibles (Opcional)</FormLabel>
+                <FormLabel>
+                  Proyectos compatibles{" "}
+                  <span className="text-sm text-muted-foreground font-normal">
+                    (Opcional)
+                  </span>
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -134,7 +139,12 @@ export const AvailabilityForm = () => {
             name="incompatibleProjects"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Proyectos incompatibles (Opcional)</FormLabel>
+                <FormLabel>
+                  Proyectos incompatibles{" "}
+                  <span className="text-sm text-muted-foreground font-normal">
+                    (Opcional)
+                  </span>
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
