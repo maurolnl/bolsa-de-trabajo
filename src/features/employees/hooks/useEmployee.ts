@@ -1,8 +1,8 @@
 import { userRepository } from "@/api";
-import { CreateUser } from "@/api/repositories/user-repository/user-repository";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreateEmployee } from "../repo/employee-repository";
 
-export function useUsers() {
+export function useEmployees() {
   return useQuery({
     queryKey: ["users"],
     queryFn: () => userRepository.getAll(),
@@ -16,11 +16,12 @@ export function useUser(id: number) {
   });
 }
 
-export function useCreateUser() {
+export function useCreateEmployee() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (newUser: CreateUser) => userRepository.create(newUser),
+    mutationFn: async (newUser: CreateEmployee) =>
+      userRepository.createEmployee(newUser),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },

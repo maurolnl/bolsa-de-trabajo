@@ -1,5 +1,6 @@
 import { supabase } from "@/api/clients/supabase-client";
-import { Timezone, User, UserRepository } from "./user-repository";
+import { Timezone, User } from "./types";
+import { CreateEmployee, EmployeeRepository } from "./employee-repository";
 
 const getUserMapper = (x: any): User => ({
   ...x,
@@ -7,8 +8,8 @@ const getUserMapper = (x: any): User => ({
 
 const userTable = "User";
 
-export const userRepositorySupabase: UserRepository = {
-  getAll: async () => {
+export const userRepositorySupabase: EmployeeRepository = {
+  getAll: async (): Promise<User[]> => {
     const { data, error } = await supabase.from(userTable).select();
     if (error) throw error;
     return data?.map(getUserMapper) || [];
@@ -22,7 +23,7 @@ export const userRepositorySupabase: UserRepository = {
     if (error) throw error;
     return getUserMapper(data);
   },
-  create: async (user) => {
+  createEmployee: async (user: CreateEmployee) => {
     const { error } = await supabase
       .from(userTable)
       .insert(user)
