@@ -1,4 +1,4 @@
-import { userRepository } from "@/api";
+import { employeeRepository } from "@/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   CreateAvailability,
@@ -8,84 +8,89 @@ import {
   CreateTech,
 } from "../repo/employee-repository";
 
+const keys = {
+  employees: ["employees"],
+  employee: (id: number) => ["employees", id],
+  timezones: ["timezones"],
+};
+
 export function useEmployees() {
   return useQuery({
-    queryKey: ["users"],
-    queryFn: () => userRepository.getAll(),
+    queryKey: keys.employees,
+    queryFn: () => employeeRepository.getAll(),
   });
 }
 
-export function useUser(id?: number) {
+export function useEmployee(id: number) {
   return useQuery({
-    queryKey: ["users", id],
-    queryFn: () => userRepository.getById(id as number),
-    enabled: typeof id === "number" && !Number.isNaN(id),
+    queryKey: keys.employee(id),
+    queryFn: () => employeeRepository.getById(id),
   });
 }
 
-export function useCreateEmployee() {
+export function useCreateEmployee(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newUser: CreateEmployee) =>
-      userRepository.createEmployee(newUser),
+      employeeRepository.createEmployee(newUser),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
     },
   });
 }
 
-export function useCreateLocation() {
+export function useCreateLocation(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newLocation: CreateLocation) =>
-      userRepository.createLocation(newLocation),
+      employeeRepository.createLocation(newLocation),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
     },
   });
 }
 
-export function useCreateTech() {
+export function useCreateTech(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newTech: CreateTech) =>
-      userRepository.createTech(newTech),
+      employeeRepository.createTech(newTech),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
     },
   });
 }
 
-export function useCreateAvailability() {
+export function useCreateAvailability(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newAvailability: CreateAvailability) =>
-      userRepository.createAvailability(newAvailability),
+      employeeRepository.createAvailability(newAvailability),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
     },
   });
 }
 
-export function useCreateEducation() {
+export function useCreateEducation(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newEducation: CreateEducation) =>
-      userRepository.createEducation(newEducation),
+      employeeRepository.createEducation(newEducation),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
     },
   });
 }
 
 export function useTimezones() {
   return useQuery({
-    queryKey: ["timezones"],
-    queryFn: () => userRepository.timezones(),
+    queryKey: keys.timezones,
+    queryFn: () => employeeRepository.timezones(),
   });
 }

@@ -23,7 +23,7 @@ export const employeeRepositoryRest: EmployeeRepository = {
     return data?.map(getEmployeeMapper) || [];
   },
   getById: async (userID: number) => {
-    const { data } = await httpClient.get(`employees/${userID}`);
+    const { data } = await httpClient.get(`users/${userID}/employee`);
     return getEmployeeMapper(data);
   },
   createEmployee: async (e: CreateEmployee) =>

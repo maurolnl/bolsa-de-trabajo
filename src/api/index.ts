@@ -21,6 +21,6 @@ const getProvider = (provider: ApiProvider) => {
   }
 };
 
-const userRepository: EmployeeRepository = getProvider(serviceProvider);
+const employeeRepository: EmployeeRepository = getProvider(serviceProvider);
 
-export { userRepository };
+export { employeeRepository };

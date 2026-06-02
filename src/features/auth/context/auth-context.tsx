@@ -40,31 +40,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     LocalStorage.remove(LSKeys.ACCESS_TOKEN);
   }, []);
 
-  const setStateFromToken = useCallback(async (): Promise<LoggedUser | null> => {
-    try {
-      const user = await authRepository.getCurrentUser();
-      const loggedUser = {
-        id: user.id,
-        displayName: user.email,
-        photoURL: "",
-        email: user.email,
-      };
+  const setStateFromToken =
+    useCallback(async (): Promise<LoggedUser | null> => {
+      try {
+        const user = await authRepository.getCurrentUser();
+        const loggedUser = {
+          id: user.id,
+          displayName: user.email,
+          photoURL: "",
+          email: user.email,
+        };
 
-      setState((x) => ({
-        ...x,
-        isAuthenticated: true,
-        userId: loggedUser.id,
-        isInitialized: true,
-        user: loggedUser,
-      }));
-      return loggedUser;
-    } catch (error) {
-      console.error(error);
+        setState((x) => ({
+          ...x,
+          isAuthenticated: true,
+          userId: loggedUser.id,
+          isInitialized: true,
+          user: loggedUser,
+        }));
+        return loggedUser;
+      } catch (error) {
+        console.error(error);
 
-      initializeState();
-      return null;
-    }
-  }, [initializeState]);
+        initializeState();
+        return null;
+      }
+    }, [initializeState]);
 
   const logout = useCallback(async () => {
     setSession(null);

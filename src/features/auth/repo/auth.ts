@@ -17,6 +17,11 @@ export type LoggedUser = {
   refreshToken: string;
 };
 
+const mapCurrentUser = (user: any) => ({
+  id: user.ID,
+  email: user.Email,
+});
+
 export const authRepository = {
   login: async (credentials: LoginCredentials) => {
     const { data } = await httpClient.post("/auth/login", credentials);
@@ -26,6 +31,6 @@ export const authRepository = {
     httpClient.post("/auth/register", credentials),
   getCurrentUser: async (): Promise<CurrentUser> => {
     const { data } = await httpClient.get("/auth/me");
-    return data;
+    return mapCurrentUser(data);
   },
 };
