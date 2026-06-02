@@ -25,9 +25,8 @@ export const useEmployeeWizard = ({ userID }: UseEmployeeWizardProps) => {
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === steps.length - 1;
 
-  const employeeQuery = useEmployee(userID);
-
-  const employeeID = employeeQuery.data?.id;
+  const { data: employee, isFetching: isFetchingEmployee } =
+    useEmployee(userID);
 
   //steps callbacks
   const createEmployeeMutation = useCreateEmployee(userID);
@@ -65,8 +64,8 @@ export const useEmployeeWizard = ({ userID }: UseEmployeeWizardProps) => {
       createTechMutation.isPending ||
       createAvailabilityMutation.isPending ||
       createEducationMutation.isPending ||
-      employeeQuery.isFetching,
-    employeeID,
+      isFetchingEmployee,
+    employee,
     createEmployee: createEmployeeMutation.mutateAsync,
     createLocation: createLocationMutation.mutateAsync,
     createTech: createTechMutation.mutateAsync,

@@ -33,13 +33,15 @@ export const NewEmployeeWizard = () => {
     onNextStep,
     onPreviousStep,
     isLoading,
-    employeeID,
+    employee,
     createEmployee,
     createLocation,
     createTech,
     createAvailability,
     createEducation,
   } = useEmployeeWizard({ userID });
+
+  const employeeID = employee?.id;
 
   const onSubmitExperience = async (data: ExperienceFormValues) => {
     if (!employeeCreatedRef.current && employeeID) {
