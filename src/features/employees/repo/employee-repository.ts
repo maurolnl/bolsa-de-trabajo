@@ -1,58 +1,14 @@
 import {
-  internetConnectionOptions,
-  internetConnectionTypeOptions,
-} from "../forms/utils";
+  Availability,
+  BaseEmployee,
+  EducationTitles,
+  Location,
+  Employee,
+  ID,
+  Tech,
+} from "../models/Employee";
 import { Timezone } from "./types";
 
-export type BaseEmployee = {
-  position: string;
-  role: string;
-  yearsOfExperience: string;
-  certifications: string[];
-  certification_files: string[];
-  portfolioUrl: string | null;
-};
-
-export type Location = {
-  timezoneCompatibility: string;
-  internetConnections: InternetConnection[];
-};
-
-export type InternetConnection = {
-  type: (typeof internetConnectionTypeOptions)[number];
-  speed: (typeof internetConnectionOptions)[number];
-};
-
-export type Tech = {
-  operatingSystem: "Windows" | "iOS" | "Linux Distribution" | "Otro";
-  paidSoftware: string[];
-};
-
-export type Availability = {
-  availableHoursPerDay: number;
-  compatibleProjects: number;
-  incompatibleProjects: number;
-};
-
-export type EducationTitles = {
-  educationTitles: Education[];
-};
-
-export type Education = {
-  title: string;
-  status: "completed" | "in-progress";
-  type: "university" | "postgraduate" | "high-school-orientation" | "tertiary";
-  document: File;
-};
-
-type ID = {
-  employeeID: number;
-};
-export type Employee = BaseEmployee &
-  Location &
-  Tech &
-  Availability &
-  EducationTitles;
 export type CreateEmployee = BaseEmployee;
 export type CreateLocation = Location & ID;
 export type CreateTech = Tech & ID;

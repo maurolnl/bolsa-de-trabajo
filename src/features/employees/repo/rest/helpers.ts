@@ -1,11 +1,11 @@
+import { yearsOfExperienceOptions } from "../../forms/utils";
+import { Employee, InternetConnection } from "../../models/Employee";
 import {
   CreateAvailability,
   CreateEducation,
   CreateEmployee,
   CreateLocation,
   CreateTech,
-  Employee,
-  InternetConnection,
 } from "../employee-repository";
 import {
   CreateAvailabilityRequest,
@@ -20,15 +20,56 @@ export const getEmployeeMapper = (x: Employee): Employee => ({
   ...x,
 });
 
-export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => ({
-  position: e.position,
-  role: e.role,
-  years_of_experience:
-    e.yearsOfExperience as CreateEmployeeRequest["years_of_experience"],
-  certifications: e.certifications,
-  certification_files: e.certification_files as unknown as File[],
-  portfolio_url: e.portfolioUrl,
-});
+export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => {
+  const yoe: Record<
+    (typeof yearsOfExperienceOptions)[number],
+    CreateEmployeeRequest["years_of_experience"]
+  > = {
+    "Menos de 1 año": "less_1y",
+    "1 año": "1y",
+    "2 a 5 años": "2_to_5y",
+    "5 a 10 años": "5_to_10y",
+    "Mas de 10 años": "more_10y",
+  };
+  //   yearsOfExperienceOptions = [
+  //   "Menos de 1 año",
+  //   "1 año",
+  //   "2 a 5 años",
+  //   "5 a 10 años",
+  //   "Mas de 10 años",
+  // ] as const;
+  return {
+    position: e.position,
+    role: e.role,
+    years_of_experience: yoe[e.yearsOfExperience],
+    certifications: e.certifications,
+    certifications_files: e.certificationFiles,
+    portfolio_url: e.portfolioUrl,
+  };
+};
+
+export const mapEmployeeFormData = (e: CreateEmployee): FormData => {
+  const payload = mapEmployee(e);
+  const formData = new FormData();
+
+  formData.append("position", payload.position);
+  formData.append("role", payload.role);
+  formData.append("years_of_experience", payload.years_of_experience);
+
+  if (payload.portfolio_url) {
+    formData.append("portfolio_url", payload.portfolio_url);
+  }
+
+  payload.certifications.forEach((certification) => {
+    formData.append("certifications[]", certification);
+  });
+
+  payload.certifications_files.forEach((file) => {
+    formData.append("certifications_files", file);
+  });
+
+  return formData;
+};
 
 const mapInternetType = (
   type: InternetConnection["type"],

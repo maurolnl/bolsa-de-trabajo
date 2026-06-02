@@ -1,5 +1,9 @@
-import { useFormContext } from "react-hook-form";
-import { NewEmployeeProfileStepperFormValues } from "../new-employee-profile-stepper-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeftIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -8,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
@@ -15,14 +20,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from "@/components/ui/loading-screen";
 import { TypographyH3 } from "@/components/ui/typography/typography-h3";
 import { dedicationTypeOptions } from "../../utils";
+import { availabilitySchema, AvailabilityFormValues } from "../schema";
+import { StepFormProps } from "./types";
 
 type DedicationType = (typeof dedicationTypeOptions)[number];
 
-export const AvailabilityForm = () => {
-  const { control, watch, setValue, setError } =
-    useFormContext<NewEmployeeProfileStepperFormValues>();
+export const AvailabilityForm = ({
+  isLoading,
+  isFirstStep,
+  onPrevious,
+  onSubmit,
+}: StepFormProps<AvailabilityFormValues>) => {
+  const form = useForm<AvailabilityFormValues>({
+    mode: "onChange",
+    resolver: zodResolver(availabilitySchema),
+  });
+
+  const { control, watch, setValue, setError } = form;
 
   const isFlexibleDedication = watch("dedicationType") === "Flexible";
   const fullTimeDedication = dedicationTypeOptions[0];
@@ -32,19 +49,19 @@ export const AvailabilityForm = () => {
   const handleDedicationTypeChange = (value: DedicationType) => {
     switch (value) {
       case flexibleDedication:
-        setValue("flexibleHours", "");
-        setError("flexibleHours", {
+        setValue("availableHoursPerDay", "");
+        setError("availableHoursPerDay", {
           message: "Debe ingresar una cantidad de horas",
         });
         break;
       case fullTimeDedication:
-        setValue("flexibleHours", "8", { shouldValidate: true });
+        setValue("availableHoursPerDay", "8", { shouldValidate: true });
         break;
       case partTimeDedication:
-        setValue("flexibleHours", "4", { shouldValidate: true });
+        setValue("availableHoursPerDay", "4", { shouldValidate: true });
         break;
       default:
-        setValue("flexibleHours", "4", { shouldValidate: true });
+        setValue("availableHoursPerDay", "4", { shouldValidate: true });
         break;
     }
 
@@ -52,7 +69,9 @@ export const AvailabilityForm = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <CardContent className="space-y-6">
       <div className="space-y-4">
         <FormField
           control={control}
@@ -85,7 +104,7 @@ export const AvailabilityForm = () => {
         {isFlexibleDedication && (
           <FormField
             control={control}
-            name="flexibleHours"
+            name="availableHoursPerDay"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Dediacion horaria flexible</FormLabel>
@@ -159,6 +178,23 @@ export const AvailabilityForm = () => {
           />
         </div>
       </div>
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPrevious}
+            disabled={isFirstStep || isLoading}
+          >
+            <ArrowLeftIcon size={20} />
+            Volver
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner size={20} /> : null}
+            Siguiente
+          </Button>
+        </CardFooter>
+      </form>
+    </Form>
   );
 };

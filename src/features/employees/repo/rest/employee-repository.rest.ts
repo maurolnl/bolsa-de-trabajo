@@ -1,9 +1,9 @@
 import { httpClient } from "@/core/services/httpClient";
 import {
   getEmployeeMapper,
-  mapEmployee,
   mapEmployeeAvailability,
   mapEmployeeEducation,
+  mapEmployeeFormData,
   mapEmployeeLocation,
   mapEmployeeTech,
 } from "./helpers";
@@ -22,12 +22,12 @@ export const employeeRepositoryRest: EmployeeRepository = {
     const { data } = await httpClient.get("employees");
     return data?.map(getEmployeeMapper) || [];
   },
-  getById: async (id: number) => {
-    const { data } = await httpClient.get(`employees/${id}`);
+  getById: async (userID: number) => {
+    const { data } = await httpClient.get(`employees/${userID}`);
     return getEmployeeMapper(data);
   },
   createEmployee: async (e: CreateEmployee) =>
-    httpClient.post(`employees`, mapEmployee(e)),
+    httpClient.post(`employees`, mapEmployeeFormData(e)),
   createLocation: async (e: CreateLocation) =>
     httpClient.post(`employees/${e.employeeID}`, mapEmployeeLocation(e)),
   createTech: async (e: CreateTech) =>

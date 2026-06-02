@@ -3,7 +3,7 @@ export type CreateEmployeeRequest = {
   role: string;
   years_of_experience: "less_1y" | "1y" | "2_to_5y" | "5_to_10y" | "more_10y";
   certifications: string[];
-  certification_files: File[];
+  certifications_files: File[];
   portfolio_url: string | null;
 };
 
@@ -44,10 +44,10 @@ export type CreateEducationRequest = {
     title: string;
     status: "completed" | "in-progress";
     type:
-      | "iniversity"
+      | "university"
       | "postgraduate"
       | "high-school-orientation"
       | "tertiary";
-    document: File;
+    document?: File;
   }[];
 };

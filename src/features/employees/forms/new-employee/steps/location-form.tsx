@@ -1,5 +1,10 @@
-import { useFormContext } from "react-hook-form";
-import { NewEmployeeProfileStepperFormValues } from "../new-employee-profile-stepper-form";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeftIcon, PlusIcon, XIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectValue,
@@ -14,33 +19,52 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Form,
 } from "@/components/ui/form";
+import { LoadingSpinner } from "@/components/ui/loading-screen";
 import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
 } from "../../utils";
-import { Button } from "@/components/ui/button";
-import { XIcon, PlusIcon } from "lucide-react";
 import { timezones } from "@/lib/timezones";
-import { useEffect } from "react";
+import { locationSchema, LocationFormValues } from "../schema";
+import { StepFormProps } from "./types";
 
-export const LocationForm = () => {
-  const { control, watch, setValue } =
-    useFormContext<NewEmployeeProfileStepperFormValues>();
+const INTERNET_CONNECTIONS_INITIAL_VALUES = [
+  {
+    speed: internetConnectionOptions[0],
+    type: internetConnectionTypeOptions[0],
+  },
+];
+
+export const LocationForm = ({
+  isLoading,
+  isFirstStep,
+  onPrevious,
+  onSubmit,
+}: StepFormProps<LocationFormValues>) => {
+  const form = useForm<LocationFormValues>({
+    mode: "onChange",
+    resolver: zodResolver(locationSchema),
+    defaultValues: {
+      internetConnections: INTERNET_CONNECTIONS_INITIAL_VALUES,
+    },
+  });
+
+  const { control, watch, setValue } = form;
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  // const offset = getTimezoneOffset();
   const userTimezone = timezones.find((tz) => tz.id === browserTimezone);
 
   useEffect(() => {
     if (userTimezone) {
-      setValue("timeZoneCompatibility", userTimezone.id);
+      setValue("timezoneCompatibility", userTimezone.id);
     }
   }, [setValue, userTimezone]);
 
   const handleAddInternetConnection = () => {
     // Add new internet connection to the form
-    const currentValues = Array.isArray(watch("internetConnection"))
-      ? watch("internetConnection")
+    const currentValues = Array.isArray(watch("internetConnections"))
+      ? watch("internetConnections")
       : [];
 
     // Default values for new connection
@@ -50,24 +74,27 @@ export const LocationForm = () => {
     };
 
     // Add the new connection to the array
-    setValue("internetConnection", [...currentValues, newConnection], {
+    setValue("internetConnections", [...currentValues, newConnection], {
       shouldValidate: false,
     });
   };
 
   return (
-    <div className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <CardContent className="space-y-4">
       <FormField
         control={control}
-        name="internetConnection"
+        name="internetConnections"
         render={({ field }) => (
           <FormItem>
             <div className="flex flex-row justify-between items-center">
               <FormLabel>Conexión a internet</FormLabel>
-              <Button
-                onClick={handleAddInternetConnection}
-                variant="outline"
-                size="icon"
+                <Button
+                  type="button"
+                  onClick={handleAddInternetConnection}
+                  variant="outline"
+                  size="icon"
               >
                 <PlusIcon className="w-4 h-4" />
               </Button>
@@ -87,7 +114,8 @@ export const LocationForm = () => {
                               const updatedValues = [...field.value];
                               updatedValues[index] = {
                                 ...updatedValues[index],
-                                type: newValue as any,
+                                type:
+                                  newValue as (typeof internetConnectionTypeOptions)[number],
                               };
                               field.onChange(updatedValues);
                             }}
@@ -131,6 +159,7 @@ export const LocationForm = () => {
                         </div>
                       </div>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => {
@@ -153,7 +182,7 @@ export const LocationForm = () => {
 
       <FormField
         control={control}
-        name="timeZoneCompatibility"
+        name="timezoneCompatibility"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Zona horaria acorde</FormLabel>
@@ -175,6 +204,23 @@ export const LocationForm = () => {
           </FormItem>
         )}
       />
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPrevious}
+            disabled={isFirstStep || isLoading}
+          >
+            <ArrowLeftIcon size={20} />
+            Volver
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner size={20} /> : null}
+            Siguiente
+          </Button>
+        </CardFooter>
+      </form>
+    </Form>
   );
 };

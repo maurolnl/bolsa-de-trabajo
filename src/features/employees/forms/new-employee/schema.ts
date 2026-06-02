@@ -14,8 +14,16 @@ import {
 } from "../utils";
 import { timezoneOptions } from "@/lib/timezones";
 
-const newEmployeeProfileSchemaBase = z.object({
-  // Step 1: Experience
+export const educationTypeOptions = [
+  "university",
+  "postgraduate",
+  "high-school-orientation",
+  "tertiary",
+] as const;
+
+export const educationStatusOptions = ["in-progress", "completed"] as const;
+
+export const experienceSchema = z.object({
   position: z.string(),
   role: z.enum(roleOptions, {
     required_error: "Debe seleccionar un rol",
@@ -26,11 +34,12 @@ const newEmployeeProfileSchemaBase = z.object({
     invalid_type_error: "Seleccione una opción válida",
   }),
   certifications: z.array(z.string()).optional(),
-  certificationsFile: multipleFileValidation.optional(),
-  projectLinks: urlValidation.optional(),
+  certificationFiles: multipleFileValidation.optional(),
+  portfolioUrl: urlValidation.optional(),
+});
 
-  // Step 2: Connections
-  internetConnection: z.array(
+export const locationSchema = z.object({
+  internetConnections: z.array(
     z.object({
       speed: z.enum(internetConnectionOptions, {
         required_error: "Debe seleccionar una velocidad de conexión",
@@ -42,25 +51,37 @@ const newEmployeeProfileSchemaBase = z.object({
       }),
     }),
   ),
-  timeZoneCompatibility: z.enum(timezoneOptions, {
+  timezoneCompatibility: z.enum(timezoneOptions, {
     required_error: "Debe seleccionar una zona horaria",
     invalid_type_error: "Seleccione una opción válida",
   }),
+});
 
-  // Step 3: Resources
+export const resourcesSchema = z
+  .object({
   hasComputer: z.enum(haveComputerOptions, {
     required_error: "Debe indicar si dispone de computadora",
     invalid_type_error: "Seleccione una opción válida",
   }),
   operatingSystem: z.enum(operatingSystemOptions).optional(),
   paidSoftware: z.array(z.string()).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.hasComputer === "Si" && !data.operatingSystem) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["operatingSystem"],
+        message: "Debe seleccionar un sistema operativo",
+      });
+    }
+  });
 
-  // Step 4: Availability
+export const availabilitySchema = z.object({
   dedicationType: z.enum(dedicationTypeOptions, {
     required_error: "Debe seleccionar un tipo de dedicación",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  flexibleHours: z
+  availableHoursPerDay: z
     .string()
     .refine(
       (val) => {
@@ -90,76 +111,33 @@ const newEmployeeProfileSchemaBase = z.object({
       { message: "La cantidad no puede ser negativa" },
     )
     .optional(),
-
-  // Step 5: Education
-  universityTitles: z.array(z.string()).optional(),
-  postgraduateTitles: z.array(z.string()).optional(),
-  schoolStudiesOrientation: z.array(z.string()).optional(),
-  tertiaryStudies: z.array(z.string()).optional(),
-  universityTitleFiles: multipleFileValidation.optional(),
-  postgraduateTitleFiles: multipleFileValidation.optional(),
-  schoolStudiesOrientationFiles: multipleFileValidation.optional(),
-  tertiaryStudyFiles: multipleFileValidation.optional(),
-  tertiaryStudyOther: z.string().optional(),
 });
 
-export const newEmployeeProfileSchema = newEmployeeProfileSchemaBase.superRefine(
-  (data, ctx) => {
-    if (data.hasComputer === "Si" && !data.operatingSystem) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["operatingSystem"],
-        message: "Debe seleccionar un sistema operativo",
-      });
-    }
-  },
-);
-
-export const experienceSchema = newEmployeeProfileSchemaBase.pick({
-  position: true,
-  role: true,
-  yearsOfExperience: true,
-  certifications: true,
-  certificationsFile: true,
-  projectLinks: true,
+export const educationTitleSchema = z.object({
+  title: z.string().min(1, "Debe ingresar un título"),
+  type: z.enum(educationTypeOptions, {
+    required_error: "Debe seleccionar un tipo",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
+  status: z.enum(educationStatusOptions, {
+    required_error: "Debe seleccionar un estado",
+    invalid_type_error: "Seleccione una opción válida",
+  }),
+  document: z.instanceof(File).optional(),
 });
 
-export const locationSchema = newEmployeeProfileSchemaBase.pick({
-  internetConnection: true,
-  timeZoneCompatibility: true,
+export const educationSchema = z.object({
+  educationTitles: z.array(educationTitleSchema).default([]),
 });
 
-export const resourcesSchema = newEmployeeProfileSchemaBase
-  .pick({
-    hasComputer: true,
-    operatingSystem: true,
-    paidSoftware: true,
-  })
-  .superRefine((data, ctx) => {
-    if (data.hasComputer === "Si" && !data.operatingSystem) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["operatingSystem"],
-        message: "Debe seleccionar un sistema operativo",
-      });
-    }
-  });
+export type ExperienceFormValues = z.infer<typeof experienceSchema>;
 
-export const availabilitySchema = newEmployeeProfileSchemaBase.pick({
-  dedicationType: true,
-  flexibleHours: true,
-  compatibleProjects: true,
-  incompatibleProjects: true,
-});
+export type LocationFormValues = z.infer<typeof locationSchema>;
 
-export const educationSchema = newEmployeeProfileSchemaBase.pick({
-  universityTitles: true,
-  postgraduateTitles: true,
-  schoolStudiesOrientation: true,
-  tertiaryStudies: true,
-  universityTitleFiles: true,
-  postgraduateTitleFiles: true,
-  schoolStudiesOrientationFiles: true,
-  tertiaryStudyFiles: true,
-  tertiaryStudyOther: true,
-});
+export type ResourcesFormValues = z.infer<typeof resourcesSchema>;
+
+export type AvailabilityFormValues = z.infer<typeof availabilitySchema>;
+
+export type EducationTitleFormValues = z.infer<typeof educationTitleSchema>;
+
+export type EducationFormValues = z.infer<typeof educationSchema>;

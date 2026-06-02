@@ -1,5 +1,5 @@
-import { User } from "./types";
+import { Employee } from "../models/Employee";
 
-export const getUserMapper = (x: any): User => ({
-  ...x,
+export const getUserMapper = (x: unknown): Employee => ({
+  ...(x as Employee),
 });

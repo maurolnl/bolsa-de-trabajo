@@ -1,6 +1,11 @@
-import { NewEmployeeProfileStepperFormValues } from "../new-employee-profile-stepper-form";
-import { useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeftIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import {
+  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -8,17 +13,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { LoadingSpinner } from "@/components/ui/loading-screen";
 import { haveComputerOptions, operatingSystemOptions } from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
+import { resourcesSchema, ResourcesFormValues } from "../schema";
+import { StepFormProps } from "./types";
 
-export const ResourcesForm = () => {
-  const { control, watch } =
-    useFormContext<NewEmployeeProfileStepperFormValues>();
+export const ResourcesForm = ({
+  isLoading,
+  isFirstStep,
+  onPrevious,
+  onSubmit,
+}: StepFormProps<ResourcesFormValues>) => {
+  const form = useForm<ResourcesFormValues>({
+    mode: "onChange",
+    resolver: zodResolver(resourcesSchema),
+    defaultValues: {
+      paidSoftware: [],
+    },
+  });
+
+  const { control, watch } = form;
   const hasComputer = watch("hasComputer") === "Si";
 
   return (
-    <div className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <CardContent className="space-y-4">
       <FormField
         control={control}
         name="hasComputer"
@@ -118,6 +140,23 @@ export const ResourcesForm = () => {
           </FormItem>
         )}
       />
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPrevious}
+            disabled={isFirstStep || isLoading}
+          >
+            <ArrowLeftIcon size={20} />
+            Volver
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner size={20} /> : null}
+            Siguiente
+          </Button>
+        </CardFooter>
+      </form>
+    </Form>
   );
 };
