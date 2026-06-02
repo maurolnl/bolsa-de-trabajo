@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon } from "lucide-react";
@@ -21,17 +22,26 @@ import { resourcesSchema, ResourcesFormValues } from "../schema";
 import { StepFormProps } from "./types";
 
 export const ResourcesForm = ({
+  defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
   onSubmit,
 }: StepFormProps<ResourcesFormValues>) => {
+  const formDefaultValues = useMemo<ResourcesFormValues>(
+    () => ({
+      hasComputer: "No",
+      paidSoftware: [],
+      ...defaultValues,
+    }),
+    [defaultValues],
+  );
+
   const form = useForm<ResourcesFormValues>({
     mode: "onChange",
     resolver: zodResolver(resourcesSchema),
-    defaultValues: {
-      paidSoftware: [],
-    },
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
   });
 
   const { control, watch } = form;

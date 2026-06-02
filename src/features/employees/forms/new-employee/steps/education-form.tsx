@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon, FileTextIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
@@ -52,6 +52,7 @@ const educationStatusLabels: Record<EducationTitleFormValues["status"], string> 
 };
 
 export const EducationForm = ({
+  defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
@@ -60,12 +61,19 @@ export const EducationForm = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
+  const formDefaultValues = useMemo<EducationFormValues>(
+    () => ({
+      educationTitles: [],
+      ...defaultValues,
+    }),
+    [defaultValues],
+  );
+
   const form = useForm<EducationFormValues>({
     mode: "onChange",
     resolver: zodResolver(educationSchema),
-    defaultValues: {
-      educationTitles: [],
-    },
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
   });
 
   const educationTitleForm = useForm<EducationTitleFormValues>({

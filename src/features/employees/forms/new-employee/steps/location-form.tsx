@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon, PlusIcon, XIcon } from "lucide-react";
@@ -38,28 +38,33 @@ const INTERNET_CONNECTIONS_INITIAL_VALUES = [
 ];
 
 export const LocationForm = ({
+  defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
   onSubmit,
 }: StepFormProps<LocationFormValues>) => {
-  const form = useForm<LocationFormValues>({
-    mode: "onChange",
-    resolver: zodResolver(locationSchema),
-    defaultValues: {
-      internetConnections: INTERNET_CONNECTIONS_INITIAL_VALUES,
-    },
-  });
-
-  const { control, watch, setValue } = form;
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const userTimezone = timezones.find((tz) => tz.id === browserTimezone);
 
-  useEffect(() => {
-    if (userTimezone) {
-      setValue("timezoneCompatibility", userTimezone.id);
-    }
-  }, [setValue, userTimezone]);
+  const formDefaultValues = useMemo<LocationFormValues>(
+    () => ({
+      internetConnections: INTERNET_CONNECTIONS_INITIAL_VALUES,
+      timezoneCompatibility: (userTimezone?.id ??
+        timezones[0].id) as LocationFormValues["timezoneCompatibility"],
+      ...defaultValues,
+    }),
+    [defaultValues, userTimezone?.id],
+  );
+
+  const form = useForm<LocationFormValues>({
+    mode: "onChange",
+    resolver: zodResolver(locationSchema),
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
+  });
+
+  const { control, watch, setValue } = form;
 
   const handleAddInternetConnection = () => {
     // Add new internet connection to the form

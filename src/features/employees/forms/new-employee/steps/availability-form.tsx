@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon } from "lucide-react";
@@ -29,14 +30,22 @@ import { StepFormProps } from "./types";
 type DedicationType = (typeof dedicationTypeOptions)[number];
 
 export const AvailabilityForm = ({
+  defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
   onSubmit,
 }: StepFormProps<AvailabilityFormValues>) => {
+  const formDefaultValues = useMemo(
+    () => defaultValues,
+    [defaultValues],
+  );
+
   const form = useForm<AvailabilityFormValues>({
     mode: "onChange",
     resolver: zodResolver(availabilitySchema),
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
   });
 
   const { control, watch, setValue, setError } = form;

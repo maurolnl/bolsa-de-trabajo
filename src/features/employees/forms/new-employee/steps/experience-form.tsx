@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon } from "lucide-react";
@@ -23,19 +24,29 @@ import { experienceSchema, ExperienceFormValues } from "../schema";
 import { StepFormProps } from "./types";
 
 export const ExperienceForm = ({
+  defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
   onSubmit,
 }: StepFormProps<ExperienceFormValues>) => {
+  const formDefaultValues = useMemo<ExperienceFormValues>(
+    () => ({
+      position: "",
+      role: roleOptions[0],
+      yearsOfExperience: yearsOfExperienceOptions[0],
+      certifications: [],
+      portfolioUrl: "",
+      ...defaultValues,
+    }),
+    [defaultValues],
+  );
+
   const form = useForm<ExperienceFormValues>({
     mode: "onChange",
     resolver: zodResolver(experienceSchema),
-    defaultValues: {
-      position: "",
-      certifications: [],
-      portfolioUrl: "",
-    },
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
   });
 
   const { control, formState, watch } = form;
