@@ -27,14 +27,13 @@ const production: Env = {
 };
 
 const development: Env = {
-  backEnd: "http://localhost:8080/",
+  backEnd: "http://localhost:8081/",
   environment: "development",
-  backEndBaseUrl: "https://balcells-back.vadiun.net/",
+  backEndBaseUrl: "http://localhost:8081/",
 };
 
 export const environment = isProduction()
   ? production
   : isStaging()
-  ? staging
-  : development;
-
+    ? staging
+    : development;

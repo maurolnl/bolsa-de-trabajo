@@ -1,5 +1,10 @@
-import { useFormContext } from "react-hook-form";
-import { NewEmployeeProfileStepperFormValues } from "../new-employee-profile-stepper-form";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeftIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import {
   FormControl,
   FormDescription,
@@ -7,21 +12,51 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Form,
 } from "@/components/ui/form";
+import { LoadingSpinner } from "@/components/ui/loading-screen";
 import { roleOptions, yearsOfExperienceOptions } from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
+import { experienceSchema, ExperienceFormValues } from "../schema";
+import { StepFormProps } from "./types";
 
-export const ExperienceForm = () => {
-  const { control, formState, watch } =
-    useFormContext<NewEmployeeProfileStepperFormValues>();
+export const ExperienceForm = ({
+  defaultValues,
+  isLoading,
+  isFirstStep,
+  onPrevious,
+  onSubmit,
+}: StepFormProps<ExperienceFormValues>) => {
+  const formDefaultValues = useMemo<ExperienceFormValues>(
+    () => ({
+      position: "",
+      role: roleOptions[0],
+      yearsOfExperience: yearsOfExperienceOptions[0],
+      certifications: [],
+      portfolioUrl: "",
+      ...defaultValues,
+    }),
+    [defaultValues],
+  );
+
+  const form = useForm<ExperienceFormValues>({
+    mode: "onChange",
+    resolver: zodResolver(experienceSchema),
+    defaultValues: formDefaultValues,
+    values: formDefaultValues,
+  });
+
+  const { control, formState, watch } = form;
 
   const certifications = watch("certifications");
 
   return (
-    <div className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} encType="multipart/form-data">
+        <CardContent className="space-y-4">
       <div className="space-y-4">
         <FormField
           control={control}
@@ -157,7 +192,7 @@ export const ExperienceForm = () => {
       {certifications && certifications.length > 0 ? (
         <FormField
           control={control}
-          name="certificationsFile"
+          name="certificationFiles"
           render={({ field: { onChange, value, ...fieldProps } }) => (
             <FormItem>
               <FormControl>
@@ -194,7 +229,7 @@ export const ExperienceForm = () => {
       <Separator orientation="horizontal" />
       <FormField
         control={control}
-        name="projectLinks"
+        name="portfolioUrl"
         render={({ field }) => (
           <FormItem className="space-y-3">
             <FormControl>
@@ -218,6 +253,23 @@ export const ExperienceForm = () => {
           </FormItem>
         )}
       />
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onPrevious}
+            disabled={isFirstStep || isLoading}
+          >
+            <ArrowLeftIcon size={20} />
+            Volver
+          </Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner size={20} /> : null}
+            Siguiente
+          </Button>
+        </CardFooter>
+      </form>
+    </Form>
   );
 };
