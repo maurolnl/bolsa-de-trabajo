@@ -1,18 +1,10 @@
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TypographyP } from "@/components/ui/typography/typography-p";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { timezoneOptions } from "@/lib/timezones";
-import {
-  dedicationTypeOptions,
-  internetConnectionOptions,
-  internetConnectionTypeOptions,
-  roleOptions,
-  yearsOfExperienceOptions,
-} from "../utils";
 import { toNumber, getFiles } from "../../utils/utils";
 import {
   AvailabilityFormValues,
@@ -27,6 +19,13 @@ import { ExperienceForm } from "./steps/experience-form";
 import { LocationForm } from "./steps/location-form";
 import { ResourcesForm } from "./steps/resources-form";
 import { useEmployeeWizard } from "./useWizard";
+import {
+  availabilityDefaultValues,
+  educationDefaultValues,
+  experienceDefaultValues,
+  locationDefaultValues,
+  resourcesDefaultValues,
+} from "./initialValues";
 
 export const NewEmployeeWizard = () => {
   const employeeCreatedRef = useRef(false);
@@ -42,164 +41,128 @@ export const NewEmployeeWizard = () => {
     onPreviousStep,
     isLoading,
     employee,
+    timezones,
     createEmployee,
     createLocation,
     createTech,
     createAvailability,
     createEducation,
+    updateEmployee,
+    updateLocation,
+    updateTech,
+    updateAvailability,
+    updateEducation,
   } = useEmployeeWizard({ userID });
 
   const employeeID = employee?.id;
+  const hasCreatedExperience = Boolean(employeeID);
 
-  const experienceDefaultValues = useMemo<
-    ExperienceFormValues | undefined
-  >(() => {
-    if (!employee) return undefined;
+  const hasCreatedLocation = Boolean(
+    employee?.timezoneCompatibility || employee?.internetConnections?.length,
+  );
 
-    return {
-      position: employee.position ?? "",
-      role: roleOptions.includes(employee.role as ExperienceFormValues["role"])
-        ? (employee.role as ExperienceFormValues["role"])
-        : roleOptions[0],
-      yearsOfExperience: yearsOfExperienceOptions.includes(
-        employee.yearsOfExperience as ExperienceFormValues["yearsOfExperience"],
-      )
-        ? (employee.yearsOfExperience as ExperienceFormValues["yearsOfExperience"])
-        : yearsOfExperienceOptions[0],
-      certifications: employee.certifications ?? [],
-      certificationFiles: employee.certificationFiles ?? [],
-      portfolioUrl: employee.portfolioUrl ?? "",
-    };
-  }, [employee]);
-
-  const locationDefaultValues = useMemo<LocationFormValues | undefined>(() => {
-    if (!employee) return undefined;
-
-    const timezoneCompatibility = timezoneOptions.includes(
-      employee.timezoneCompatibility as LocationFormValues["timezoneCompatibility"],
-    )
-      ? (employee.timezoneCompatibility as LocationFormValues["timezoneCompatibility"])
-      : timezoneOptions[0];
-
-    return {
-      internetConnections:
-        employee.internetConnections?.length > 0
-          ? employee.internetConnections
-          : [
-              {
-                speed: internetConnectionOptions[0],
-                type: internetConnectionTypeOptions[0],
-              },
-            ],
-      timezoneCompatibility,
-    };
-  }, [employee]);
-
-  const resourcesDefaultValues = useMemo<
-    ResourcesFormValues | undefined
-  >(() => {
-    if (!employee) return undefined;
-
-    return {
-      hasComputer: employee.operatingSystem ? "Si" : "No",
-      operatingSystem: employee.operatingSystem ?? undefined,
-      paidSoftware: employee.paidSoftware ?? [],
-    };
-  }, [employee]);
-
-  const availabilityDefaultValues = useMemo<
-    AvailabilityFormValues | undefined
-  >(() => {
-    if (!employee || employee.availableHoursPerDay <= 0) return undefined;
-
-    const availableHoursPerDay = String(employee.availableHoursPerDay);
-    const dedicationType =
-      employee.availableHoursPerDay === 8
-        ? dedicationTypeOptions[0]
-        : employee.availableHoursPerDay === 4
-          ? dedicationTypeOptions[1]
-          : dedicationTypeOptions[2];
-
-    return {
-      dedicationType,
-      availableHoursPerDay,
-      compatibleProjects:
-        employee.compatibleProjects === null
-          ? undefined
-          : String(employee.compatibleProjects),
-      incompatibleProjects:
-        employee.incompatibleProjects === null
-          ? undefined
-          : String(employee.incompatibleProjects),
-    };
-  }, [employee]);
-
-  const educationDefaultValues = useMemo<
-    EducationFormValues | undefined
-  >(() => {
-    if (!employee) return undefined;
-
-    return {
-      educationTitles: employee.educationTitles ?? [],
-    };
-  }, [employee]);
+  const hasCreatedTech = Boolean(
+    employee &&
+      (employee.operatingSystem !== null || employee.paidSoftware !== null),
+  );
+  const hasCreatedAvailability = Boolean(
+    employee && employee.availableHoursPerDay > 0,
+  );
+  const hasCreatedEducation = Boolean(employee?.educationTitles?.length);
 
   const onSubmitExperience = async (data: ExperienceFormValues) => {
-    if (!employeeCreatedRef.current && employeeID) {
-      await createEmployee({
-        position: data.position,
-        role: data.role,
-        yearsOfExperience: data.yearsOfExperience,
-        certifications: data.certifications ?? [],
-        certificationFiles: getFiles(data.certificationFiles),
-        portfolioUrl: data.portfolioUrl || null,
-      });
-      employeeCreatedRef.current = true;
+    const payload = {
+      position: data.position,
+      role: data.role,
+      yearsOfExperience: data.yearsOfExperience,
+      certifications: data.certifications ?? [],
+      certificationFiles: getFiles(data.certificationFiles),
+      portfolioUrl: data.portfolioUrl || null,
+    };
+
+    if (hasCreatedExperience && employeeID) {
+      await updateEmployee({ employeeID, ...payload });
       onNextStep();
+      return;
     }
+
+    if (!employeeCreatedRef.current) {
+      await createEmployee(payload);
+      employeeCreatedRef.current = true;
+    }
+
+    onNextStep();
   };
 
   const onSubmitLocation = async (data: LocationFormValues) => {
     if (employeeID) {
-      await createLocation({
+      const payload = {
         employeeID,
-        internetConnections: data.internetConnections,
+        internetConnections: data.internetConnections ?? [],
         timezoneCompatibility: data.timezoneCompatibility,
-      });
+      };
+
+      if (hasCreatedLocation) {
+        await updateLocation(payload);
+      } else {
+        await createLocation(payload);
+      }
+
       onNextStep();
     }
   };
 
   const onSubmitResources = async (data: ResourcesFormValues) => {
     if (employeeID) {
-      await createTech({
+      const payload = {
         employeeID,
         operatingSystem:
           data.hasComputer === "Si" ? (data.operatingSystem ?? null) : null,
         paidSoftware: data.paidSoftware ?? [],
-      });
+      };
+
+      if (hasCreatedTech) {
+        await updateTech(payload);
+      } else {
+        await createTech(payload);
+      }
+
       onNextStep();
     }
   };
 
   const onSubmitAvailability = async (data: AvailabilityFormValues) => {
     if (employeeID) {
-      await createAvailability({
+      const payload = {
         employeeID,
         availableHoursPerDay: Number(data.availableHoursPerDay),
         compatibleProjects: toNumber(data.compatibleProjects),
         incompatibleProjects: toNumber(data.incompatibleProjects),
-      });
+      };
+
+      if (hasCreatedAvailability) {
+        await updateAvailability(payload);
+      } else {
+        await createAvailability(payload);
+      }
+
       onNextStep();
     }
   };
 
   const onSubmitEducation = async (data: EducationFormValues) => {
     if (employeeID) {
-      await createEducation({
+      const payload = {
         employeeID,
         educationTitles: data.educationTitles,
-      });
+      };
+
+      if (hasCreatedEducation) {
+        await updateEducation(payload);
+      } else {
+        await createEducation(payload);
+      }
+
       toast({ title: "Usuario creado" });
     }
   };
@@ -209,7 +172,7 @@ export const NewEmployeeWizard = () => {
       case 1:
         return (
           <ExperienceForm
-            defaultValues={experienceDefaultValues}
+            defaultValues={experienceDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
             onPrevious={onPreviousStep}
@@ -219,7 +182,8 @@ export const NewEmployeeWizard = () => {
       case 2:
         return (
           <LocationForm
-            defaultValues={locationDefaultValues}
+            defaultValues={locationDefaultValues(timezones, employee)}
+            timezones={timezones}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
             onPrevious={onPreviousStep}
@@ -229,7 +193,7 @@ export const NewEmployeeWizard = () => {
       case 3:
         return (
           <ResourcesForm
-            defaultValues={resourcesDefaultValues}
+            defaultValues={resourcesDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
             onPrevious={onPreviousStep}
@@ -239,7 +203,7 @@ export const NewEmployeeWizard = () => {
       case 4:
         return (
           <AvailabilityForm
-            defaultValues={availabilityDefaultValues}
+            defaultValues={availabilityDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
             onPrevious={onPreviousStep}
@@ -249,7 +213,7 @@ export const NewEmployeeWizard = () => {
       case 5:
         return (
           <EducationForm
-            defaultValues={educationDefaultValues}
+            defaultValues={educationDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
             isLastStep={isLastStep}

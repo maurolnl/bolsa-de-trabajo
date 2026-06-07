@@ -49,7 +49,7 @@ export type Education = {
   title: string;
   status: "completed" | "in-progress";
   type: "university" | "postgraduate" | "high-school-orientation" | "tertiary";
-  document?: File;
+  document?: File | string;
 };
 
 export type ID = {

@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon } from "lucide-react";
@@ -28,20 +27,11 @@ export const ResourcesForm = ({
   onPrevious,
   onSubmit,
 }: StepFormProps<ResourcesFormValues>) => {
-  const formDefaultValues = useMemo<ResourcesFormValues>(
-    () => ({
-      hasComputer: "No",
-      paidSoftware: [],
-      ...defaultValues,
-    }),
-    [defaultValues],
-  );
-
   const form = useForm<ResourcesFormValues>({
     mode: "onChange",
     resolver: zodResolver(resourcesSchema),
-    defaultValues: formDefaultValues,
-    values: formDefaultValues,
+    defaultValues: defaultValues,
+    values: defaultValues,
   });
 
   const { control, watch } = form;
@@ -51,105 +41,107 @@ export const ResourcesForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
-      <FormField
-        control={control}
-        name="hasComputer"
-        render={({ field }) => (
-          <FormItem className="space-y-3">
-            <div className="mb-4">
-              <FormLabel>¿Dispone de una computadora?</FormLabel>
-            </div>
-            <FormItem className="flex items-center space-x-2 space-y-0">
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {haveComputerOptions.map((title) => (
-                    <FormItem
-                      key={title}
-                      className="flex items-center space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <RadioGroupItem value={title} />
-                      </FormControl>
-                      <FormLabel className="font-normal">{title}</FormLabel>
-                    </FormItem>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            </FormItem>
-          </FormItem>
-        )}
-      />
-
-      {hasComputer && (
-        <FormField
-          control={control}
-          name="operatingSystem"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <div className="mb-4">
-                <FormLabel>Sistema operativo disponible</FormLabel>
-                <FormDescription>
-                  Seleccione el sistema operativo de la computadora
-                </FormDescription>
-              </div>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {operatingSystemOptions.map((option) => (
-                    <FormItem
-                      key={option}
-                      className="flex items-center space-x-3 space-y-0"
-                    >
-                      <FormControl>
-                        <RadioGroupItem value={option} />
-                      </FormControl>
-                      <FormLabel className="font-normal">{option}</FormLabel>
-                    </FormItem>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      )}
-
-      <FormField
-        control={control}
-        name="paidSoftware"
-        render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormControl>
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <FormLabel>
-                    Software de pago{" "}
-                    <span className="text-sm text-muted-foreground font-normal">
-                      (Opcional)
-                    </span>
-                  </FormLabel>
-                  <FormDescription>
-                    Agregue el software de pago que dispone
-                  </FormDescription>
+          <FormField
+            control={control}
+            name="hasComputer"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <div className="mb-4">
+                  <FormLabel>¿Dispone de una computadora?</FormLabel>
                 </div>
-                <AutocompleteInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Escriba el nombre del software"
-                  addButtonLabel="Agregar"
-                />
-              </div>
-            </FormControl>
-          </FormItem>
-        )}
-      />
+                <FormItem className="flex items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      {haveComputerOptions.map((title) => (
+                        <FormItem
+                          key={title}
+                          className="flex items-center space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <RadioGroupItem value={title} />
+                          </FormControl>
+                          <FormLabel className="font-normal">{title}</FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </FormItem>
+              </FormItem>
+            )}
+          />
+
+          {hasComputer && (
+            <FormField
+              control={control}
+              name="operatingSystem"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <div className="mb-4">
+                    <FormLabel>Sistema operativo disponible</FormLabel>
+                    <FormDescription>
+                      Seleccione el sistema operativo de la computadora
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      {operatingSystemOptions.map((option) => (
+                        <FormItem
+                          key={option}
+                          className="flex items-center space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <RadioGroupItem value={option} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          <FormField
+            control={control}
+            name="paidSoftware"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormControl>
+                  <div className="space-y-2">
+                    <div className="space-y-1">
+                      <FormLabel>
+                        Software de pago{" "}
+                        <span className="text-sm text-muted-foreground font-normal">
+                          (Opcional)
+                        </span>
+                      </FormLabel>
+                      <FormDescription>
+                        Agregue el software de pago que dispone
+                      </FormDescription>
+                    </div>
+                    <AutocompleteInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Escriba el nombre del software"
+                      addButtonLabel="Agregar"
+                    />
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button

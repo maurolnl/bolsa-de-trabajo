@@ -30,6 +30,26 @@ const unsupportedCreateEducation: EmployeeRepository["createEducation"] = async 
   await unsupportedOperation();
 };
 
+const unsupportedUpdateEmployee: EmployeeRepository["updateEmployee"] = async () => {
+  await unsupportedOperation();
+};
+
+const unsupportedUpdateLocation: EmployeeRepository["updateLocation"] = async () => {
+  await unsupportedOperation();
+};
+
+const unsupportedUpdateTech: EmployeeRepository["updateTech"] = async () => {
+  await unsupportedOperation();
+};
+
+const unsupportedUpdateAvailability: EmployeeRepository["updateAvailability"] = async () => {
+  await unsupportedOperation();
+};
+
+const unsupportedUpdateEducation: EmployeeRepository["updateEducation"] = async () => {
+  await unsupportedOperation();
+};
+
 const getCreateEmployeeMapper = (x: CreateEmployee): Omit<Employee, "id"> => ({
   ...x,
   timezoneCompatibility: "",
@@ -67,10 +87,15 @@ export const userRepositorySupabase: EmployeeRepository = {
       .single();
     if (error) throw error;
   },
+  updateEmployee: unsupportedUpdateEmployee,
   createLocation: unsupportedCreateLocation,
+  updateLocation: unsupportedUpdateLocation,
   createTech: unsupportedCreateTech,
+  updateTech: unsupportedUpdateTech,
   createAvailability: unsupportedCreateAvailability,
+  updateAvailability: unsupportedUpdateAvailability,
   createEducation: unsupportedCreateEducation,
+  updateEducation: unsupportedUpdateEducation,
   timezones: async () => {
     const { data, error } = await supabase.rpc("get_timezones");
 

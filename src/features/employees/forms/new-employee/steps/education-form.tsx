@@ -1,7 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeftIcon, FileTextIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  FileTextIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,10 +52,15 @@ const educationTypeLabels: Record<EducationTitleFormValues["type"], string> = {
   tertiary: "Terciario",
 };
 
-const educationStatusLabels: Record<EducationTitleFormValues["status"], string> = {
+const educationStatusLabels: Record<
+  EducationTitleFormValues["status"],
+  string
+> = {
   "in-progress": "En curso",
   completed: "Completado",
 };
+
+const CREATE_INDEX = -1;
 
 export const EducationForm = ({
   defaultValues,
@@ -58,22 +69,15 @@ export const EducationForm = ({
   onPrevious,
   onSubmit,
 }: StepFormProps<EducationFormValues>) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const formDefaultValues = useMemo<EducationFormValues>(
-    () => ({
-      educationTitles: [],
-      ...defaultValues,
-    }),
-    [defaultValues],
-  );
+  const isEditing = editingIndex !== null;
 
   const form = useForm<EducationFormValues>({
     mode: "onChange",
     resolver: zodResolver(educationSchema),
-    defaultValues: formDefaultValues,
-    values: formDefaultValues,
+    defaultValues: defaultValues,
+    values: defaultValues,
   });
 
   const educationTitleForm = useForm<EducationTitleFormValues>({
@@ -85,27 +89,24 @@ export const EducationForm = ({
   const educationTitles = form.watch("educationTitles");
 
   const handleOpenCreate = () => {
-    setEditingIndex(null);
-    setIsEditing(true);
+    setEditingIndex(CREATE_INDEX);
     educationTitleForm.reset(DEFAULT_EDUCATION_TITLE);
   };
 
   const handleOpenEdit = (index: number) => {
     setEditingIndex(index);
-    setIsEditing(true);
     educationTitleForm.reset(educationTitles[index]);
   };
 
   const handleCancelEdit = () => {
     setEditingIndex(null);
-    setIsEditing(false);
     educationTitleForm.reset(DEFAULT_EDUCATION_TITLE);
   };
 
   const handleSaveEducationTitle = (data: EducationTitleFormValues) => {
     const nextEducationTitles = [...educationTitles];
 
-    if (editingIndex === null) {
+    if (editingIndex === CREATE_INDEX || editingIndex === null) {
       nextEducationTitles.push(data);
     } else {
       nextEducationTitles[editingIndex] = data;
@@ -128,7 +129,10 @@ export const EducationForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} encType="multipart/form-data">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        encType="multipart/form-data"
+      >
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
@@ -154,7 +158,10 @@ export const EducationForm = ({
                         <FormItem>
                           <FormLabel>Título</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Licenciatura en Sistemas" />
+                            <Input
+                              {...field}
+                              placeholder="Licenciatura en Sistemas"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -168,18 +175,23 @@ export const EducationForm = ({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Tipo</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Seleccione tipo" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {Object.entries(educationTypeLabels).map(([value, label]) => (
-                                  <SelectItem key={value} value={value}>
-                                    {label}
-                                  </SelectItem>
-                                ))}
+                                {Object.entries(educationTypeLabels).map(
+                                  ([value, label]) => (
+                                    <SelectItem key={value} value={value}>
+                                      {label}
+                                    </SelectItem>
+                                  ),
+                                )}
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -193,18 +205,23 @@ export const EducationForm = ({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Estado</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Seleccione estado" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {Object.entries(educationStatusLabels).map(([value, label]) => (
-                                  <SelectItem key={value} value={value}>
-                                    {label}
-                                  </SelectItem>
-                                ))}
+                                {Object.entries(educationStatusLabels).map(
+                                  ([value, label]) => (
+                                    <SelectItem key={value} value={value}>
+                                      {label}
+                                    </SelectItem>
+                                  ),
+                                )}
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -216,7 +233,9 @@ export const EducationForm = ({
                     <FormField
                       control={educationTitleForm.control}
                       name="document"
-                      render={({ field: { onChange, value, ...fieldProps } }) => {
+                      render={({
+                        field: { onChange, value, ...fieldProps },
+                      }) => {
                         const selectedFile = value;
 
                         return (
@@ -237,7 +256,10 @@ export const EducationForm = ({
                             </FormControl>
                             {selectedFile ? (
                               <TypographyP className="text-sm text-muted-foreground">
-                                Archivo seleccionado: {selectedFile.name}
+                                Archivo seleccionado:{" "}
+                                {typeof selectedFile === "string"
+                                  ? selectedFile
+                                  : selectedFile.name}
                               </TypographyP>
                             ) : null}
                             <FormMessage />
@@ -247,12 +269,18 @@ export const EducationForm = ({
                     />
 
                     <div className="flex justify-end gap-2">
-                      <Button type="button" variant="outline" onClick={handleCancelEdit}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancelEdit}
+                      >
                         Cancelar
                       </Button>
                       <Button
                         type="button"
-                        onClick={educationTitleForm.handleSubmit(handleSaveEducationTitle)}
+                        onClick={educationTitleForm.handleSubmit(
+                          handleSaveEducationTitle,
+                        )}
                       >
                         {editingIndex === null ? "Agregar" : "Guardar"}
                       </Button>
@@ -264,66 +292,13 @@ export const EducationForm = ({
           ) : null}
 
           {educationTitles.length === 0 ? (
-            <Card className="border-dashed bg-muted/30">
-              <CardContent className="flex items-start gap-4 py-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background text-muted-foreground">
-                  <FileTextIcon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-48 rounded bg-muted" />
-                  <div className="h-3 w-64 rounded bg-muted" />
-                  <div className="flex gap-2 pt-1">
-                    <div className="h-6 w-20 rounded-full bg-muted" />
-                    <div className="h-6 w-24 rounded-full bg-muted" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <EmptyEducation />
           ) : (
-            <div className="space-y-3">
-              {educationTitles.map((educationTitle, index) => (
-                <Card key={`${educationTitle.title}-${index}`}>
-                  <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-2">
-                      <div>
-                        <h4 className="font-medium">{educationTitle.title}</h4>
-                        {educationTitle.document ? (
-                          <TypographyP className="text-sm text-muted-foreground">
-                            {educationTitle.document.name}
-                          </TypographyP>
-                        ) : null}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary">
-                          {educationStatusLabels[educationTitle.status]}
-                        </Badge>
-                        <Badge variant="outline">
-                          {educationTypeLabels[educationTitle.type]}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 self-end sm:self-center">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleOpenEdit(index)}
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDeleteEducationTitle(index)}
-                      >
-                        <Trash2Icon className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <EducationCard
+              onDelete={handleDeleteEducationTitle}
+              onEdit={handleOpenEdit}
+              titles={educationTitles}
+            />
           )}
         </CardContent>
 
@@ -339,10 +314,87 @@ export const EducationForm = ({
           </Button>
           <Button type="submit" disabled={isLoading}>
             {isLoading ? <LoadingSpinner size={20} /> : null}
-            Crear Usuario
+            Guardar
           </Button>
         </CardFooter>
       </form>
     </Form>
+  );
+};
+
+const EmptyEducation = () => {
+  return (
+    <Card className="border-dashed bg-muted/30">
+      <CardContent className="flex items-start gap-4 py-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background text-muted-foreground">
+          <FileTextIcon className="h-5 w-5" />
+        </div>
+        <div className="flex-1 space-y-2">
+          <div className="h-4 w-48 rounded bg-muted" />
+          <div className="h-3 w-64 rounded bg-muted" />
+          <div className="flex gap-2 pt-1">
+            <div className="h-6 w-20 rounded-full bg-muted" />
+            <div className="h-6 w-24 rounded-full bg-muted" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface EducationCardProps {
+  titles: EducationTitleFormValues[];
+  onEdit: (index: number) => void;
+  onDelete: (index: number) => void;
+}
+
+const EducationCard = ({ titles, onEdit, onDelete }: EducationCardProps) => {
+  return (
+    <div className="space-y-3">
+      {titles.map((educationTitle, index) => (
+        <Card key={`${educationTitle.title}-${index}`}>
+          <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-2">
+              <div>
+                <h4 className="font-medium">{educationTitle.title}</h4>
+                {educationTitle.document ? (
+                  <TypographyP className="text-sm text-muted-foreground">
+                    {typeof educationTitle.document === "string"
+                      ? educationTitle.document
+                      : educationTitle.document.name}
+                  </TypographyP>
+                ) : null}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">
+                  {educationStatusLabels[educationTitle.status]}
+                </Badge>
+                <Badge variant="outline">
+                  {educationTypeLabels[educationTitle.type]}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex gap-2 self-end sm:self-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => onEdit(index)}
+              >
+                <PencilIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => onDelete(index)}
+              >
+                <Trash2Icon className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };

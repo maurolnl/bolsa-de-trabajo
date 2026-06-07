@@ -7,6 +7,12 @@ export type CreateEmployeeRequest = {
   portfolio_url: string | null;
 };
 
+export type EmployeeResponse = CreateEmployeeRequest &
+  CreateLocationRequest &
+  CreateTechRequest &
+  CreateAvailabilityRequest &
+  GetEducationResponse & { id: number };
+
 export type InternetConnectionTypeRequest =
   | "fiber"
   | "wifi"
@@ -48,6 +54,18 @@ export type CreateEducationRequest = {
       | "postgraduate"
       | "high-school-orientation"
       | "tertiary";
-    document?: File;
+    document?: File | string;
+  }[];
+};
+export type GetEducationResponse = {
+  education: {
+    title: string;
+    status: "completed" | "in-progress";
+    education_type:
+      | "university"
+      | "postgraduate"
+      | "high-school-orientation"
+      | "tertiary";
+    certification?: string;
   }[];
 };

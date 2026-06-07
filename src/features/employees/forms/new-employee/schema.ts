@@ -12,7 +12,6 @@ import {
   roleOptions,
   yearsOfExperienceOptions,
 } from "../utils";
-import { timezoneOptions } from "@/lib/timezones";
 
 export const educationTypeOptions = [
   "university",
@@ -22,6 +21,8 @@ export const educationTypeOptions = [
 ] as const;
 
 export const educationStatusOptions = ["in-progress", "completed"] as const;
+
+const educationDocumentSchema = z.union([z.instanceof(File), z.string()]);
 
 export const experienceSchema = z.object({
   position: z.string(),
@@ -51,20 +52,22 @@ export const locationSchema = z.object({
       }),
     }),
   ),
-  timezoneCompatibility: z.enum(timezoneOptions, {
-    required_error: "Debe seleccionar una zona horaria",
-    invalid_type_error: "Seleccione una opción válida",
-  }),
+  timezoneCompatibility: z
+    .string({
+      required_error: "Debe seleccionar una zona horaria",
+      invalid_type_error: "Seleccione una opción válida",
+    })
+    .min(1, "Debe seleccionar una zona horaria"),
 });
 
 export const resourcesSchema = z
   .object({
-  hasComputer: z.enum(haveComputerOptions, {
-    required_error: "Debe indicar si dispone de computadora",
-    invalid_type_error: "Seleccione una opción válida",
-  }),
-  operatingSystem: z.enum(operatingSystemOptions).optional(),
-  paidSoftware: z.array(z.string()).optional(),
+    hasComputer: z.enum(haveComputerOptions, {
+      required_error: "Debe indicar si dispone de computadora",
+      invalid_type_error: "Seleccione una opción válida",
+    }),
+    operatingSystem: z.enum(operatingSystemOptions).optional(),
+    paidSoftware: z.array(z.string()).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.hasComputer === "Si" && !data.operatingSystem) {
@@ -123,7 +126,7 @@ export const educationTitleSchema = z.object({
     required_error: "Debe seleccionar un estado",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  document: z.instanceof(File).optional(),
+  document: educationDocumentSchema.optional(),
 });
 
 export const educationSchema = z.object({

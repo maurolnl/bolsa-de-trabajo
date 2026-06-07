@@ -1,4 +1,7 @@
-import { yearsOfExperienceOptions } from "../../forms/utils";
+import {
+  operatingSystemOptions,
+  yearsOfExperienceOptions,
+} from "../../forms/utils";
 import { Employee, InternetConnection } from "../../models/Employee";
 import {
   CreateAvailability,
@@ -13,11 +16,95 @@ import {
   CreateEmployeeRequest,
   CreateLocationRequest,
   CreateTechRequest,
+  EmployeeResponse,
+  InternetConnectionSpeedRequest,
   InternetConnectionTypeRequest,
 } from "./types";
 
-export const getEmployeeMapper = (x: Employee): Employee => ({
-  ...x,
+const mapYearsOfExperience = (
+  yearsOfExperience: EmployeeResponse["years_of_experience"],
+): Employee["yearsOfExperience"] => {
+  const map: Record<
+    EmployeeResponse["years_of_experience"],
+    (typeof yearsOfExperienceOptions)[number]
+  > = {
+    less_1y: "Menos de 1 año",
+    "1y": "1 año",
+    "2_to_5y": "2 a 5 años",
+    "5_to_10y": "5 a 10 años",
+    more_10y: "Mas de 10 años",
+  };
+
+  return map[yearsOfExperience];
+};
+
+const mapInternetTypeResponse = (
+  type: InternetConnectionTypeRequest,
+): InternetConnection["type"] => {
+  const map: Record<InternetConnectionTypeRequest, InternetConnection["type"]> =
+    {
+      fiber: "Fibra",
+      wifi: "Aire / Wifi",
+      coaxial: "Cable coaxial",
+      adsl: "ADSL",
+      mobile: "Móvil",
+    };
+
+  return map[type];
+};
+
+const mapInternetSpeedResponse = (
+  speed: InternetConnectionSpeedRequest,
+): InternetConnection["speed"] => {
+  const map: Record<
+    InternetConnectionSpeedRequest,
+    InternetConnection["speed"]
+  > = {
+    less_10mb: "< 10Mbps",
+    "20mb": "20Mbps",
+    "30mb": "30Mbps",
+    "40mb": "40Mbps",
+    more_50mb: "> 50Mbps",
+  };
+
+  return map[speed];
+};
+
+const mapOperatingSystemResponse = (
+  operatingSystem: EmployeeResponse["os"],
+): Employee["operatingSystem"] => {
+  if (!operatingSystem) return null;
+
+  return operatingSystemOptions.includes(
+    operatingSystem as (typeof operatingSystemOptions)[number],
+  )
+    ? (operatingSystem as Employee["operatingSystem"])
+    : "Otro";
+};
+
+export const getEmployeeMapper = (x: EmployeeResponse): Employee => ({
+  id: x.id,
+  position: x.position,
+  role: x.role,
+  yearsOfExperience: mapYearsOfExperience(x.years_of_experience),
+  certifications: x.certifications,
+  certificationFiles: x.certifications_files,
+  portfolioUrl: x.portfolio_url,
+  internetConnections: x.internet_connections.map((conn) => ({
+    type: mapInternetTypeResponse(conn.type),
+    speed: mapInternetSpeedResponse(conn.speed),
+  })),
+  timezoneCompatibility: x.timezone,
+  operatingSystem: mapOperatingSystemResponse(x.os),
+  paidSoftware: x.paid_software,
+  availableHoursPerDay: x.available_hours_per_day,
+  compatibleProjects: x.compatible_projects,
+  incompatibleProjects: x.incompatible_projects,
+  educationTitles: x.education.map((e) => ({
+    ...e,
+    type: e.education_type,
+    document: e.certification,
+  })),
 });
 
 export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => {
@@ -31,13 +118,6 @@ export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => {
     "5 a 10 años": "5_to_10y",
     "Mas de 10 años": "more_10y",
   };
-  //   yearsOfExperienceOptions = [
-  //   "Menos de 1 año",
-  //   "1 año",
-  //   "2 a 5 años",
-  //   "5 a 10 años",
-  //   "Mas de 10 años",
-  // ] as const;
   return {
     position: e.position,
     role: e.role,
@@ -134,3 +214,32 @@ export const mapEmployeeEducation = (
     document: edu.document,
   })),
 });
+
+export const mapEmployeeEducationFormData = (e: CreateEducation): FormData => {
+  const payload = mapEmployeeEducation(e);
+  const formData = new FormData();
+
+  const education = {
+    education_titles: payload.education_titles.map((educationTitle, index) => {
+      const document = educationTitle?.document;
+      const documentFieldName = document
+        ? `education_document_${index}`
+        : undefined;
+
+      if (document && documentFieldName) {
+        formData.append(documentFieldName, document);
+      }
+
+      return {
+        title: educationTitle.title,
+        status: educationTitle.status,
+        type: educationTitle.type,
+        document: documentFieldName,
+      };
+    }),
+  };
+
+  formData.append("education", JSON.stringify(education));
+
+  return formData;
+};
