@@ -7,8 +7,8 @@ enum ApiProvider {
   dedicated = "dedicated",
 }
 
-const serviceProvider =
-  import.meta.env.VITE_API_PROVIDER || ("supabase" as ApiProvider);
+const serviceProvider = (import.meta.env.VITE_API_PROVIDER ||
+  "supabase") as ApiProvider;
 
 const getProvider = (provider: ApiProvider) => {
   switch (provider) {
