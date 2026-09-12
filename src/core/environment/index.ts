@@ -14,6 +14,8 @@ type Env = {
   backEndBaseUrl: string;
 };
 
+const configuredBackEnd = import.meta.env.VITE_BACKEND_URL;
+
 const staging: Env = {
   backEnd: "https://back-prueba.balcellsgroup.com/api",
   environment: "staging",
@@ -32,8 +34,14 @@ const development: Env = {
   backEndBaseUrl: "http://localhost:8081/",
 };
 
-export const environment = isProduction()
-  ? production
-  : isStaging()
-    ? staging
-    : development;
+export const environment: Env = configuredBackEnd
+  ? {
+      backEnd: configuredBackEnd,
+      backEndBaseUrl: configuredBackEnd,
+      environment: import.meta.env.PROD ? "production" : "development",
+    }
+  : isProduction()
+    ? production
+    : isStaging()
+      ? staging
+      : development;
