@@ -3,7 +3,7 @@ export type BaseEmployee = {
   role: string;
   yearsOfExperience: string;
   certifications: string[];
-  certificationFiles: File[];
+  certificationFile: File | null;
   portfolioUrl: string | null;
 };
 

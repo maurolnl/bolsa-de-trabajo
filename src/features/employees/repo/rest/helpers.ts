@@ -87,20 +87,20 @@ export const getEmployeeMapper = (x: EmployeeResponse): Employee => ({
   position: x.position,
   role: x.role,
   yearsOfExperience: mapYearsOfExperience(x.years_of_experience),
-  certifications: x.certifications,
-  certificationFiles: x.certifications_files,
+  certifications: x.certifications ?? [],
+  certificationFile: null,
   portfolioUrl: x.portfolio_url,
-  internetConnections: x.internet_connections.map((conn) => ({
+  internetConnections: (x.internet_connections ?? []).map((conn) => ({
     type: mapInternetTypeResponse(conn.type),
     speed: mapInternetSpeedResponse(conn.speed),
   })),
   timezoneCompatibility: x.timezone,
   operatingSystem: mapOperatingSystemResponse(x.os),
-  paidSoftware: x.paid_software,
+  paidSoftware: x.paid_software ?? [],
   availableHoursPerDay: x.available_hours_per_day,
   compatibleProjects: x.compatible_projects,
   incompatibleProjects: x.incompatible_projects,
-  educationTitles: x.education.map((e) => ({
+  educationTitles: (x.education ?? []).map((e) => ({
     ...e,
     type: e.education_type,
     document: e.certification,
@@ -123,7 +123,7 @@ export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => {
     role: e.role,
     years_of_experience: yoe[e.yearsOfExperience],
     certifications: e.certifications,
-    certifications_files: e.certificationFiles,
+    certification_file: e.certificationFile,
     portfolio_url: e.portfolioUrl,
   };
 };
@@ -144,9 +144,9 @@ export const mapEmployeeFormData = (e: CreateEmployee): FormData => {
     formData.append("certifications[]", certification);
   });
 
-  payload.certifications_files.forEach((file) => {
-    formData.append("certifications_files", file);
-  });
+  if (payload.certification_file) {
+    formData.append("certifications_file", payload.certification_file);
+  }
 
   return formData;
 };
@@ -192,16 +192,20 @@ export const mapEmployeeLocation = (
 });
 
 export const mapEmployeeTech = (e: CreateTech): CreateTechRequest => ({
-  os: e.operatingSystem,
-  paid_software: e.paidSoftware,
+  ...(e.operatingSystem ? { os: e.operatingSystem } : {}),
+  ...(e.paidSoftware?.length ? { paid_software: e.paidSoftware } : {}),
 });
 
 export const mapEmployeeAvailability = (
   e: CreateAvailability,
 ): CreateAvailabilityRequest => ({
   available_hours_per_day: e.availableHoursPerDay,
-  compatible_projects: e.compatibleProjects,
-  incompatible_projects: e.incompatibleProjects,
+  ...(e.compatibleProjects === null
+    ? {}
+    : { compatible_projects: e.compatibleProjects }),
+  ...(e.incompatibleProjects === null
+    ? {}
+    : { incompatible_projects: e.incompatibleProjects }),
 });
 
 export const mapEmployeeEducation = (
@@ -222,11 +226,11 @@ export const mapEmployeeEducationFormData = (e: CreateEducation): FormData => {
   const education = {
     education_titles: payload.education_titles.map((educationTitle, index) => {
       const document = educationTitle?.document;
-      const documentFieldName = document
+      const documentFieldName = document instanceof File
         ? `education_document_${index}`
         : undefined;
 
-      if (document && documentFieldName) {
+      if (document instanceof File && documentFieldName) {
         formData.append(documentFieldName, document);
       }
 

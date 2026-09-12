@@ -3,15 +3,23 @@ export type CreateEmployeeRequest = {
   role: string;
   years_of_experience: "less_1y" | "1y" | "2_to_5y" | "5_to_10y" | "more_10y";
   certifications: string[];
-  certifications_files: File[];
+  certification_file: File | null;
   portfolio_url: string | null;
 };
 
-export type EmployeeResponse = CreateEmployeeRequest &
+export type EmployeeResponse = Omit<CreateEmployeeRequest, "certification_file"> &
   CreateLocationRequest &
-  CreateTechRequest &
-  CreateAvailabilityRequest &
-  GetEducationResponse & { id: number };
+  GetEducationResponse & {
+    id: number;
+    user_id: number;
+    email: string;
+    os: string;
+    paid_software: string[] | null;
+    available_hours_per_day: number;
+    compatible_projects: number | null;
+    incompatible_projects: number | null;
+    files: { title: string }[];
+  };
 
 export type InternetConnectionTypeRequest =
   | "fiber"
@@ -35,14 +43,14 @@ export type CreateLocationRequest = {
 };
 
 export type CreateTechRequest = {
-  os: string | null;
-  paid_software: string[] | null;
+  os?: string;
+  paid_software?: string[];
 };
 
 export type CreateAvailabilityRequest = {
   available_hours_per_day: number;
-  compatible_projects: number | null;
-  incompatible_projects: number | null;
+  compatible_projects?: number;
+  incompatible_projects?: number;
 };
 
 export type CreateEducationRequest = {
