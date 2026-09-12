@@ -18,12 +18,14 @@ function App() {
     mutationCache: new MutationCache({
       onError: (error) => {
         console.error(error);
-        const { messages } = (error as AxiosError).response?.data as {
-          messages: string[];
-        };
-        let errorMsg = "Something went wrong";
-        if (messages) {
-          errorMsg = messages.join("\n");
+        const responseData = (error as AxiosError).response?.data as
+          | { error?: string; messages?: string[] }
+          | undefined;
+        let errorMsg = "Ocurrió un error, intente nuevamente";
+        if (responseData?.error) {
+          errorMsg = responseData.error;
+        } else if (responseData?.messages) {
+          errorMsg = responseData.messages.join("\n");
         }
         toast({
           title: "Error",

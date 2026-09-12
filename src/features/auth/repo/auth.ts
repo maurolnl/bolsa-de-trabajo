@@ -10,6 +10,11 @@ type CurrentUser = {
   email: string;
 };
 
+type CurrentUserResponse = {
+  ID: number;
+  Email: string;
+};
+
 export type LoggedUser = {
   id: number;
   email: string;
@@ -17,7 +22,7 @@ export type LoggedUser = {
   refreshToken: string;
 };
 
-const mapCurrentUser = (user: any) => ({
+const mapCurrentUser = (user: CurrentUserResponse): CurrentUser => ({
   id: user.ID,
   email: user.Email,
 });
