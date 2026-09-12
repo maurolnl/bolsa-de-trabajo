@@ -39,9 +39,8 @@ export function useCreateEmployee(id: number) {
   return useMutation({
     mutationFn: async (newUser: CreateEmployee) =>
       employeeRepository.createEmployee(newUser),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -51,9 +50,8 @@ export function useUpdateEmployee(id: number) {
   return useMutation({
     mutationFn: async (employee: UpdateEmployee) =>
       employeeRepository.updateEmployee(employee),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -63,9 +61,8 @@ export function useCreateLocation(id: number) {
   return useMutation({
     mutationFn: async (newLocation: CreateLocation) =>
       employeeRepository.createLocation(newLocation),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -75,9 +72,8 @@ export function useUpdateLocation(id: number) {
   return useMutation({
     mutationFn: async (location: UpdateLocation) =>
       employeeRepository.updateLocation(location),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -87,9 +83,8 @@ export function useCreateTech(id: number) {
   return useMutation({
     mutationFn: async (newTech: CreateTech) =>
       employeeRepository.createTech(newTech),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -98,9 +93,8 @@ export function useUpdateTech(id: number) {
 
   return useMutation({
     mutationFn: async (tech: UpdateTech) => employeeRepository.updateTech(tech),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -110,9 +104,8 @@ export function useCreateAvailability(id: number) {
   return useMutation({
     mutationFn: async (newAvailability: CreateAvailability) =>
       employeeRepository.createAvailability(newAvailability),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -122,9 +115,8 @@ export function useUpdateAvailability(id: number) {
   return useMutation({
     mutationFn: async (availability: UpdateAvailability) =>
       employeeRepository.updateAvailability(availability),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -134,9 +126,8 @@ export function useCreateEducation(id: number) {
   return useMutation({
     mutationFn: async (newEducation: CreateEducation) =>
       employeeRepository.createEducation(newEducation),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 
@@ -146,9 +137,8 @@ export function useUpdateEducation(id: number) {
   return useMutation({
     mutationFn: async (education: UpdateEducation) =>
       employeeRepository.updateEducation(education),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
   });
 }
 

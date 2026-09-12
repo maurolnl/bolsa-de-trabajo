@@ -1,10 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import {
-  useCreateAvailability,
-  useCreateEducation,
   useCreateEmployee,
-  useCreateLocation,
-  useCreateTech,
   useTimezones,
   useEmployee,
   useUpdateAvailability,
@@ -39,10 +35,6 @@ export const useEmployeeWizard = ({ userID }: UseEmployeeWizardProps) => {
 
   //steps callbacks
   const createEmployeeMutation = useCreateEmployee(userID);
-  const createLocationMutation = useCreateLocation(userID);
-  const createTechMutation = useCreateTech(userID);
-  const createAvailabilityMutation = useCreateAvailability(userID);
-  const createEducationMutation = useCreateEducation(userID);
   const updateEmployeeMutation = useUpdateEmployee(userID);
   const updateLocationMutation = useUpdateLocation(userID);
   const updateTechMutation = useUpdateTech(userID);
@@ -74,10 +66,6 @@ export const useEmployeeWizard = ({ userID }: UseEmployeeWizardProps) => {
 
     isLoading:
       createEmployeeMutation.isPending ||
-      createLocationMutation.isPending ||
-      createTechMutation.isPending ||
-      createAvailabilityMutation.isPending ||
-      createEducationMutation.isPending ||
       updateEmployeeMutation.isPending ||
       updateLocationMutation.isPending ||
       updateTechMutation.isPending ||
@@ -88,10 +76,6 @@ export const useEmployeeWizard = ({ userID }: UseEmployeeWizardProps) => {
     employee: employee === null ? undefined : employee,
     timezones,
     createEmployee: createEmployeeMutation.mutateAsync,
-    createLocation: createLocationMutation.mutateAsync,
-    createTech: createTechMutation.mutateAsync,
-    createAvailability: createAvailabilityMutation.mutateAsync,
-    createEducation: createEducationMutation.mutateAsync,
     updateEmployee: updateEmployeeMutation.mutateAsync,
     updateLocation: updateLocationMutation.mutateAsync,
     updateTech: updateTechMutation.mutateAsync,
