@@ -192,7 +192,7 @@ export const ExperienceForm = ({
       {certifications && certifications.length > 0 ? (
         <FormField
           control={control}
-          name="certificationFiles"
+          name="certificationFile"
           render={({ field: { onChange, value, ...fieldProps } }) => (
             <FormItem>
               <FormControl>
@@ -203,25 +203,20 @@ export const ExperienceForm = ({
                   <Input
                     {...fieldProps}
                     type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      onChange(files);
-                    }}
-                    placeholder="Suba documentos de las certificaciones"
+                    accept=".pdf,application/pdf"
+                    onChange={(event) =>
+                      onChange(event.target.files?.[0])
+                    }
+                    placeholder="Suba el documento de la certificación"
                   />
-                  {value &&
-                    Object.values(value).map((file: unknown) => (
-                      <p
-                        key={Math.random()}
-                        className="text-sm text-muted-foreground"
-                      >
-                        Archivo seleccionado: {(file as File).name}
-                      </p>
-                    ))}
+                  {value ? (
+                    <p className="text-sm text-muted-foreground">
+                      Archivo seleccionado: {value.name}
+                    </p>
+                  ) : null}
                 </div>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />

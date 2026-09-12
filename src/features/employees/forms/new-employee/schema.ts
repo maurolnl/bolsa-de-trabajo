@@ -1,5 +1,5 @@
 import {
-  multipleFileValidation,
+  pdfFileValidation,
   urlValidation,
 } from "@/core/utils/forms/fileValidation";
 import { z } from "zod";
@@ -22,7 +22,7 @@ export const educationTypeOptions = [
 
 export const educationStatusOptions = ["in-progress", "completed"] as const;
 
-const educationDocumentSchema = z.union([z.instanceof(File), z.string()]);
+const educationDocumentSchema = z.union([pdfFileValidation, z.string()]);
 
 export const experienceSchema = z.object({
   position: z.string(),
@@ -35,7 +35,7 @@ export const experienceSchema = z.object({
     invalid_type_error: "Seleccione una opción válida",
   }),
   certifications: z.array(z.string()).optional(),
-  certificationFiles: multipleFileValidation.optional(),
+  certificationFile: pdfFileValidation.optional(),
   portfolioUrl: urlValidation.optional(),
 });
 
@@ -99,9 +99,9 @@ export const availabilitySchema = z.object({
     .refine(
       (val) => {
         const num = parseInt(val);
-        return !isNaN(num) && num >= 0;
+        return !isNaN(num) && num >= 0 && num <= 32767;
       },
-      { message: "La cantidad no puede ser negativa" },
+      { message: "La cantidad debe estar entre 0 y 32767" },
     )
     .optional(),
   incompatibleProjects: z
@@ -109,15 +109,15 @@ export const availabilitySchema = z.object({
     .refine(
       (val) => {
         const num = parseInt(val);
-        return !isNaN(num) && num >= 0;
+        return !isNaN(num) && num >= 0 && num <= 32767;
       },
-      { message: "La cantidad no puede ser negativa" },
+      { message: "La cantidad debe estar entre 0 y 32767" },
     )
     .optional(),
 });
 
 export const educationTitleSchema = z.object({
-  title: z.string().min(1, "Debe ingresar un título"),
+  title: z.string().min(2, "El título debe tener al menos 2 caracteres"),
   type: z.enum(educationTypeOptions, {
     required_error: "Debe seleccionar un tipo",
     invalid_type_error: "Seleccione una opción válida",
@@ -130,7 +130,9 @@ export const educationTitleSchema = z.object({
 });
 
 export const educationSchema = z.object({
-  educationTitles: z.array(educationTitleSchema).default([]),
+  educationTitles: z
+    .array(educationTitleSchema)
+    .min(1, "Debe agregar al menos un título académico"),
 });
 
 export type ExperienceFormValues = z.infer<typeof experienceSchema>;
