@@ -122,13 +122,13 @@ export const ResourcesForm = ({
                   <div className="space-y-2">
                     <div className="space-y-1">
                       <FormLabel>
-                        Software de pago{" "}
+                        Software relevante que conoce{" "}
                         <span className="text-sm text-muted-foreground font-normal">
                           (Opcional)
                         </span>
                       </FormLabel>
                       <FormDescription>
-                        Agregue el software de pago que dispone
+                        Agregue el software relevante que conoce
                       </FormDescription>
                     </div>
                     <AutocompleteInput
