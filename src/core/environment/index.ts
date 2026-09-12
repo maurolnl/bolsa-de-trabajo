@@ -1,10 +1,4 @@
-//TODO: update env vars
-export const APP_PRODUCTION_URL = "bolsa-de-trabajo-tesis.vercel.app";
 export const APP_STAGING_URL = "balcells-stg.vadiun.net";
-// export const APP_STAGING_URL = 'crm-prueba.balcellsgroup.com';
-
-export const isProduction = () =>
-  window.location.hostname === APP_PRODUCTION_URL;
 
 export const isStaging = () => window.location.hostname === APP_STAGING_URL;
 
@@ -40,8 +34,8 @@ export const environment: Env = configuredBackEnd
       backEndBaseUrl: configuredBackEnd,
       environment: import.meta.env.PROD ? "production" : "development",
     }
-  : isProduction()
-    ? production
-    : isStaging()
-      ? staging
+  : isStaging()
+    ? staging
+    : import.meta.env.PROD
+      ? production
       : development;
