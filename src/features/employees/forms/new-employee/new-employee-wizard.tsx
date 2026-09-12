@@ -1,11 +1,9 @@
-import { useRef } from "react";
-
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TypographyP } from "@/components/ui/typography/typography-p";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { toNumber, getFiles } from "../../utils/utils";
+import { toNumber } from "../../utils/utils";
 import {
   AvailabilityFormValues,
   EducationFormValues,
@@ -14,7 +12,7 @@ import {
   ResourcesFormValues,
 } from "./schema";
 import { AvailabilityForm } from "./steps/availability-form";
-import { EducationForm } from "./steps/education-form";
+import { EducationsForm } from "./steps/education-form/educations-form";
 import { ExperienceForm } from "./steps/experience-form";
 import { LocationForm } from "./steps/location-form";
 import { ResourcesForm } from "./steps/resources-form";
@@ -28,8 +26,6 @@ import {
 } from "./initialValues";
 
 export const NewEmployeeWizard = () => {
-  const employeeCreatedRef = useRef(false);
-
   const { user } = useAuth();
   const userID = typeof user.id === "string" ? Number(user.id) : user.id;
   const {
@@ -43,10 +39,6 @@ export const NewEmployeeWizard = () => {
     employee,
     timezones,
     createEmployee,
-    createLocation,
-    createTech,
-    createAvailability,
-    createEducation,
     updateEmployee,
     updateLocation,
     updateTech,
@@ -57,26 +49,13 @@ export const NewEmployeeWizard = () => {
   const employeeID = employee?.id;
   const hasCreatedExperience = Boolean(employeeID);
 
-  const hasCreatedLocation = Boolean(
-    employee?.timezoneCompatibility || employee?.internetConnections?.length,
-  );
-
-  const hasCreatedTech = Boolean(
-    employee &&
-      (employee.operatingSystem !== null || employee.paidSoftware !== null),
-  );
-  const hasCreatedAvailability = Boolean(
-    employee && employee.availableHoursPerDay > 0,
-  );
-  const hasCreatedEducation = Boolean(employee?.educationTitles?.length);
-
   const onSubmitExperience = async (data: ExperienceFormValues) => {
     const payload = {
       position: data.position,
       role: data.role,
       yearsOfExperience: data.yearsOfExperience,
       certifications: data.certifications ?? [],
-      certificationFiles: getFiles(data.certificationFiles),
+      certificationFile: data.certificationFile ?? null,
       portfolioUrl: data.portfolioUrl || null,
     };
 
@@ -86,11 +65,7 @@ export const NewEmployeeWizard = () => {
       return;
     }
 
-    if (!employeeCreatedRef.current) {
-      await createEmployee(payload);
-      employeeCreatedRef.current = true;
-    }
-
+    await createEmployee(payload);
     onNextStep();
   };
 
@@ -102,12 +77,7 @@ export const NewEmployeeWizard = () => {
         timezoneCompatibility: data.timezoneCompatibility,
       };
 
-      if (hasCreatedLocation) {
-        await updateLocation(payload);
-      } else {
-        await createLocation(payload);
-      }
-
+      await updateLocation(payload);
       onNextStep();
     }
   };
@@ -121,12 +91,7 @@ export const NewEmployeeWizard = () => {
         paidSoftware: data.paidSoftware ?? [],
       };
 
-      if (hasCreatedTech) {
-        await updateTech(payload);
-      } else {
-        await createTech(payload);
-      }
-
+      await updateTech(payload);
       onNextStep();
     }
   };
@@ -140,30 +105,43 @@ export const NewEmployeeWizard = () => {
         incompatibleProjects: toNumber(data.incompatibleProjects),
       };
 
-      if (hasCreatedAvailability) {
-        await updateAvailability(payload);
-      } else {
-        await createAvailability(payload);
-      }
-
+      await updateAvailability(payload);
       onNextStep();
     }
   };
 
   const onSubmitEducation = async (data: EducationFormValues) => {
     if (employeeID) {
+      const currentEducation = employee?.educationTitles ?? [];
+      const hasChanges =
+        JSON.stringify(data.educationTitles) !== JSON.stringify(currentEducation);
+
+      if (!hasChanges) {
+        toast({ title: "Perfil guardado" });
+        return;
+      }
+
+      if (
+        data.educationTitles.some(
+          (education) => typeof education.document === "string",
+        )
+      ) {
+        toast({
+          variant: "destructive",
+          title: "Volvé a adjuntar los certificados",
+          description:
+            "Para modificar la educación, reemplazá cada certificado existente por su archivo PDF.",
+        });
+        return;
+      }
+
       const payload = {
         employeeID,
         educationTitles: data.educationTitles,
       };
 
-      if (hasCreatedEducation) {
-        await updateEducation(payload);
-      } else {
-        await createEducation(payload);
-      }
-
-      toast({ title: "Usuario creado" });
+      await updateEducation(payload);
+      toast({ title: "Perfil guardado" });
     }
   };
 
@@ -212,7 +190,7 @@ export const NewEmployeeWizard = () => {
         );
       case 5:
         return (
-          <EducationForm
+          <EducationsForm
             defaultValues={educationDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}
