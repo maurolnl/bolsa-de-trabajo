@@ -9,14 +9,14 @@ export const universityTitles = [
   "Contabilidad",
   "Administracion",
   "Otro",
-];
+] as const;
 
 export const postgraduateTitles = [
   "Especializacion",
   "Maestria",
   "Doctorado",
   "Otro",
-];
+] as const;
 
 export const schoolStudiesOrientation = [
   "Humanidades",
@@ -26,7 +26,7 @@ export const schoolStudiesOrientation = [
   "Tecnica",
   "Energías Renovables",
   "Otro",
-];
+] as const;
 
 export const tertiaryStudies = [
   "Tecnicatura en Desarrollo de Software",
@@ -46,7 +46,59 @@ export const tertiaryStudies = [
   "Tecnicatura en Gestión Ambiental",
   "Tecnicatura en Bibliotecología",
   "Otro",
-];
+] as const;
+
+export const educationTypeOptions = [
+  "university",
+  "postgraduate",
+  "high-school-orientation",
+  "tertiary",
+] as const;
+
+export type EducationType = (typeof educationTypeOptions)[number];
+
+export const educationTitlesByType: Record<EducationType, readonly string[]> = {
+  university: universityTitles,
+  postgraduate: postgraduateTitles,
+  "high-school-orientation": schoolStudiesOrientation,
+  tertiary: tertiaryStudies,
+};
+
+export const uniqueUniversityTitles = [
+  "Abogacia",
+  "Contabilidad",
+  "Administracion",
+] as const;
+
+interface EducationSelection {
+  title: string;
+  type: EducationType;
+}
+
+export const isUniqueUniversityTitle = (title: string) =>
+  uniqueUniversityTitles.some((uniqueTitle) => uniqueTitle === title);
+
+export const hasHighSchoolOrientation = (
+  educationTitles: readonly EducationSelection[],
+) =>
+  educationTitles.some(
+    ({ type }) => type === "high-school-orientation",
+  );
+
+export const isEducationTitleForType = (
+  type: EducationType,
+  title: string,
+) => educationTitlesByType[type].some((option) => option === title);
+
+export const getAvailableEducationTitles = (
+  type: EducationType,
+  educationTitles: readonly EducationSelection[],
+) =>
+  educationTitlesByType[type].filter(
+    (title) =>
+      !isUniqueUniversityTitle(title) ||
+      !educationTitles.some((education) => education.title === title),
+  );
 
 export const roles = ["Lider de proyecto", "Adjunto", "Aprendiz/Auxiliar"];
 export const roleOptions = [

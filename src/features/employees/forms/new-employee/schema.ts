@@ -5,20 +5,18 @@ import {
 import { z } from "zod";
 import {
   dedicationTypeOptions,
+  educationTypeOptions,
   haveComputerOptions,
   internetConnectionOptions,
   internetConnectionTypeOptions,
+  isEducationTitleForType,
+  isUniqueUniversityTitle,
   operatingSystemOptions,
   roleOptions,
   yearsOfExperienceOptions,
 } from "../utils";
 
-export const educationTypeOptions = [
-  "university",
-  "postgraduate",
-  "high-school-orientation",
-  "tertiary",
-] as const;
+export { educationTypeOptions } from "../utils";
 
 export const educationStatusOptions = ["in-progress", "completed"] as const;
 
@@ -116,23 +114,60 @@ export const availabilitySchema = z.object({
     .optional(),
 });
 
-export const educationTitleSchema = z.object({
-  title: z.string().min(2, "El título debe tener al menos 2 caracteres"),
-  type: z.enum(educationTypeOptions, {
-    required_error: "Debe seleccionar un tipo",
-    invalid_type_error: "Seleccione una opción válida",
-  }),
-  status: z.enum(educationStatusOptions, {
-    required_error: "Debe seleccionar un estado",
-    invalid_type_error: "Seleccione una opción válida",
-  }),
-  document: educationDocumentSchema.optional(),
-});
+export const educationTitleSchema = z
+  .object({
+    title: z.string().min(2, "El título debe tener al menos 2 caracteres"),
+    type: z.enum(educationTypeOptions, {
+      required_error: "Debe seleccionar un tipo",
+      invalid_type_error: "Seleccione una opción válida",
+    }),
+    status: z.enum(educationStatusOptions, {
+      required_error: "Debe seleccionar un estado",
+      invalid_type_error: "Seleccione una opción válida",
+    }),
+    document: educationDocumentSchema.optional(),
+  })
+  .superRefine(({ title, type }, ctx) => {
+    if (!isEducationTitleForType(type, title)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["title"],
+        message: "Seleccione un título válido para el tipo elegido",
+      });
+    }
+  });
 
 export const educationSchema = z.object({
   educationTitles: z
     .array(educationTitleSchema)
-    .min(1, "Debe agregar al menos un título académico"),
+    .min(1, "Debe agregar al menos un título académico")
+    .superRefine((educationTitles, ctx) => {
+      const usedUniqueTitles = new Set<string>();
+
+      educationTitles.forEach(({ title }) => {
+        if (!isUniqueUniversityTitle(title)) return;
+
+        if (usedUniqueTitles.has(title)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Solo puede agregar una formación de ${title}`,
+          });
+        }
+
+        usedUniqueTitles.add(title);
+      });
+
+      if (
+        educationTitles.filter(
+          ({ type }) => type === "high-school-orientation",
+        ).length > 1
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Solo puede agregar una orientación secundaria",
+        });
+      }
+    }),
 });
 
 export type ExperienceFormValues = z.infer<typeof experienceSchema>;

@@ -12,11 +12,11 @@ yarn build           # tsc + build de Vite
 yarn lint            # ESLint; cero warnings permitidos
 yarn tsc --noEmit     # typecheck aislado
 yarn eslint ruta.tsx # lint enfocado
+yarn test:e2e        # suite E2E de Playwright en Chromium
 ```
 
-No hay runner ni script de tests configurado. No afirmar que los tests pasaron ni
-inventar un comando de test. Si se incorpora uno, agregar scripts y actualizar este
-archivo.
+Las pruebas E2E viven en `e2e/`, usan Playwright con Chromium y controlan las
+respuestas HTTP; no deben depender de APIs ni datos compartidos.
 
 ## Estructura
 
