@@ -1,192 +1,109 @@
-# AGENTS.md
+# Laburi.to Frontend
 
-## Purpose
+## Stack y comandos
 
-This file gives coding agents the local conventions for this repository.
-Prefer small, targeted edits that match the current structure instead of broad refactors.
-
-## Repo Snapshot
-
-- App type: Vite + React 18 + TypeScript SPA.
-- Package manager: Yarn Classic (`yarn.lock` is present).
-- UI stack: Tailwind CSS + shadcn/ui + Radix UI.
-- Data layer: React Query for async state, axios and Supabase clients for transport.
-- Forms: `react-hook-form` + `zod`.
-- Routing: `react-router-dom` with route constants in `src/router/paths.ts`.
-- Path alias: `@/*` maps to `src/*`.
-
-## Install And Run
+SPA con Vite, React 18 y TypeScript. Usa Yarn Classic, React Router, TanStack
+React Query, Axios, React Hook Form, Zod, Tailwind, shadcn/ui y Radix.
 
 ```bash
-yarn
-yarn start
+yarn                 # instalar dependencias
+yarn start           # servidor de desarrollo
+yarn build           # tsc + build de Vite
+yarn lint            # ESLint; cero warnings permitidos
+yarn tsc --noEmit     # typecheck aislado
+yarn eslint ruta.tsx # lint enfocado
 ```
 
-- Local dev server: `yarn start`.
-- Default Vite port is whatever Vite selects; do not hardcode a different port unless config changes.
+No hay runner ni script de tests configurado. No afirmar que los tests pasaron ni
+inventar un comando de test. Si se incorpora uno, agregar scripts y actualizar este
+archivo.
 
-## Build, Lint, And Test Commands
+## Estructura
 
-```bash
-yarn start
-yarn build
-yarn lint
-yarn preview
-```
+- `src/features/`: páginas, formularios, hooks, modelos y repositorios por dominio.
+- `src/components/ui/`: primitivas compartidas; reutilizarlas antes de crear otras.
+- `src/api/`: clientes y selección de adaptadores.
+- `src/core/`: HTTP, entorno, auth storage, i18n y utilidades transversales.
+- `src/router/`: rutas y constantes de navegación.
+- `src/lib/`: helpers pequeños y reutilizables.
 
-- `yarn start` - run the Vite dev server.
-- `yarn build` - run `tsc && vite build`.
-- `yarn lint` - run ESLint on all `ts` and `tsx` files with `--max-warnings 0`.
-- `yarn preview` - preview the production build.
+Mantener la lógica dentro de su feature. Usar `@/` para imports entre áreas y rutas
+relativas dentro del mismo subárbol. No mover lógica de features a `App.tsx`.
 
-## Verified Current Status
+## Flujo de datos y contratos
 
-- `yarn build` succeeds today.
-- Build output reports a CSS minification warning and a large chunk warning.
-- `yarn lint` fails today because warnings are treated as errors.
-- Existing lint warnings include explicit `any`, React Fast Refresh export warnings in some shadcn files, and one hook dependency warning.
+- Componentes consumen hooks de React Query; no duplicar estado remoto con
+  `useEffect` y `useState`.
+- Las llamadas HTTP pertenecen a repositorios de cada feature. Mantener interfaz,
+  implementación REST/Supabase, tipos y mappers alineados.
+- Respetar el contrato real de cada endpoint: employee usa mayormente `snake_case`,
+  login combina campos camelCase y `/auth/me` expone campos Go en mayúscula. Mapear
+  explícitamente en el borde con tipos concretos y usar nombres idiomáticos en la UI.
+- Tras una mutación exitosa, invalidar las query keys afectadas.
+- Centralizar paths de pantalla en `src/router/paths.ts`.
+- No crear otro cliente Axios: el código de features usa
+  `src/core/services/httpClient.ts`.
 
-## Focused Commands
+Al cambiar una ruta o payload, verificar el handler y los modelos de
+`../bolsa-de-trabajo-back/`; no inferir el contrato solo desde `docs/`.
 
-Use local binaries through Yarn when you only need a narrow check.
+## Autenticación
 
-```bash
-yarn eslint src/features/auth/components/login-form.tsx
-yarn eslint src/features/employees/hooks/useUser.ts
-yarn tsc --noEmit
-```
+- `AuthProvider` es dueño del estado de sesión.
+- Persistir el access token mediante `LocalStorage`/`LSKeys` y configurar la sesión
+  mediante `setSession`; evitar llamadas directas dispersas a `window.localStorage`.
+- Las rutas protegidas pasan por los guards existentes.
+- No confiar en IDs del navegador para autorizar recursos; el BE valida identidad y
+  propiedad.
+- No registrar tokens ni credenciales.
 
-- Single-file lint: `yarn eslint path/to/file.tsx`.
-- Whole-project type check: `yarn tsc --noEmit`.
-- There is no dedicated script for partial builds.
+## Formularios del empleado
 
-## Test Status
+El asistente sigue el orden documentado: experiencia, locación, recursos,
+disponibilidad y educación. Cada paso puede crear o actualizar su sección según el
+perfil recuperado.
 
-There is no test runner configured in `package.json` right now.
+- Usar React Hook Form y derivar tipos con `z.infer` cuando exista schema Zod.
+- Mantener schemas junto al flujo en `forms/new-employee/`.
+- Preservar los enums exactos enviados por la API.
+- Los endpoints REST de experiencia y educación siempre exigen
+  `multipart/form-data`, incluso sin PDFs; dejar que el navegador/Axios genere el
+  boundary.
+- Reutilizar `src/core/utils/forms/fileValidation.ts`, pero recordar que la validación
+  del servidor sigue siendo autoritativa.
+- Centralizar errores en el toast global de React Query y capturar localmente solo si
+  existe recuperación. El backend normalmente devuelve `{ "error": "..." }`; todo
+  manejo nuevo debe leer ese campo. Si se modifica el handler global, corregir su
+  expectativa legacy de `messages` o estandarizar ambos lados en el mismo cambio.
 
-- No `test` script exists.
-- No `vitest`, `jest`, `playwright`, or `cypress` config is present.
-- No `*.test.*` or `*.spec.*` files exist under `src`.
-- There is currently no supported single-test command because there are no tests.
+## UI y estilo
 
-If you add tests, also add package scripts and update this file.
-Preferred future direction would be Vitest because the app already uses Vite.
+- Reutilizar primitivas shadcn/Radix y `cn()` de `src/lib/utils.ts`.
+- Usar tokens y variables existentes de Tailwind/`src/globals.css`; no introducir un
+  segundo sistema de estilos.
+- Componentes en PascalCase, hooks `useX`, variables en camelCase y archivos nuevos
+  preferentemente kebab-case.
+- TypeScript estricto: evitar `any`, non-null assertions y contratos duplicados.
+- Seguir el formato local; para archivos nuevos, comillas dobles y punto y coma.
+- Mantener textos y validaciones visibles coherentes con el español actual.
 
-## High-Level Structure
+## Finalización
 
-- `src/components/ui` - reusable UI primitives, mostly shadcn-style wrappers.
-- `src/features` - feature-owned pages, hooks, forms, models, and helpers.
-- `src/api` - repository selection and data access adapters.
-- `src/core` - shared services, environment helpers, i18n, storage, and low-level utilities.
-- `src/router` - router setup and route constants.
-- `src/lib` - small shared helpers such as `cn()` and timezone utilities.
+Ejecutar primero lint enfocado y typecheck; luego `yarn build` cuando el cambio lo
+justifique. No empeorar warnings preexistentes, hacer refactors ajenos ni modificar
+`.env`. No hacer commit, push o deploy sin solicitud explícita.
 
-## Architecture Conventions
+## OpenSpec
 
-- Keep feature logic inside its feature folder when possible.
-- Reuse shared UI from `src/components/ui` before creating new primitives.
-- Add cross-cutting utilities to `src/core` or `src/lib`, not to random feature folders.
-- Use the repository pattern already present in `src/api/repositories` when adding new backend resources.
-- Keep route strings centralized in `src/router/paths.ts`.
-- Use React Query for remote async data instead of ad hoc fetch state in components.
+Este repositorio tiene una raíz OpenSpec propia en `openspec/`, configurada con el
+schema `spec-driven`. Los artefactos se escriben en español, conservando headings
+estructurales y palabras normativas SHALL/MUST en inglés.
 
-## Imports
-
-- Prefer this import order: React/framework, third-party packages, app aliases from `@/`, then relative imports.
-- Prefer `@/` aliases for cross-feature imports.
-- Use relative imports for nearby files in the same feature subtree.
-- Avoid `src/...` absolute imports; one legacy example exists, but `@/...` is the preferred pattern.
-- Use `import type` for type-only imports when practical.
-- Keep imports grouped and remove unused imports immediately.
-
-## Formatting
-
-- Follow the surrounding file style instead of mass-reformatting.
-- Semicolons are the dominant style; keep using them.
-- Quote style is mixed across the repo; preserve the file-local style when editing.
-- For new `src` files, prefer the dominant application style: double quotes and semicolons.
-- Keep JSX readable; split props across lines when a tag becomes dense.
-- Do not introduce a formatter-specific rewrite unless the repo adds a formatter config.
-
-## TypeScript And Types
-
-- `tsconfig.json` uses `strict: true`.
-- `noImplicitAny` is disabled, but ESLint warns on explicit `any`; avoid `any` anyway.
-- Prefer explicit domain types in repositories, hooks, and exported helpers.
-- Use `z.infer<typeof schema>` for form types derived from Zod schemas.
-- Use `type` for unions, mapped types, and utility compositions.
-- Use `interface` for component props or extensible object contracts when that reads better.
-- Keep backend-to-frontend mapping logic explicit, like `mapFormValuesToUser()`.
-- Avoid non-null assertions unless the value is guaranteed by framework setup or env requirements.
-
-## Naming
-
-- Components: PascalCase (`MainLayout`, `LoginForm`).
-- Hooks: `useX` (`useUsers`, `useAuth`).
-- Utility functions and variables: camelCase.
-- Shared constants: UPPER_SNAKE_CASE or all-caps objects when already established (`PATHS`, `LSKeys`, `ROLES`).
-- File names are mostly kebab-case in features and UI folders; follow local patterns.
-- Some legacy model files use PascalCase names like `src/models/User.ts`; do not rename existing files unless needed.
-
-## React Conventions
-
-- Prefer function components and hooks.
-- Use `React.forwardRef` only for reusable low-level UI primitives.
-- Keep page-level composition in feature pages, not in `App.tsx`.
-- Keep providers near the root; `App.tsx` already wires React Query, auth, routing, and toasts.
-- Prefer declarative React Query hooks over manual `useEffect` + `useState` data fetching.
-
-## Forms And Validation
-
-- Use `react-hook-form` for non-trivial forms.
-- Put schemas next to the form flow, as done in `src/features/employees/forms/new-employee/schema.ts`.
-- Reuse shared validators from `src/core/utils/forms/fileValidation.ts`.
-- Keep validation messages consistent with the screen language; much of the employee flow is in Spanish.
-- Derive form value types from schemas instead of duplicating interfaces.
-
-## Error Handling
-
-- Let repository methods throw transport errors unless there is a clear recovery path.
-- Surface user-facing async errors through the existing React Query mutation cache toast pattern in `src/App.tsx`.
-- Only catch errors when you can recover, reset state, redirect, or add useful context.
-- Do not silently swallow errors.
-- Keep `console.error` limited to boundary points such as provider initialization or global mutation handling.
-
-## Data And API Conventions
-
-- `src/api/index.ts` chooses the active `userRepository` via `VITE_API_PROVIDER`.
-- Supabase config relies on `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-- REST clients use axios instances built from `src/core/environment/index.ts`.
-- When adding a new resource, keep the repository interface and each backend implementation aligned.
-- Invalidate relevant React Query keys after successful mutations.
-
-## Styling And UI
-
-- Prefer existing shadcn/ui primitives before inventing new base components.
-- Use `cn()` from `src/lib/utils.ts` to merge Tailwind classes.
-- Reuse Tailwind theme tokens and CSS variables from `src/globals.css` and `tailwind.config.js`.
-- Keep layout work inside existing containers and layout primitives where possible.
-- Avoid introducing a separate styling system.
-
-## Routing, Auth, And State
-
-- Add or change route paths in `src/router/paths.ts` first, then wire them in `src/router/index.tsx`.
-- Keep auth state inside `AuthContext` and related hooks.
-- Store browser persistence through `LocalStorage` helpers instead of raw `window.localStorage` calls.
-- Use feature hooks as the main component-facing API for async data.
-
-## Cursor And Copilot Rules
-
-- Cursor rules directory exists at `.cursor/rules/`.
-- The only file found is `.cursor/rules/final-project-work-app.mdc`.
-- That file currently contains empty frontmatter and no actionable instructions.
-- No `.cursorrules` file was found.
-- No `.github/copilot-instructions.md` file was found.
-
-## Practical Guidance For Agents
-
-- Prefer small edits over broad cleanup.
-- Preserve existing behavior unless the task explicitly asks for refactoring.
-- If you touch lint-problematic files, avoid making the warning situation worse.
-- Update this file if you add tests, new scripts, or new repo-wide rules.
-- Do not commit changes unless explicitly asked
+Para tickets iniciados mediante `/start-ticket`, crear aquí la rama indicada por
+`gitBranchName` de Linear cuando el frontend esté afectado. Ejecutar
+`/opsx-propose` desde esta carpeta y detenerse para revisión antes de editar código.
+Tras aprobación explícita, commitear primero los artefactos del spec y después
+ejecutar `/opsx-apply`. Al finalizar, validar la implementación y comprobar todos los
+criterios de aceptación. Después, archivar y validar el cambio OpenSpec antes de
+pushear o abrir un PR contra la rama base real (`main` o `master`); incluir el archivo
+OpenSpec resultante en los commits de la rama.

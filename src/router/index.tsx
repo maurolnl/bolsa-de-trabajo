@@ -6,41 +6,46 @@ import { MainErrorPage } from "@/features/app/pages/main-error-page";
 import { Suspense } from "react";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { NewEmployeePage } from "@/features/employees/pages/new-employee-page";
+import {
+  RequireAuth,
+  RequireNotLogged,
+} from "@/features/app/components/auth-guard";
+import { LoginPage } from "@/features/auth/pages/login-page";
 
 export const router = createBrowserRouter([
-  // {
-  //   path: "auth/*",
-  //   element: (
-  //     <Suspense fallback={<div>Loading...</div>}>
-  //       <RequireNotLogged>
-  //         <Outlet />
-  //       </RequireNotLogged>
-  //     </Suspense>
-  //   ),
-  //   children: [
-  //     {
-  //       path: "login",
-  //       element: <LoginPage />,
-  //     },
-  //     // {
-  //     //   path: "register",
-  //     //   element: (
-  //     //     <RequireNotLogged>
-  //     //       <RegisterPage />
-  //     //     </RequireNotLogged>
-  //     //   ),
-  //     // },
-  //   ],
-  // },
+  {
+    path: "auth/*",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <RequireNotLogged>
+          <Outlet />
+        </RequireNotLogged>
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      // {
+      //   path: "register",
+      //   element: (
+      //     <RequireNotLogged>
+      //       <RegisterPage />
+      //     </RequireNotLogged>
+      //   ),
+      // },
+    ],
+  },
   {
     path: "main/*",
     element: (
       <Suspense fallback={<LoadingScreen />}>
-        {/* <RequireAuth noAuth={noAuth}> */}
-        <MainLayout>
-          <Outlet />
-        </MainLayout>
-        {/* </RequireAuth> */}
+        <RequireAuth>
+          <MainLayout>
+            <Outlet />
+          </MainLayout>
+        </RequireAuth>
       </Suspense>
     ),
     children: [

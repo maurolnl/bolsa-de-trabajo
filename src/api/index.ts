@@ -1,10 +1,6 @@
-import { UserRepository } from "./repositories/user-repository/user-repository";
-import { userRepositoryRest } from "./repositories/user-repository/user-repository.rest";
-import { userRepositorySupabase } from "./repositories/user-repository/user-repository.supabase";
+import { EmployeeRepository } from "@/features/employees/repo/employee-repository";
+import { employeeRepositoryRest } from "@/features/employees/repo/rest/employee-repository.rest";
 
-const serviceProvider = import.meta.env.VITE_API_PROVIDER || "supabase";
+const employeeRepository: EmployeeRepository = employeeRepositoryRest;
 
-const userRepository: UserRepository =
-  serviceProvider === "supabase" ? userRepositorySupabase : userRepositoryRest;
-
-export { userRepository };
+export { employeeRepository };
