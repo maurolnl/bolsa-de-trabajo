@@ -37,6 +37,15 @@ export const EducationsForm = ({
   });
 
   const educationTitles = form.watch("educationTitles");
+  const educationTitlesError = form.formState.errors.educationTitles;
+  const invalidTitleMessage = Array.isArray(educationTitlesError)
+    ? educationTitlesError.find((titleError) => titleError?.title?.message)?.title
+        ?.message
+    : undefined;
+  const educationTitlesErrorMessage =
+    educationTitlesError?.root?.message ??
+    educationTitlesError?.message ??
+    invalidTitleMessage;
 
   const handleOpenCreate = () => {
     setOpenEducationForm(true);
@@ -100,6 +109,9 @@ export const EducationsForm = ({
 
           <EducationForm
             open={openEducationForm}
+            otherEducationTitles={educationTitles.filter(
+              (_, index) => index !== editingIndex,
+            )}
             onSave={handleSaveEducationTitle}
             onClose={handleCancelEdit}
             initialValues={
@@ -116,9 +128,9 @@ export const EducationsForm = ({
               titles={educationTitles}
             />
           )}
-          {form.formState.errors.educationTitles?.root?.message ? (
+          {educationTitlesErrorMessage ? (
             <TypographyP className="text-sm text-destructive">
-              {form.formState.errors.educationTitles.root.message}
+              {educationTitlesErrorMessage}
             </TypographyP>
           ) : null}
         </CardContent>

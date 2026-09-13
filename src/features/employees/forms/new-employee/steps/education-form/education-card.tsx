@@ -51,6 +51,7 @@ export const EducationCard = ({
                 type="button"
                 variant="outline"
                 size="icon"
+                aria-label={`Editar ${educationTitle.title}`}
                 onClick={() => onEdit(index)}
               >
                 <PencilIcon className="h-4 w-4" />
@@ -59,6 +60,7 @@ export const EducationCard = ({
                 type="button"
                 variant="outline"
                 size="icon"
+                aria-label={`Eliminar ${educationTitle.title}`}
                 onClick={() => onDelete(index)}
               >
                 <Trash2Icon className="h-4 w-4" />

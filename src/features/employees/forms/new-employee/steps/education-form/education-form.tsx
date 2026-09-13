@@ -24,6 +24,11 @@ import { educationStatusLabels, educationTypeLabels } from "./constants";
 import { TypographyP } from "@/components/ui/typography/typography-p";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "motion/react";
+import {
+  educationTypeOptions,
+  getAvailableEducationTitles,
+  hasHighSchoolOrientation,
+} from "../../../utils";
 
 const DEFAULT_EDUCATION_TITLE: EducationTitleFormValues = {
   title: "",
@@ -34,6 +39,7 @@ const DEFAULT_EDUCATION_TITLE: EducationTitleFormValues = {
 interface EducationFormProps {
   open: boolean;
   initialValues?: EducationTitleFormValues;
+  otherEducationTitles: EducationTitleFormValues[];
   onClose: () => void;
   onSave: (data: EducationTitleFormValues) => void;
 }
@@ -41,6 +47,7 @@ interface EducationFormProps {
 export const EducationForm = ({
   open,
   initialValues,
+  otherEducationTitles,
   onClose,
   onSave,
 }: EducationFormProps) => {
@@ -57,6 +64,17 @@ export const EducationForm = ({
       educationTitleForm.reset(initialValues ?? DEFAULT_EDUCATION_TITLE);
     }
   }, [educationTitleForm, initialValues, open]);
+
+  const selectedType = educationTitleForm.watch("type");
+  const availableTitles = getAvailableEducationTitles(
+    selectedType,
+    otherEducationTitles,
+  );
+  const availableTypes = educationTypeOptions.filter(
+    (type) =>
+      type !== "high-school-orientation" ||
+      !hasHighSchoolOrientation(otherEducationTitles),
+  );
 
   return (
     <AnimatePresence>
@@ -80,12 +98,23 @@ export const EducationForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Título</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Licenciatura en Sistemas"
-                        />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccione título" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {availableTitles.map((title) => (
+                            <SelectItem key={title} value={title}>
+                              {title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -99,7 +128,15 @@ export const EducationForm = ({
                       <FormItem>
                         <FormLabel>Tipo</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(type) => {
+                            if (type !== field.value) {
+                              educationTitleForm.setValue("title", "", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                            }
+                            field.onChange(type);
+                          }}
                           value={field.value}
                         >
                           <FormControl>
@@ -108,13 +145,11 @@ export const EducationForm = ({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {Object.entries(educationTypeLabels).map(
-                              ([value, label]) => (
-                                <SelectItem key={value} value={value}>
-                                  {label}
-                                </SelectItem>
-                              ),
-                            )}
+                            {availableTypes.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {educationTypeLabels[type]}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
