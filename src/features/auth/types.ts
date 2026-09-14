@@ -1,5 +1,7 @@
 export type Role = "super_admin" | "admin" | "lawyer" | "customer";
 
+export type UserRole = "employee" | "employer";
+
 export type AuthStateType = {
   isAuthenticated: boolean;
   isInitialized: boolean;
@@ -10,6 +12,7 @@ export type AuthStateType = {
 export type LoggedUser = {
   id: string | number;
   email: string;
+  role: UserRole | null;
 };
 
 // ----------------------------------------------------------------------
