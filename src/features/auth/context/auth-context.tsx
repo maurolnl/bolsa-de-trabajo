@@ -13,6 +13,7 @@ const initialState: AuthStateType = {
   user: {
     id: "",
     email: "",
+    role: null,
   },
 };
 
@@ -28,27 +29,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [state, setState] = useState(initialState);
   const loginMutation = useLoginMutation();
   const initializePromiseRef = useRef<Promise<void> | null>(null);
+  const sessionAttemptRef = useRef(0);
 
   const initializeState = useCallback(() => {
-    setState((x) => ({
-      ...x,
+    sessionAttemptRef.current += 1;
+    setSession(null);
+    setState({
+      ...initialState,
       isAuthenticated: false,
       userId: undefined,
-      roles: [],
       isInitialized: true,
-    }));
-    LocalStorage.remove(LSKeys.ACCESS_TOKEN);
+    });
   }, []);
 
   const setStateFromToken =
     useCallback(async (): Promise<LoggedUser | null> => {
+      const attempt = ++sessionAttemptRef.current;
       try {
         const user = await authRepository.getCurrentUser();
+        if (attempt !== sessionAttemptRef.current) return null;
         const loggedUser = {
           id: user.id,
           displayName: user.email,
           photoURL: "",
           email: user.email,
+          role: user.role,
         };
 
         setState((x) => ({
@@ -60,6 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }));
         return loggedUser;
       } catch (error) {
+        if (attempt !== sessionAttemptRef.current) return null;
         console.error(error);
 
         initializeState();
