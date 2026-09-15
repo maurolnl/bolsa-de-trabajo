@@ -83,14 +83,18 @@ const setupPage = async (
   });
 
   await page.route("**/auth/me", async (route) => {
-    await route.fulfill({ json: { ID: 1, Email: "employee@example.com" } });
+    await route.fulfill({
+      json: { ID: 1, Email: "employee@example.com", Role: "employee" },
+    });
   });
 
   await page.route(/\/api\/(?:timezones|users\/|employees\/)/, async (route) => {
     const { pathname } = new URL(route.request().url());
 
     if (pathname.endsWith("/auth/me")) {
-      await route.fulfill({ json: { ID: 1, Email: "employee@example.com" } });
+      await route.fulfill({
+        json: { ID: 1, Email: "employee@example.com", Role: "employee" },
+      });
       return;
     }
     if (pathname.endsWith("/timezones")) {
