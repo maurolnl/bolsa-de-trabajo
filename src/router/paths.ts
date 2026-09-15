@@ -11,6 +11,14 @@ export const PATHS = {
     root: "/main",
     home: "/main/home",
     analytics: "/main/analytics",
+    employee: {
+      profile: "/main/employee/profile",
+      home: "/main/employee/home",
+    },
+    employer: {
+      profile: "/main/employer/profile",
+      jobs: "/main/employer/jobs",
+    },
   },
 };
 

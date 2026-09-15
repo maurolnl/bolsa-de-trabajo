@@ -9,8 +9,12 @@ import { NewEmployeePage } from "@/features/employees/pages/new-employee-page";
 import {
   RequireAuth,
   RequireNotLogged,
+  RequireRole,
 } from "@/features/app/components/auth-guard";
 import { LoginPage } from "@/features/auth/pages/login-page";
+import { RegisterPage } from "@/features/auth/pages/register-page";
+import { MainResolverPage } from "@/features/app/pages/main-resolver-page";
+import { ContinuityPage } from "@/features/app/pages/continuity-page";
 
 export const router = createBrowserRouter([
   {
@@ -27,14 +31,10 @@ export const router = createBrowserRouter([
         path: "login",
         element: <LoginPage />,
       },
-      // {
-      //   path: "register",
-      //   element: (
-      //     <RequireNotLogged>
-      //       <RegisterPage />
-      //     </RequireNotLogged>
-      //   ),
-      // },
+      {
+        path: "register",
+        element: <RegisterPage />,
+      },
     ],
   },
   {
@@ -50,19 +50,69 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
+        index: true,
+        element: <MainResolverPage />,
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employee/profile",
+        element: (
+          <RequireRole allowedRoles={["employee"]}>
+            <NewEmployeePage />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employee/home",
+        element: (
+          <RequireRole allowedRoles={["employee"]}>
+            <ContinuityPage
+              title="Tu espacio de trabajo"
+              description="Estamos preparando tus próximas oportunidades laborales."
+            />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employer/profile",
+        element: (
+          <RequireRole allowedRoles={["employer"]}>
+            <ContinuityPage
+              title="Perfil de empleador"
+              description="La creación del perfil de empresa estará disponible próximamente."
+            />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employer/jobs",
+        element: (
+          <RequireRole allowedRoles={["employer"]}>
+            <ContinuityPage
+              title="Puestos de trabajo"
+              description="La gestión de búsquedas laborales estará disponible próximamente."
+            />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
         path: "home",
-        element: <NewEmployeePage />,
+        element: <Navigate to={PATHS.main.root} replace />,
         errorElement: <MainErrorPage />,
       },
       {
         path: "*",
-        element: <Navigate to={PATHS.main.home} />,
+        element: <Navigate to={PATHS.main.root} replace />,
         errorElement: <MainErrorPage />,
       },
     ],
   },
   {
     path: "*",
-    element: <Navigate to={PATHS.main.home} />,
+    element: <Navigate to={PATHS.main.root} replace />,
   },
 ]);

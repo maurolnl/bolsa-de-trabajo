@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoginForm, LoginFormType } from "../components/login-form";
 import { getLogoutLocation } from "@/lib/utils";
 import { useAuth } from "../hooks/useAuth";
+import { PATHS } from "@/router/paths";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,9 @@ export const LoginPage = () => {
   async function onSubmit(values: LoginFormType) {
     await login(values);
     const logoutRedirect = getLogoutLocation();
-    navigate(logoutRedirect);
+    navigate(PATHS.main.root, {
+      state: { requestedPath: logoutRedirect },
+    });
   }
 
   return (
@@ -23,7 +26,7 @@ export const LoginPage = () => {
           <LoginForm onSubmit={onSubmit} />
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link to="#" className="underline">
+            <Link to={PATHS.auth.register} className="underline">
               Sign up
             </Link>
           </div>
