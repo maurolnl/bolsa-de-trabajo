@@ -15,6 +15,7 @@ import { LoginPage } from "@/features/auth/pages/login-page";
 import { RegisterPage } from "@/features/auth/pages/register-page";
 import { MainResolverPage } from "@/features/app/pages/main-resolver-page";
 import { ContinuityPage } from "@/features/app/pages/continuity-page";
+import { EmployerProfilePage } from "@/features/employers/pages/employer-profile-page";
 
 export const router = createBrowserRouter([
   {
@@ -79,10 +80,7 @@ export const router = createBrowserRouter([
         path: "employer/profile",
         element: (
           <RequireRole allowedRoles={["employer"]}>
-            <ContinuityPage
-              title="Perfil de empleador"
-              description="La creación del perfil de empresa estará disponible próximamente."
-            />
+            <EmployerProfilePage />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,
