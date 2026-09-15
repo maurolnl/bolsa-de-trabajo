@@ -3,6 +3,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { saveCurrentLocation } from "@/lib/utils";
 import { PATHS } from "@/router/paths";
 import { Navigate } from "react-router-dom";
+import { UserRole } from "@/features/auth/types";
 
 interface Props {
   children: JSX.Element;
@@ -31,10 +32,34 @@ export const RequireAuth: React.FC<Props> = ({ children, noAuth }) => {
   return children;
 };
 
-export const RequireNotLogged = ({ children }) => {
+export const RequireNotLogged: React.FC<Props> = ({ children }) => {
   const auth = useAuth();
+
+  if (!auth.isInitialized) {
+    return <LoadingScreen />;
+  }
+
   if (auth.isAuthenticated) {
-    return <Navigate to={PATHS.main.home} replace />;
+    return <Navigate to={PATHS.main.root} replace />;
+  }
+
+  return children;
+};
+
+type RequireRoleProps = {
+  allowedRoles: readonly UserRole[];
+  children: JSX.Element;
+};
+
+export const RequireRole = ({ allowedRoles, children }: RequireRoleProps) => {
+  const auth = useAuth();
+
+  if (!auth.isInitialized) {
+    return <LoadingScreen />;
+  }
+
+  if (!auth.user.role || !allowedRoles.includes(auth.user.role)) {
+    return <Navigate to={PATHS.main.root} replace />;
   }
 
   return children;

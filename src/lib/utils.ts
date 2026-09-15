@@ -12,7 +12,7 @@ export const saveCurrentLocation = () => {
 };
 
 export const getLogoutLocation = () => {
-  const redirectPath = LocalStorage.get(LSKeys.LOCATION_AFTER_LOGOUT) as string;
+  const redirectPath = LocalStorage.get<string>(LSKeys.LOCATION_AFTER_LOGOUT);
   LocalStorage.remove(LSKeys.LOCATION_AFTER_LOGOUT);
-  return redirectPath || PATHS.main.home;
+  return redirectPath || PATHS.main.root;
 };

@@ -13,7 +13,7 @@ import {
   UpdateTech,
 } from "../repo/employee-repository";
 
-const keys = {
+export const employeeKeys = {
   employees: ["employees"],
   employee: (id: number) => ["employees", id],
   timezones: ["timezones"],
@@ -21,14 +21,14 @@ const keys = {
 
 export function useEmployees() {
   return useQuery({
-    queryKey: keys.employees,
+    queryKey: employeeKeys.employees,
     queryFn: () => employeeRepository.getAll(),
   });
 }
 
 export function useEmployee(id: number) {
   return useQuery({
-    queryKey: keys.employee(id),
+    queryKey: employeeKeys.employee(id),
     queryFn: () => employeeRepository.getById(id),
   });
 }
@@ -40,7 +40,7 @@ export function useCreateEmployee(id: number) {
     mutationFn: async (newUser: CreateEmployee) =>
       employeeRepository.createEmployee(newUser),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -51,7 +51,7 @@ export function useUpdateEmployee(id: number) {
     mutationFn: async (employee: UpdateEmployee) =>
       employeeRepository.updateEmployee(employee),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -62,7 +62,7 @@ export function useCreateLocation(id: number) {
     mutationFn: async (newLocation: CreateLocation) =>
       employeeRepository.createLocation(newLocation),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -73,7 +73,7 @@ export function useUpdateLocation(id: number) {
     mutationFn: async (location: UpdateLocation) =>
       employeeRepository.updateLocation(location),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -84,7 +84,7 @@ export function useCreateTech(id: number) {
     mutationFn: async (newTech: CreateTech) =>
       employeeRepository.createTech(newTech),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -94,7 +94,7 @@ export function useUpdateTech(id: number) {
   return useMutation({
     mutationFn: async (tech: UpdateTech) => employeeRepository.updateTech(tech),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -105,7 +105,7 @@ export function useCreateAvailability(id: number) {
     mutationFn: async (newAvailability: CreateAvailability) =>
       employeeRepository.createAvailability(newAvailability),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -116,7 +116,7 @@ export function useUpdateAvailability(id: number) {
     mutationFn: async (availability: UpdateAvailability) =>
       employeeRepository.updateAvailability(availability),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -127,7 +127,7 @@ export function useCreateEducation(id: number) {
     mutationFn: async (newEducation: CreateEducation) =>
       employeeRepository.createEducation(newEducation),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
@@ -138,13 +138,13 @@ export function useUpdateEducation(id: number) {
     mutationFn: async (education: UpdateEducation) =>
       employeeRepository.updateEducation(education),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: keys.employee(id) }),
+      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
   });
 }
 
 export function useTimezones() {
   return useQuery({
-    queryKey: keys.timezones,
+    queryKey: employeeKeys.timezones,
     queryFn: () => employeeRepository.timezones(),
   });
 }

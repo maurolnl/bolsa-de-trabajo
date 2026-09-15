@@ -117,7 +117,7 @@ const setupPage = async (
     await route.fulfill({ status: 404, json: { error: "Unexpected E2E request" } });
   });
 
-  await page.goto("/main/home?step=5");
+  await page.goto("/main/employee/profile?step=5");
   await expect(page.getByRole("heading", { name: "Titulos academicos" })).toBeVisible();
 };
 

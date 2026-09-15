@@ -1,13 +1,15 @@
 import { httpClient } from "@/core/services/httpClient";
 import { UserRole } from "../types";
+import {
+  RegisterCredentials,
+  registerCredentialsSchema,
+} from "../schemas/register-credentials";
+
+export type { RegisterCredentials } from "../schemas/register-credentials";
 
 export type LoginCredentials = {
   email: string;
   password: string;
-};
-
-export type RegisterCredentials = LoginCredentials & {
-  role: UserRole;
 };
 
 type CurrentUser = {
@@ -55,7 +57,7 @@ export const authRepository = {
     return mapLoggedUser(data);
   },
   register: async (credentials: RegisterCredentials) =>
-    httpClient.post("/auth/register", credentials),
+    httpClient.post("/auth/register", registerCredentialsSchema.parse(credentials)),
   getCurrentUser: async (): Promise<CurrentUser> => {
     const { data } = await httpClient.get("/auth/me");
     return mapCurrentUser(data);
