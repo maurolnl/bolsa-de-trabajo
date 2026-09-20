@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -10,6 +9,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PATHS } from "@/router/paths";
 
 import {
+  isUnavailableJobPositionError,
   jobPositionKeys,
   useDeleteJobPosition,
   useEmployerJobPositions,
@@ -80,13 +80,6 @@ const JobPositionsList = ({ employerId }: { employerId: number }) => {
     );
   }
 
-  // Un 403 o un 404 al eliminar significan que el listado local estaba viejo: el puesto
-  // ya no existe o dejó de pertenecer al empleador. Reintentar no cambiaría nada, así
-  // que se refresca la colección contra la API.
-  const isStaleListing = (error: unknown) =>
-    axios.isAxiosError(error) &&
-    (error.response?.status === 403 || error.response?.status === 404);
-
   const handleConfirmDeletion = async () => {
     if (!pendingDeletion) return;
 
@@ -97,7 +90,9 @@ const JobPositionsList = ({ employerId }: { employerId: number }) => {
         description: `"${pendingDeletion.position}" ya no está publicado.`,
       });
     } catch (error) {
-      if (isStaleListing(error)) {
+      // El puesto ya no existe o dejó de pertenecer al empleador: el listado local estaba
+      // viejo y se refresca contra la API en lugar de ofrecer un reintento inútil.
+      if (isUnavailableJobPositionError(error)) {
         await queryClient.invalidateQueries({
           queryKey: jobPositionKeys.byEmployer(employerId),
         });

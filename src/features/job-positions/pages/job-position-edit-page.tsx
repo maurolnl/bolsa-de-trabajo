@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -11,21 +10,21 @@ import { jobPositionToFormValues } from "../forms/job-position/initial-values";
 import { JobPositionFormValues } from "../forms/job-position/schema";
 import { useEmployerContext } from "../hooks/use-employer-context";
 import {
+  isForeignJobPositionError,
+  isMissingJobPositionError,
   useJobPosition,
   useUpdateJobPosition,
 } from "../hooks/use-job-positions";
 import { JobPosition } from "../models/job-position";
 import { JobPositionState } from "./job-position-state";
 
-// El backend responde 404 para un puesto inexistente o eliminado y 403 para uno ajeno. Ni
-// uno ni otro se resuelven reintentando.
+// Ni un puesto inexistente ni uno ajeno se resuelven reintentando, así que cada caso
+// merece su propio mensaje en vez del genérico de conexión.
 const unavailableJobPositionMessage = (error: unknown) => {
-  if (!axios.isAxiosError(error)) return null;
-
-  if (error.response?.status === 404) {
+  if (isMissingJobPositionError(error)) {
     return "El puesto no existe o fue eliminado.";
   }
-  if (error.response?.status === 403) {
+  if (isForeignJobPositionError(error)) {
     return "No tenés permiso para editar este puesto.";
   }
 

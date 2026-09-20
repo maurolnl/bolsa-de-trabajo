@@ -1,10 +1,25 @@
 import { jobPositionRepository } from "@/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 import {
   CreateJobPosition,
   UpdateJobPosition,
 } from "../models/job-position";
+
+// El backend responde 404 cuando el puesto no existe o fue eliminado, y 403 cuando
+// pertenece a otro empleador. Distinguirlos es responsabilidad del contrato, no de las
+// pantallas: sin estos predicados cada página necesitaría conocer axios y los códigos.
+export const isMissingJobPositionError = (error: unknown) =>
+  axios.isAxiosError(error) && error.response?.status === 404;
+
+export const isForeignJobPositionError = (error: unknown) =>
+  axios.isAxiosError(error) && error.response?.status === 403;
+
+// Ninguno de los dos se resuelve reintentando: los dos significan que el estado local
+// quedó viejo respecto del backend.
+export const isUnavailableJobPositionError = (error: unknown) =>
+  isMissingJobPositionError(error) || isForeignJobPositionError(error);
 
 export const jobPositionKeys = {
   byEmployer: (employerId: number) =>
