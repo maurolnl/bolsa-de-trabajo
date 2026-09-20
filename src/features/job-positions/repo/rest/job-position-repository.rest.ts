@@ -12,6 +12,14 @@ export const jobPositionRepositoryRest: JobPositionRepository = {
     );
     return mapJobPositionResponse(data);
   },
+  // La API devuelve solo los puestos activos del empleador: los eliminados quedan fuera
+  // de la colección y el frontend no tiene que filtrarlos.
+  listJobPositions: async (employerId) => {
+    const { data } = await httpClient.get<JobPositionResponse[]>(
+      `employers/${employerId}/jobs`,
+    );
+    return (data ?? []).map(mapJobPositionResponse);
+  },
   getJobPosition: async (jobPositionId) => {
     const { data } = await httpClient.get<JobPositionResponse>(
       `jobs/${jobPositionId}`,
@@ -24,5 +32,9 @@ export const jobPositionRepositoryRest: JobPositionRepository = {
       mapCreateJobPosition(jobPosition),
     );
     return mapJobPositionResponse(data);
+  },
+  // La API responde 204 sin cuerpo: no hay nada que mapear.
+  deleteJobPosition: async (jobPositionId) => {
+    await httpClient.delete(`jobs/${jobPositionId}`);
   },
 };

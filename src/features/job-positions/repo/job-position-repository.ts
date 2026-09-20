@@ -5,9 +5,11 @@ export type JobPositionRepository = {
     employerId: number,
     jobPosition: CreateJobPosition,
   ): Promise<JobPosition>;
+  listJobPositions(employerId: number): Promise<JobPosition[]>;
   getJobPosition(jobPositionId: number): Promise<JobPosition>;
   updateJobPosition(
     jobPositionId: number,
     jobPosition: UpdateJobPosition,
   ): Promise<JobPosition>;
+  deleteJobPosition(jobPositionId: number): Promise<void>;
 };

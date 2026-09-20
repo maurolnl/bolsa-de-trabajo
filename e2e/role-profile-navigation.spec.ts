@@ -31,6 +31,10 @@ const restoreSession = async (page: Page, role: Role) => {
       json: { ID: 1, Email: `${role}@example.com`, Role: role },
     }),
   );
+  // El destino del empleador es el listado de puestos, que consulta su colección.
+  await page.route("**/employers/*/jobs", (route) =>
+    route.fulfill({ status: 200, json: [] }),
+  );
 };
 
 const profilePath = (role: Role) => `/api/users/1/${role}`;

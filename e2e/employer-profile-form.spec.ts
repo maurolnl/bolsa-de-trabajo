@@ -45,6 +45,11 @@ const setupEmployerProfile = async (
     await route.fulfill({ json: employerAuthResponse });
   });
 
+  // Todo test que termine en el área de puestos consulta la colección del empleador.
+  await page.route("**/employers/*/jobs", async (route) => {
+    await route.fulfill({ status: 200, json: [] });
+  });
+
   let getAttempts = 0;
   let postAttempts = 0;
 
@@ -248,9 +253,18 @@ test("POST 201 invalida el perfil, vuelve a consultar y redirige a puestos", asy
   page,
 }) => {
   let getCount = 0;
+  let created = false;
   await setupEmployerProfile(page);
+  // El perfil existe recién después del POST: mantener el 404 indefinidamente haría que
+  // el área de puestos devolviera al onboarding, como exige el guard de navegación.
   await page.route("**/users/1/employer", async (route) => {
     getCount += 1;
+
+    if (created) {
+      await route.fulfill({ status: 200, json: employerProfileResponse });
+      return;
+    }
+
     await route.fulfill({
       status: 404,
       json: { error: "employer profile not found" },
@@ -261,6 +275,7 @@ test("POST 201 invalida el perfil, vuelve a consultar y redirige a puestos", asy
       await route.continue();
       return;
     }
+    created = true;
     await route.fulfill({ status: 201, body: "" });
   });
 
