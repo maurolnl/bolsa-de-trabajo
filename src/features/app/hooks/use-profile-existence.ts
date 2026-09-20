@@ -1,7 +1,10 @@
 import { employeeRepository, employerRepository } from "@/api";
 import { UserRole } from "@/features/auth/types";
 import { employeeKeys } from "@/features/employees/hooks/useEmployee";
-import { employerKeys } from "@/features/employers/hooks/use-employer";
+import {
+  employerKeys,
+  isMissingEmployerProfileError,
+} from "@/features/employers/hooks/use-employer";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -19,7 +22,7 @@ const isMissingProfileError = (error: unknown, role: UserRole) => {
     );
   }
 
-  return error.response?.status === 404;
+  return isMissingEmployerProfileError(error);
 };
 
 const getProfile = async (userId: number, role: UserRole) => {

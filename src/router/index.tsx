@@ -1,4 +1,6 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import { createBrowserRouter, Link, Navigate, Outlet } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
 
 import { PATHS } from "./paths";
 import { MainLayout } from "@/features/layout/main-layout";
@@ -16,6 +18,8 @@ import { RegisterPage } from "@/features/auth/pages/register-page";
 import { MainResolverPage } from "@/features/app/pages/main-resolver-page";
 import { ContinuityPage } from "@/features/app/pages/continuity-page";
 import { EmployerProfilePage } from "@/features/employers/pages/employer-profile-page";
+import { JobPositionCreatePage } from "@/features/job-positions/pages/job-position-create-page";
+import { JobPositionEditPage } from "@/features/job-positions/pages/job-position-edit-page";
 
 export const router = createBrowserRouter([
   {
@@ -91,8 +95,31 @@ export const router = createBrowserRouter([
           <RequireRole allowedRoles={["employer"]}>
             <ContinuityPage
               title="Puestos de trabajo"
-              description="La gestión de búsquedas laborales estará disponible próximamente."
+              description="El listado de puestos estará disponible próximamente. Mientras tanto, ya podés publicar uno nuevo."
+              action={
+                <Button asChild>
+                  <Link to={PATHS.main.employer.jobsNew}>Publicar puesto</Link>
+                </Button>
+              }
             />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employer/jobs/new",
+        element: (
+          <RequireRole allowedRoles={["employer"]}>
+            <JobPositionCreatePage />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employer/jobs/:jobPositionId/edit",
+        element: (
+          <RequireRole allowedRoles={["employer"]}>
+            <JobPositionEditPage />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,
