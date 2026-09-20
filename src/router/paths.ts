@@ -21,6 +21,8 @@ export const PATHS = {
       jobsNew: "/main/employer/jobs/new",
       jobsEdit: (jobPositionId: number | string) =>
         `/main/employer/jobs/${jobPositionId}/edit`,
+      jobsCandidates: (jobPositionId: number | string) =>
+        `/main/employer/jobs/${jobPositionId}/candidates`,
     },
   },
 };

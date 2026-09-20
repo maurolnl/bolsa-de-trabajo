@@ -20,6 +20,7 @@ import { ContinuityPage } from "@/features/app/pages/continuity-page";
 import { EmployerProfilePage } from "@/features/employers/pages/employer-profile-page";
 import { JobPositionCreatePage } from "@/features/job-positions/pages/job-position-create-page";
 import { JobPositionEditPage } from "@/features/job-positions/pages/job-position-edit-page";
+import { JobPositionsListPage } from "@/features/job-positions/pages/job-positions-list-page";
 
 export const router = createBrowserRouter([
   {
@@ -93,15 +94,7 @@ export const router = createBrowserRouter([
         path: "employer/jobs",
         element: (
           <RequireRole allowedRoles={["employer"]}>
-            <ContinuityPage
-              title="Puestos de trabajo"
-              description="El listado de puestos estará disponible próximamente. Mientras tanto, ya podés publicar uno nuevo."
-              action={
-                <Button asChild>
-                  <Link to={PATHS.main.employer.jobsNew}>Publicar puesto</Link>
-                </Button>
-              }
-            />
+            <JobPositionsListPage />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,
@@ -120,6 +113,23 @@ export const router = createBrowserRouter([
         element: (
           <RequireRole allowedRoles={["employer"]}>
             <JobPositionEditPage />
+          </RequireRole>
+        ),
+        errorElement: <MainErrorPage />,
+      },
+      {
+        path: "employer/jobs/:jobPositionId/candidates",
+        element: (
+          <RequireRole allowedRoles={["employer"]}>
+            <ContinuityPage
+              title="Candidatos recomendados"
+              description="Las recomendaciones se calculan de forma diferida y todavía no están disponibles para este puesto."
+              action={
+                <Button asChild variant="outline">
+                  <Link to={PATHS.main.employer.jobs}>Volver a mis puestos</Link>
+                </Button>
+              }
+            />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,
