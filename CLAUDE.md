@@ -96,9 +96,13 @@ perfil recuperado. El perfil de empleador es un formulario único en
   siendo autoritativa.
 - Errores: centralizados en el toast global de React Query
   (`MutationCache.onError` en `App.tsx`), que lee `{error}` y cae a `{messages}`.
-  Capturar localmente solo si hay recuperación real. Ojo: los errores de validación del
-  backend llegan como **texto plano**, no JSON, y caen al mensaje genérico; si una
-  pantalla necesita mostrarlos, es un cambio de contrato a coordinar con el BE.
+  Capturar localmente solo si hay recuperación real. El formato del backend no es
+  uniforme: `internal/jobposition` responde **todos** sus errores como JSON `{error}`,
+  incluidos los de validación, pero los endpoints que todavía usan
+  `PrintValidatorError` o `http.Error` directo (por ejemplo `POST /auth/register`)
+  devuelven **texto plano** y caen al mensaje genérico. Verificar cuál aplica antes de
+  prometer un mensaje específico en pantalla; migrar un endpoint viejo es un cambio de
+  contrato a coordinar con el BE en la misma tarea.
 
 ## UI y estilo
 
