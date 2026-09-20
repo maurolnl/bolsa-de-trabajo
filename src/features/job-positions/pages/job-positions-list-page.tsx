@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { LoadingScreen } from "@/components/ui/loading-screen";
@@ -9,8 +8,6 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PATHS } from "@/router/paths";
 
 import {
-  isUnavailableJobPositionError,
-  jobPositionKeys,
   useDeleteJobPosition,
   useEmployerJobPositions,
 } from "../hooks/use-job-positions";
@@ -59,7 +56,6 @@ export const JobPositionsListPage = () => {
 const JobPositionsList = ({ employerId }: { employerId: number }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const jobPositions = useEmployerJobPositions(employerId);
   const deleteJobPosition = useDeleteJobPosition(employerId);
   const [pendingDeletion, setPendingDeletion] = useState<JobPosition | null>(
@@ -80,27 +76,21 @@ const JobPositionsList = ({ employerId }: { employerId: number }) => {
     );
   }
 
-  const handleConfirmDeletion = async () => {
+  // El hook resincroniza la caché y el MutationCache global presenta el error: acá solo
+  // queda confirmar en pantalla y cerrar el diálogo.
+  const handleConfirmDeletion = () => {
     if (!pendingDeletion) return;
 
-    try {
-      await deleteJobPosition.mutateAsync(pendingDeletion.id);
-      toast({
-        title: "Puesto eliminado",
-        description: `"${pendingDeletion.position}" ya no está publicado.`,
-      });
-    } catch (error) {
-      // El puesto ya no existe o dejó de pertenecer al empleador: el listado local estaba
-      // viejo y se refresca contra la API en lugar de ofrecer un reintento inútil.
-      if (isUnavailableJobPositionError(error)) {
-        await queryClient.invalidateQueries({
-          queryKey: jobPositionKeys.byEmployer(employerId),
-        });
-      }
-      // El MutationCache global presenta el error recibido de la API.
-    } finally {
-      setPendingDeletion(null);
-    }
+    const { id, position } = pendingDeletion;
+
+    deleteJobPosition.mutate(id, {
+      onSuccess: () =>
+        toast({
+          title: "Puesto eliminado",
+          description: `"${position}" ya no está publicado.`,
+        }),
+      onSettled: () => setPendingDeletion(null),
+    });
   };
 
   if (jobPositions.data.length === 0) {
@@ -158,7 +148,7 @@ const JobPositionsList = ({ employerId }: { employerId: number }) => {
         jobPosition={pendingDeletion}
         isDeleting={deleteJobPosition.isPending}
         onCancel={() => setPendingDeletion(null)}
-        onConfirm={() => void handleConfirmDeletion()}
+        onConfirm={handleConfirmDeletion}
       />
     </div>
   );

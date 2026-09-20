@@ -81,10 +81,17 @@ export const useUpdateJobPosition = (
   });
 };
 
-// Invalidar el detalle además de la colección evita que una edición abierta en otra
-// pestaña siga sirviendo desde caché un puesto que ya no existe.
+// La consistencia de la caché es responsabilidad del hook: quien elimina un puesto no
+// tiene por qué saber qué claves quedaron viejas. Invalidar el detalle además de la
+// colección evita que una edición abierta en otra pestaña siga sirviendo desde caché un
+// puesto que ya no existe.
 export const useDeleteJobPosition = (employerId: number) => {
   const queryClient = useQueryClient();
+
+  const invalidateCollection = () =>
+    queryClient.invalidateQueries({
+      queryKey: jobPositionKeys.byEmployer(employerId),
+    });
 
   return useMutation({
     mutationFn: (jobPositionId: number) =>
@@ -93,9 +100,11 @@ export const useDeleteJobPosition = (employerId: number) => {
       await queryClient.invalidateQueries({
         queryKey: jobPositionKeys.detail(jobPositionId),
       });
-      await queryClient.invalidateQueries({
-        queryKey: jobPositionKeys.byEmployer(employerId),
-      });
+      await invalidateCollection();
     },
+    // Un puesto inexistente o ajeno significa que la colección cacheada quedó vieja: se
+    // resincroniza contra la API en lugar de dejar visible algo que ya no está.
+    onError: (error) =>
+      isUnavailableJobPositionError(error) ? invalidateCollection() : undefined,
   });
 };
