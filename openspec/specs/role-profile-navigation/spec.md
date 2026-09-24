@@ -13,7 +13,7 @@ El frontend SHALL obtener el rol desde la sesión reconstruida mediante `GET /au
 
 #### Scenario: Empleado con perfil
 - **WHEN** `/auth/me` identifica al usuario como `employee` y la API devuelve su perfil de empleado
-- **THEN** el frontend navega a `/main/employee/home`
+- **THEN** el frontend navega a `/main/employee/home`, que presenta sus puestos recomendados
 
 #### Scenario: Empleador sin perfil
 - **WHEN** `/auth/me` identifica al usuario como `employer` y la API informa que su perfil de empleador no existe
@@ -133,3 +133,26 @@ actualizar, y MUST NOT ofrecer ninguna acción de reapertura de un puesto.
   puesto
 - **THEN** el frontend no presenta ninguna acción de reapertura ni de cambio de estado de
   publicación
+
+### Requirement: Ruta de recomendaciones del empleado condicionada a perfil existente
+El frontend MUST reservar `/main/employee/home` a una sesión autenticada con rol `employee`
+que ya posea perfil propio, y SHALL redirigir al onboarding de empleado cuando ese perfil no
+exista. La ruta deja de presentar una pantalla de continuidad y pasa a presentar los puestos
+recomendados del empleado.
+
+#### Scenario: Empleado con perfil abre sus recomendaciones
+- **WHEN** una sesión `employee` con perfil solicita `/main/employee/home`
+- **THEN** el frontend presenta la pantalla de puestos recomendados
+
+#### Scenario: Empleado sin perfil abre sus recomendaciones
+- **WHEN** una sesión `employee` sin perfil solicita `/main/employee/home`
+- **THEN** el frontend reemplaza la ubicación por `/main/employee/profile` sin consultar
+  recomendaciones
+
+#### Scenario: Empleador intenta abrir las recomendaciones del empleado
+- **WHEN** una sesión `employer` solicita directamente `/main/employee/home`
+- **THEN** el frontend reemplaza la ubicación por el destino válido del empleador
+
+#### Scenario: Perfil de empleado todavía pendiente
+- **WHEN** la consulta del perfil de empleado está pendiente al abrir `/main/employee/home`
+- **THEN** el frontend muestra un estado de carga y no ejecuta una redirección provisional

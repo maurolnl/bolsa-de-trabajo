@@ -1,5 +1,13 @@
 import { employeeRepository } from "@/api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import axios from "axios";
+import { jobRecommendationKeys } from "@/features/job-recommendations/hooks/use-job-recommendations";
+import { Employee } from "../models/Employee";
 import {
   CreateAvailability,
   CreateEducation,
@@ -33,14 +41,57 @@ export function useEmployee(id: number) {
   });
 }
 
+type ErrorResponse = {
+  error?: unknown;
+};
+
+// El backend responde 400 con este mensaje cuando la cuenta todavía no creó su perfil de
+// empleado. Esa ausencia es un estado esperado del flujo, no un error de comunicación.
+export const isMissingEmployeeProfileError = (error: unknown) =>
+  axios.isAxiosError<ErrorResponse>(error) &&
+  error.response?.status === 400 &&
+  error.response.data?.error === "employee not found";
+
+export const getEmployeeProfile = async (
+  userId: number,
+): Promise<Employee | null> => {
+  try {
+    return await employeeRepository.getById(userId);
+  } catch (error) {
+    if (isMissingEmployeeProfileError(error)) return null;
+    throw error;
+  }
+};
+
+// Comparte la query key con la resolución de navegación: las pantallas que necesitan el
+// identificador del perfil de empleado leen el perfil ya cacheado en vez de consultarlo
+// otra vez. Un `data` nulo con la consulta ya resuelta significa que no hay perfil.
+export const useEmployeeProfile = (userId: number) =>
+  useQuery({
+    queryKey: employeeKeys.employee(userId),
+    queryFn: () => getEmployeeProfile(userId),
+    enabled: Number.isFinite(userId),
+  });
+
+// Toda escritura sobre el perfil dispara en el backend la regeneración de las
+// recomendaciones del empleado (LAB-34), así que el conjunto cacheado queda viejo en el
+// mismo momento. Se invalida por prefijo para alcanzar todos los tramos paginados de una
+// vez. Va en `onSuccess` y no en `onSettled`: una escritura fallida no regeneró nada.
+const invalidateProfileAndRecommendations = (
+  queryClient: QueryClient,
+  id: number,
+) => {
+  void queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) });
+  void queryClient.invalidateQueries({ queryKey: jobRecommendationKeys.all });
+};
+
 export function useCreateEmployee(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (newUser: CreateEmployee) =>
       employeeRepository.createEmployee(newUser),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -50,8 +101,7 @@ export function useUpdateEmployee(id: number) {
   return useMutation({
     mutationFn: async (employee: UpdateEmployee) =>
       employeeRepository.updateEmployee(employee),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -61,8 +111,7 @@ export function useCreateLocation(id: number) {
   return useMutation({
     mutationFn: async (newLocation: CreateLocation) =>
       employeeRepository.createLocation(newLocation),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -72,8 +121,7 @@ export function useUpdateLocation(id: number) {
   return useMutation({
     mutationFn: async (location: UpdateLocation) =>
       employeeRepository.updateLocation(location),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -83,8 +131,7 @@ export function useCreateTech(id: number) {
   return useMutation({
     mutationFn: async (newTech: CreateTech) =>
       employeeRepository.createTech(newTech),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -93,8 +140,7 @@ export function useUpdateTech(id: number) {
 
   return useMutation({
     mutationFn: async (tech: UpdateTech) => employeeRepository.updateTech(tech),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -104,8 +150,7 @@ export function useCreateAvailability(id: number) {
   return useMutation({
     mutationFn: async (newAvailability: CreateAvailability) =>
       employeeRepository.createAvailability(newAvailability),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -115,8 +160,7 @@ export function useUpdateAvailability(id: number) {
   return useMutation({
     mutationFn: async (availability: UpdateAvailability) =>
       employeeRepository.updateAvailability(availability),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -126,8 +170,7 @@ export function useCreateEducation(id: number) {
   return useMutation({
     mutationFn: async (newEducation: CreateEducation) =>
       employeeRepository.createEducation(newEducation),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 
@@ -137,8 +180,7 @@ export function useUpdateEducation(id: number) {
   return useMutation({
     mutationFn: async (education: UpdateEducation) =>
       employeeRepository.updateEducation(education),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: employeeKeys.employee(id) }),
+    onSuccess: () => invalidateProfileAndRecommendations(queryClient, id),
   });
 }
 

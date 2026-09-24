@@ -1,39 +1,27 @@
-import { employeeRepository, employerRepository } from "@/api";
+import { employerRepository } from "@/api";
 import { UserRole } from "@/features/auth/types";
-import { employeeKeys } from "@/features/employees/hooks/useEmployee";
+import {
+  employeeKeys,
+  getEmployeeProfile,
+} from "@/features/employees/hooks/useEmployee";
 import {
   employerKeys,
   isMissingEmployerProfileError,
 } from "@/features/employers/hooks/use-employer";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
-type ErrorResponse = {
-  error?: unknown;
-};
-
-const isMissingProfileError = (error: unknown, role: UserRole) => {
-  if (!axios.isAxiosError<ErrorResponse>(error)) return false;
-
+// Cada feature clasifica la ausencia de su propio perfil: acá solo se elige cuál según el
+// rol. Duplicar el criterio dejaría que las dos definiciones se separaran sin que nada lo
+// note, y la query key es compartida con las pantallas que leen ese mismo perfil.
+const getProfile = async (userId: number, role: UserRole) => {
   if (role === "employee") {
-    return (
-      error.response?.status === 400 &&
-      error.response.data?.error === "employee not found"
-    );
+    return getEmployeeProfile(userId);
   }
 
-  return isMissingEmployerProfileError(error);
-};
-
-const getProfile = async (userId: number, role: UserRole) => {
   try {
-    if (role === "employee") {
-      return await employeeRepository.getById(userId);
-    }
-
     return await employerRepository.getByUserId(userId);
   } catch (error) {
-    if (isMissingProfileError(error, role)) return null;
+    if (isMissingEmployerProfileError(error)) return null;
     throw error;
   }
 };
