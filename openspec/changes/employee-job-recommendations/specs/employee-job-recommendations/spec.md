@@ -133,17 +133,19 @@ de afinidad ni por una posición derivada del orden.
 - **THEN** el frontend presenta la lista sin prometer que está ordenada por afinidad
 
 ### Requirement: Acceso al detalle del puesto recomendado
-El frontend SHALL ofrecer, desde cada puesto recomendado, el acceso a su detalle, y SHALL
-presentar un estado explicativo cuando ese puesto ya no esté disponible.
+El frontend SHALL ofrecer, desde cada puesto recomendado, el acceso a su detalle completo, y
+MUST componerlo con los datos que la respuesta de recomendaciones ya trae embebidos. El
+frontend MUST NOT consultar el recurso del puesto para abrir ese detalle: la lectura de un
+puesto individual está reservada a su empleador y una sesión `employee` recibiría `403`.
 
 #### Scenario: Detalle de un puesto recomendado
 - **WHEN** el empleado activa el acceso al detalle de un puesto recomendado
-- **THEN** el frontend presenta la información de ese puesto
+- **THEN** el frontend presenta la información de ese puesto sin emitir ninguna petición
+  adicional
 
-#### Scenario: Puesto ya no disponible
-- **WHEN** el detalle solicitado corresponde a un puesto que la API ya no expone
-- **THEN** el frontend explica la indisponibilidad y ofrece volver a la lista de
-  recomendaciones
+#### Scenario: Detalle cerrado
+- **WHEN** el empleado cierra el detalle
+- **THEN** el frontend vuelve a la lista conservando el tramo que estaba viendo
 
 ### Requirement: Refresco de las recomendaciones tras cambios en el perfil
 El frontend SHALL invalidar las recomendaciones del empleado cuando una operación de

@@ -150,12 +150,25 @@ lugar, porque es donde el backend dispara la regeneración (LAB-34).
 
 Invalidar por prefijo y no por `offset` alcanza a todos los tramos cacheados de una vez.
 
-### El acceso al detalle reutiliza el puesto que ya vino en la respuesta
+### El detalle se compone con los datos embebidos, no con una consulta al puesto
 
-`items[]` trae los campos del puesto embebidos, así que la tarjeta se arma sin una consulta
-extra por puesto. El detalle enlaza al recurso del puesto, y un `404` o un `403` al abrirlo
-se presenta con el estado explicativo existente en vez de un reintento: es el mismo
-tratamiento que `isUnavailableJobPositionError` ya le da a un puesto ajeno o eliminado.
+`GET /jobs/{jobPositionID}` resuelve con `resolveOwnedPosition`
+(`internal/jobposition/service.go:107`): exige que el solicitante sea el empleador dueño, así
+que una sesión `employee` recibe `403`. No hay endpoint de detalle legible por el empleado y
+este cambio no lo agrega.
+
+No hace falta: `items[]` trae los trece campos del puesto embebidos —todo salvo el `id` del
+puesto y su `created_at`— así que tanto la tarjeta como el detalle se arman sin una sola
+petición extra. El detalle abre en un diálogo sobre `@radix-ui/react-dialog`, que ya está
+entre las dependencias y ya se usa para la confirmación de borrado de puestos.
+
+Como el dato es local, no existe el caso "el puesto ya no está disponible" al abrir el
+detalle: el backend excluye los puestos eliminados del listado y del total, así que lo que
+está en pantalla es lo que la última respuesta trajo.
+
+Alternativa descartada: una ruta `/main/employee/jobs/:jobPositionId` alimentada por el
+estado de navegación. Agrega una ruta que no sobrevive a un refresh ni a un enlace directo,
+para mostrar exactamente el mismo contenido.
 
 ## Risks / Trade-offs
 

@@ -56,6 +56,9 @@
   `processing` + items se ven ambas cosas.
 - [ ] 3.6 Crear `pages/job-recommendation-card.tsx` con los datos del puesto que ya vienen en
   la respuesta y el acceso a su detalle; verificar que no dispara una consulta por tarjeta.
+- [ ] 3.6b Crear `pages/job-recommendation-detail-dialog.tsx` sobre el primitivo `Dialog`,
+  alimentado solo por el item ya cargado; verificar en DevTools de red que abrirlo y cerrarlo
+  no emite ninguna petición y que al cerrar se conserva el tramo visible.
 - [ ] 3.7 Renderizar el puntaje solo cuando `score !== null`; verificar con la respuesta real
   de hoy —todos los `score` nulos— que no aparece ningún indicador de afinidad ni texto que
   prometa orden por afinidad.
