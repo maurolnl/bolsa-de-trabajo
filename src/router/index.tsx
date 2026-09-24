@@ -21,6 +21,7 @@ import { EmployerProfilePage } from "@/features/employers/pages/employer-profile
 import { JobPositionCreatePage } from "@/features/job-positions/pages/job-position-create-page";
 import { JobPositionEditPage } from "@/features/job-positions/pages/job-position-edit-page";
 import { JobPositionsListPage } from "@/features/job-positions/pages/job-positions-list-page";
+import { JobRecommendationsPage } from "@/features/job-recommendations/pages/job-recommendations-page";
 
 export const router = createBrowserRouter([
   {
@@ -73,10 +74,7 @@ export const router = createBrowserRouter([
         path: "employee/home",
         element: (
           <RequireRole allowedRoles={["employee"]}>
-            <ContinuityPage
-              title="Tu espacio de trabajo"
-              description="Estamos preparando tus próximas oportunidades laborales."
-            />
+            <JobRecommendationsPage />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,
