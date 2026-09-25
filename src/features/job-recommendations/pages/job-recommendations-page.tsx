@@ -12,14 +12,13 @@ import {
   isForbiddenRecommendationsError,
   useJobRecommendations,
 } from "../hooks/use-job-recommendations";
-import {
-  JobRecommendation,
-  isGenerationInProgress,
-} from "../models/job-recommendation";
+import { isGenerationInProgress } from "@/features/recommendations/models/recommendation-status";
+
+import { JobRecommendation } from "../models/job-recommendation";
 import { JobRecommendationCard } from "./job-recommendation-card";
 import { JobRecommendationDetailSheet } from "./job-recommendation-detail-sheet";
-import { RecommendationsPagination } from "./recommendations-pagination";
-import { RecommendationsState } from "./recommendations-state";
+import { RecommendationsPagination } from "@/features/recommendations/components/recommendations-pagination";
+import { RecommendationsState } from "@/features/recommendations/components/recommendations-state";
 
 // La ruta está reservada a una sesión `employee` con perfil propio: sin perfil no hay
 // sujeto del que pedir recomendaciones, así que se redirige al onboarding antes de
