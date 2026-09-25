@@ -11,7 +11,7 @@ import {
 } from "@/features/job-positions/forms/job-position/options";
 
 import { JobRecommendation } from "../models/job-recommendation";
-import { RecommendationScore } from "./recommendation-score";
+import { RecommendationScore } from "@/features/recommendations/components/recommendation-score";
 
 type JobRecommendationDetailSheetProps = {
   recommendation: JobRecommendation | null;
