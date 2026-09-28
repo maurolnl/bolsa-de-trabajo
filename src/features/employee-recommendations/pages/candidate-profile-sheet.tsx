@@ -9,6 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useEmployeeFileDownload } from "@/features/employees/hooks/use-employee-file-download";
 import { EmployeeProfile } from "@/features/employees/models/employee-profile";
 import {
   educationStatusProfileLabels,
@@ -19,7 +20,6 @@ import {
   yearsOfExperienceLabels,
 } from "@/features/employees/utils/profile-labels";
 
-import { useCandidateFileDownload } from "../hooks/use-candidate-file-download";
 import {
   isForbiddenCandidateProfileError,
   useCandidateProfile,
@@ -117,7 +117,7 @@ const CandidateProfileBody = ({
 };
 
 const CandidateProfileDetail = ({ profile }: { profile: EmployeeProfile }) => {
-  const downloads = useCandidateFileDownload();
+  const downloads = useEmployeeFileDownload();
 
   return (
     <div className="mt-6 space-y-8">
@@ -131,17 +131,100 @@ const CandidateProfileDetail = ({ profile }: { profile: EmployeeProfile }) => {
             label="Portfolio"
             value={profile.portfolioUrl ?? "Sin portfolio"}
           />
-          <div className="sm:col-span-2">
-            <Field
-              label="Certificaciones"
-              value={
-                profile.certifications.length > 0
-                  ? profile.certifications.join(", ")
-                  : "Sin certificaciones"
-              }
-            />
-          </div>
         </dl>
+      </Section>
+
+      <Section title="Certificaciones">
+        {/* Cada certificación ofrece solo su propio PDF. Los certificados viejos, cargados
+            antes de que cada PDF quedara asociado, se listan aparte y no se atribuyen a
+            ninguna certificación. */}
+        {profile.certifications.length === 0 && profile.files.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Sin certificaciones</p>
+        ) : (
+          <ul className="space-y-3">
+            {profile.certifications.map((certification) => {
+              const target =
+                certification.documentId === null
+                  ? null
+                  : ({
+                      kind: "certificate",
+                      employeeId: profile.id,
+                      fileId: certification.documentId,
+                    } as const);
+
+              return (
+                <li
+                  key={certification.name}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
+                >
+                  <div className="space-y-1">
+                    <span className="text-sm font-medium">
+                      {certification.name}
+                    </span>
+                    {target === null ? (
+                      <p className="text-sm text-muted-foreground">Sin PDF</p>
+                    ) : null}
+                    {target && downloads.hasFailed(target) ? (
+                      <p className="text-sm text-destructive">
+                        No pudimos abrir este certificado.
+                      </p>
+                    ) : null}
+                  </div>
+                  {/* Botón y nunca `<a href>`: un enlace dejaría la URL prefirmada en el DOM,
+                      en el menú contextual y en el historial. */}
+                  {target ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={downloads.isDownloading(target)}
+                      onClick={() => void downloads.download(target)}
+                    >
+                      {downloads.isDownloading(target)
+                        ? "Abriendo…"
+                        : "Descargar"}
+                    </Button>
+                  ) : null}
+                </li>
+              );
+            })}
+            {profile.files.map((file) => {
+              const target = {
+                kind: "certificate",
+                employeeId: profile.id,
+                fileId: file.id,
+              } as const;
+
+              return (
+                <li
+                  key={`unassigned-${file.id}`}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
+                >
+                  <div className="space-y-1">
+                    <span className="text-sm font-medium">
+                      Certificado sin asociar
+                    </span>
+                    <p className="text-sm text-muted-foreground">{file.title}</p>
+                    {downloads.hasFailed(target) ? (
+                      <p className="text-sm text-destructive">
+                        No pudimos abrir este archivo.
+                      </p>
+                    ) : null}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={downloads.isDownloading(target)}
+                    onClick={() => void downloads.download(target)}
+                  >
+                    {downloads.isDownloading(target)
+                      ? "Abriendo…"
+                      : "Descargar"}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Section>
 
       <Section title="Locación">
@@ -265,54 +348,6 @@ const CandidateProfileDetail = ({ profile }: { profile: EmployeeProfile }) => {
         ) : (
           <p className="text-sm text-muted-foreground">
             Sin títulos informados
-          </p>
-        )}
-      </Section>
-
-      <Section title="Archivos">
-        {/* Cada archivo se identifica por título e identificador. La clave de objeto y el
-            bucket no llegan al frontend: el backend no los envía. */}
-        {profile.files.length > 0 ? (
-          <ul className="space-y-3">
-            {profile.files.map((file) => {
-              const target = {
-                kind: "certificate",
-                employeeId: profile.id,
-                fileId: file.id,
-              } as const;
-
-              return (
-                <li
-                  key={file.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
-                >
-                  <div className="space-y-1">
-                    <span className="text-sm">{file.title}</span>
-                    {downloads.hasFailed(target) ? (
-                      <p className="text-sm text-destructive">
-                        No pudimos abrir este archivo.
-                      </p>
-                    ) : null}
-                  </div>
-                  {/* Botón y nunca `<a href>`: un enlace dejaría la URL prefirmada en el DOM,
-                      en el menú contextual y en el historial. */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={downloads.isDownloading(target)}
-                    onClick={() => void downloads.download(target)}
-                  >
-                    {downloads.isDownloading(target)
-                      ? "Abriendo…"
-                      : "Descargar"}
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Sin archivos disponibles
           </p>
         )}
       </Section>

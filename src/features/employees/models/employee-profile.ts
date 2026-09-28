@@ -1,9 +1,17 @@
 // El perfil completo leído por identificador de empleado. Es un modelo aparte de `Employee`
 // —el perfil propio leído por identificador de usuario— porque su contrato es distinto: los
 // archivos vienen identificados y sin ubicación, y el correo solo viaja para el propio dueño.
+// `files` contiene solo certificados sin certificación asociada, cargados antes de LAB-40.
 export type EmployeeProfileFile = {
   id: number;
   title: string;
+};
+
+// `documentId` nulo significa que la certificación no tiene PDF: decide si se ofrece la
+// descarga.
+export type EmployeeProfileCertification = {
+  name: string;
+  documentId: number | null;
 };
 
 // `certificationDocumentId` nulo significa que el título no tiene documento: es lo que decide
@@ -27,7 +35,7 @@ export type EmployeeProfile = {
   position: string;
   role: string;
   yearsOfExperience: string;
-  certifications: string[];
+  certifications: EmployeeProfileCertification[];
   portfolioUrl: string | null;
   timezone: string;
   os: string;

@@ -32,8 +32,32 @@ export const experienceSchema = z.object({
     required_error: "Debe seleccionar una opción",
     invalid_type_error: "Seleccione una opción válida",
   }),
-  certifications: z.array(z.string()).optional(),
-  certificationFile: pdfFileValidation.optional(),
+  certifications: z
+    .array(
+      z.object({
+        name: z
+          .string()
+          .trim()
+          .min(1, "El nombre de la certificación no puede estar vacío"),
+        documentId: z.number().nullable(),
+        document: pdfFileValidation.optional(),
+      }),
+    )
+    .superRefine((certifications, ctx) => {
+      const seen = new Set<string>();
+      certifications.forEach((certification, index) => {
+        const key = certification.name.trim().toLowerCase();
+        if (seen.has(key)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "La certificación ya fue agregada",
+            path: [index, "name"],
+          });
+        }
+        seen.add(key);
+      });
+    })
+    .optional(),
   portfolioUrl: urlValidation.optional(),
 });
 

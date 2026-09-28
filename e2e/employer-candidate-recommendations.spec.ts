@@ -67,7 +67,10 @@ const candidateProfile = (overrides: Record<string, unknown> = {}) => ({
   position: "Desarrolladora backend",
   role: "Adjunto",
   years_of_experience: "2_to_5y",
-  certifications: ["AWS Cloud Practitioner"],
+  certifications: [
+    { name: "AWS Cloud Practitioner", document_id: 55 },
+    { name: "Scrum Master", document_id: null },
+  ],
   portfolio_url: "https://portfolio.example.com",
   timezone: "America/Argentina/Buenos_Aires",
   os: "Linux Distribution",
@@ -90,7 +93,7 @@ const candidateProfile = (overrides: Record<string, unknown> = {}) => ({
       certification_document_id: null,
     },
   ],
-  files: [{ id: 55, title: "Certificado AWS" }],
+  files: [],
   created_at: "2026-09-20T00:00:00Z",
   updated_at: "2026-09-20T00:00:00Z",
   ...overrides,
@@ -471,7 +474,7 @@ test("el perfil muestra las cinco secciones y los archivos disponibles", async (
     "Recursos",
     "Disponibilidad",
     "Educación",
-    "Archivos",
+    "Certificaciones",
   ]) {
     await expect(
       profile.getByRole("heading", { name: section, exact: true }),
@@ -483,7 +486,7 @@ test("el perfil muestra las cinco secciones y los archivos disponibles", async (
   await expect(profile.getByText("Fibra · > 50Mbps")).toBeVisible();
   await expect(profile.getByText("Universitario")).toBeVisible();
   await expect(profile.getByText("Completado")).toBeVisible();
-  await expect(profile.getByText("Certificado AWS")).toBeVisible();
+  await expect(profile.getByText("AWS Cloud Practitioner")).toBeVisible();
 });
 
 test("un título sin documento no ofrece descarga", async ({ page }) => {
@@ -506,7 +509,7 @@ test("la descarga pide la URL prefirmada en el clic y no la deja en el DOM", asy
 
   await page.goto(CANDIDATES_PATH);
   await page.getByRole("button", { name: "Ver perfil" }).click();
-  await expect(page.getByText("Certificado AWS")).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("AWS Cloud Practitioner")).toBeVisible();
 
   // Nada se pidió antes del clic, y la URL no puede estar en el documento porque todavía no
   // existe.
@@ -534,7 +537,42 @@ test("una descarga rechazada se informa y no queda ofrecida como disponible", as
   await page.getByRole("button", { name: "Ver perfil" }).click();
   await page.getByRole("button", { name: "Descargar", exact: true }).click();
 
-  await expect(page.getByText("No pudimos abrir este archivo.")).toBeVisible();
+  await expect(page.getByText("No pudimos abrir este certificado.")).toBeVisible();
+});
+
+test("cada certificación descarga su propio PDF y los viejos se muestran sin asociar", async ({
+  page,
+}) => {
+  const api = await setup(page, {
+    profile: candidateProfile({
+      certifications: [
+        { name: "Scrum Master", document_id: 56 },
+        { name: "AWS Cloud Practitioner", document_id: 57 },
+        { name: "ITIL", document_id: null },
+      ],
+      files: [{ id: 12, title: "certificado-viejo.pdf" }],
+    }),
+  });
+
+  await page.goto(CANDIDATES_PATH);
+  await page.getByRole("button", { name: "Ver perfil" }).click();
+
+  const profile = page.getByRole("dialog");
+  const aws = profile.getByRole("listitem").filter({ hasText: "AWS Cloud Practitioner" });
+  const itil = profile.getByRole("listitem").filter({ hasText: "ITIL" });
+
+  await expect(itil.getByText("Sin PDF")).toBeVisible();
+  await expect(itil.getByRole("button", { name: "Descargar" })).toHaveCount(0);
+  await expect(profile.getByText("Certificado sin asociar")).toBeVisible();
+  await expect(profile.getByText("certificado-viejo.pdf")).toBeVisible();
+
+  const popup = page.waitForEvent("popup").catch(() => null);
+  await aws.getByRole("button", { name: "Descargar", exact: true }).click();
+  await popup;
+
+  expect(api.downloadUrls()).toEqual([
+    expect.stringContaining("/employees/30/files/57/download-url"),
+  ]);
 });
 
 test("un perfil no autorizado no afirma si el empleado existe", async ({

@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { KeyboardEvent, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -19,17 +19,27 @@ import { roleOptions, yearsOfExperienceOptions } from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import { AutocompleteInput } from "@/components/ui/autocomplete-input";
+import { Label } from "@/components/ui/label";
+import { useEmployeeFileDownload } from "@/features/employees/hooks/use-employee-file-download";
+import { UnassignedCertificate } from "@/features/employees/models/Employee";
 import { experienceSchema, ExperienceFormValues } from "../schema";
 import { StepFormProps } from "./types";
 
+type ExperienceFormProps = StepFormProps<ExperienceFormValues> & {
+  // Ausente hasta que el paso base se crea: sin empleado no hay PDF cargado que descargar.
+  employeeId?: number;
+  unassignedCertificates: UnassignedCertificate[];
+};
+
 export const ExperienceForm = ({
+  employeeId,
+  unassignedCertificates,
   defaultValues,
   isLoading,
   isFirstStep,
   onPrevious,
   onSubmit,
-}: StepFormProps<ExperienceFormValues>) => {
+}: ExperienceFormProps) => {
   const formDefaultValues = useMemo<ExperienceFormValues>(
     () => ({
       position: "",
@@ -49,9 +59,41 @@ export const ExperienceForm = ({
     values: formDefaultValues,
   });
 
-  const { control, formState, watch } = form;
+  const { control, formState, watch, setValue } = form;
+  const certificationFields = useFieldArray({ control, name: "certifications" });
+  const certifications = watch("certifications") ?? [];
+  const downloads = useEmployeeFileDownload();
 
-  const certifications = watch("certifications");
+  const [newCertification, setNewCertification] = useState("");
+  const [newCertificationError, setNewCertificationError] = useState<
+    string | null
+  >(null);
+
+  const addCertification = () => {
+    const name = newCertification.trim();
+    if (!name) return;
+
+    const exists = certifications.some(
+      (certification) =>
+        certification.name.trim().toLowerCase() === name.toLowerCase(),
+    );
+    if (exists) {
+      setNewCertificationError("La certificación ya fue agregada");
+      return;
+    }
+
+    certificationFields.append({ name, documentId: null });
+    setNewCertification("");
+    setNewCertificationError(null);
+  };
+
+  const onNewCertificationKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      addCertification();
+    }
+  };
 
   return (
     <Form {...form}>
@@ -160,67 +202,207 @@ export const ExperienceForm = ({
         />
       </div>
       <Separator orientation="horizontal" />
-      <FormField
-        control={control}
-        name="certifications"
-        render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormControl>
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <FormLabel>
-                    Certificaciones profesionales{" "}
-                    <span className="text-sm text-muted-foreground font-normal">
-                      (Opcional)
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <Label htmlFor="new-certification">
+            Certificaciones profesionales{" "}
+            <span className="text-sm text-muted-foreground font-normal">
+              (Opcional)
+            </span>
+          </Label>
+          <p className="text-[0.8rem] text-muted-foreground">
+            Agregue las certificaciones profesionales que posee y, si quiere, el PDF
+            de cada una
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Input
+            id="new-certification"
+            value={newCertification}
+            onChange={(event) => {
+              setNewCertification(event.target.value);
+              setNewCertificationError(null);
+            }}
+            onKeyDown={onNewCertificationKeyDown}
+            placeholder="Escriba el título de la certificación"
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            onClick={addCertification}
+            disabled={!newCertification.trim()}
+            size="sm"
+          >
+            <Plus className="h-3 w-3" />
+            Agregar
+          </Button>
+        </div>
+        {newCertificationError ? (
+          <p className="text-sm font-medium text-destructive">
+            {newCertificationError}
+          </p>
+        ) : null}
+        {certificationFields.fields.length > 0 ? (
+          <ul className="space-y-3">
+            {certificationFields.fields.map((field, index) => {
+              const certification = certifications[index];
+              const documentId = certification?.documentId ?? null;
+              const hasNewDocument = certification?.document instanceof File;
+              // El PDF ya cargado solo se ofrece mientras no se lo reemplace ni se lo quite.
+              const target =
+                employeeId && documentId !== null && !hasNewDocument
+                  ? ({
+                      kind: "certificate",
+                      employeeId,
+                      fileId: documentId,
+                    } as const)
+                  : null;
+
+              return (
+                <li
+                  key={field.id}
+                  className="space-y-2 rounded-md border p-3"
+                  data-testid="certification-item"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium">
+                      {certification?.name ?? field.name}
                     </span>
-                  </FormLabel>
-                  <FormDescription>
-                    Agregue las certificaciones profesionales que posee
-                  </FormDescription>
-                </div>
-                <AutocompleteInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Escriba el título de la certificación"
-                  addButtonLabel="Agregar"
-                />
-              </div>
-            </FormControl>
-          </FormItem>
-        )}
-      />
-      {certifications && certifications.length > 0 ? (
-        <FormField
-          control={control}
-          name="certificationFile"
-          render={({ field: { onChange, value, ...fieldProps } }) => (
-            <FormItem>
-              <FormControl>
-                <div className="space-y-2 mb-4">
-                  <FormDescription>
-                    Suba los documentos de las certificaciones
-                  </FormDescription>
-                  <Input
-                    {...fieldProps}
-                    type="file"
-                    accept=".pdf,application/pdf"
-                    onChange={(event) =>
-                      onChange(event.target.files?.[0])
-                    }
-                    placeholder="Suba el documento de la certificación"
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => certificationFields.remove(index)}
+                    >
+                      <X className="h-3 w-3" />
+                      Quitar
+                    </Button>
+                  </div>
+                  <FormField
+                    control={control}
+                    name={`certifications.${index}.name`}
+                    render={() => <FormMessage />}
                   />
-                  {value ? (
-                    <p className="text-sm text-muted-foreground">
-                      Archivo seleccionado: {value.name}
-                    </p>
+                  {target ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        PDF cargado
+                      </span>
+                      {/* Botón y nunca `<a href>`: la URL prefirmada no se deja en el DOM. */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={downloads.isDownloading(target)}
+                        onClick={() => void downloads.download(target)}
+                      >
+                        {downloads.isDownloading(target)
+                          ? "Abriendo…"
+                          : "Descargar"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setValue(`certifications.${index}.documentId`, null)
+                        }
+                      >
+                        Quitar PDF
+                      </Button>
+                      {downloads.hasFailed(target) ? (
+                        <p className="w-full text-sm text-destructive">
+                          No pudimos abrir este certificado.
+                        </p>
+                      ) : null}
+                    </div>
                   ) : null}
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      ) : null}
+                  <FormField
+                    control={control}
+                    name={`certifications.${index}.document`}
+                    render={({ field: { onChange, value, ...fieldProps } }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="space-y-2">
+                            {/* Se remonta al descartar para que el input nativo también
+                                olvide el archivo elegido. */}
+                            <Input
+                              {...fieldProps}
+                              key={value ? "selected" : "empty"}
+                              value={undefined}
+                              type="file"
+                              accept=".pdf,application/pdf"
+                              aria-label={`PDF de ${certification?.name ?? field.name}`}
+                              onChange={(event) =>
+                                onChange(event.target.files?.[0])
+                              }
+                            />
+                            {value ? (
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="text-sm text-muted-foreground">
+                                  Archivo seleccionado: {value.name}
+                                </p>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => onChange(undefined)}
+                                >
+                                  Descartar
+                                </Button>
+                              </div>
+                            ) : null}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+        {unassignedCertificates.length > 0 && employeeId ? (
+          <ul className="space-y-2">
+            {unassignedCertificates.map((file) => {
+              const target = {
+                kind: "certificate",
+                employeeId,
+                fileId: file.id,
+              } as const;
+
+              return (
+                <li
+                  key={file.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-dashed p-3"
+                >
+                  <div className="space-y-1">
+                    <span className="text-sm font-medium">
+                      Certificado sin asociar
+                    </span>
+                    <p className="text-sm text-muted-foreground">{file.title}</p>
+                    {downloads.hasFailed(target) ? (
+                      <p className="text-sm text-destructive">
+                        No pudimos abrir este archivo.
+                      </p>
+                    ) : null}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={downloads.isDownloading(target)}
+                    onClick={() => void downloads.download(target)}
+                  >
+                    {downloads.isDownloading(target) ? "Abriendo…" : "Descargar"}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </div>
       <Separator orientation="horizontal" />
       <FormField
         control={control}
