@@ -4,6 +4,8 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Container } from "@/components/ui/container/container";
 import { PATHS } from "@/router/paths";
 
+import { TopBar } from "./top-bar";
+
 export function MainLayout({ children }: { children: React.ReactNode }) {
   // La lista de puestos muestra las cards en dos columnas y necesita más ancho que el
   // resto de las pantallas, que son formularios de una columna.
@@ -14,6 +16,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       <SidebarProvider>
         <div className="flex-1 items-center justify-center">
           {/* <SidebarTrigger /> */}
+          <TopBar />
           <Container
             maxWidth={isEmployerJobsList ? "5xl" : "2xl"}
             className="h-full p-4"
