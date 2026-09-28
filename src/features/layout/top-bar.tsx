@@ -16,7 +16,7 @@ export const TopBar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <header className="flex h-14 items-center border-b bg-background px-4">
+    <header className="flex h-14 items-center justify-end border-b bg-background px-4">
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label="Abrir menú de cuenta"
@@ -24,7 +24,7 @@ export const TopBar = () => {
         >
           <UserIcon size={18} />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-48">
+        <DropdownMenuContent align="end" className="min-w-48">
           {user?.email && (
             <>
               <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
