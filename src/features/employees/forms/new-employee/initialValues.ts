@@ -22,8 +22,10 @@ export const experienceDefaultValues = (employee?: Employee) => {
     )
       ? (employee.yearsOfExperience as ExperienceFormValues["yearsOfExperience"])
       : yearsOfExperienceOptions[0],
-    certifications: employee.certifications ?? [],
-    certificationFile: undefined,
+    certifications: (employee.certifications ?? []).map((certification) => ({
+      name: certification.name,
+      documentId: certification.documentId,
+    })),
     portfolioUrl: employee.portfolioUrl ?? "",
   };
 };

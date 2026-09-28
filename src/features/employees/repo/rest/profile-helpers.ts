@@ -17,7 +17,10 @@ export const mapEmployeeProfileResponse = (
   position: profile.position,
   role: profile.role,
   yearsOfExperience: profile.years_of_experience,
-  certifications: profile.certifications ?? [],
+  certifications: (profile.certifications ?? []).map((certification) => ({
+    name: certification.name,
+    documentId: certification.document_id,
+  })),
   portfolioUrl: profile.portfolio_url ?? null,
   timezone: profile.timezone,
   os: profile.os,

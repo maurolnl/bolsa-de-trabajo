@@ -55,7 +55,6 @@ export const NewEmployeeWizard = () => {
       role: data.role,
       yearsOfExperience: data.yearsOfExperience,
       certifications: data.certifications ?? [],
-      certificationFile: data.certificationFile ?? null,
       portfolioUrl: data.portfolioUrl || null,
     };
 
@@ -150,6 +149,8 @@ export const NewEmployeeWizard = () => {
       case 1:
         return (
           <ExperienceForm
+            employeeId={employeeID}
+            unassignedCertificates={employee?.unassignedCertificates ?? []}
             defaultValues={experienceDefaultValues(employee)}
             isLoading={isLoading}
             isFirstStep={isFirstStep}

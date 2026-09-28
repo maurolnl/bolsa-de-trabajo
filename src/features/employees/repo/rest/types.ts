@@ -1,13 +1,27 @@
+// Cada ítem viaja serializado dentro del campo multipart `certifications`. `document` es la
+// clave del archivo nuevo en el mismo multipart y `document_id` el PDF ya cargado que se
+// conserva; son excluyentes, y sin ninguno la certificación queda sin PDF.
+export type CertificationRequest = {
+  name: string;
+  document?: string;
+  document_id?: number;
+};
+
 export type CreateEmployeeRequest = {
   position: string;
   role: string;
   years_of_experience: "less_1y" | "1y" | "2_to_5y" | "5_to_10y" | "more_10y";
-  certifications: string[];
-  certification_file: File | null;
+  certifications: CertificationRequest[];
   portfolio_url: string | null;
 };
 
-export type EmployeeResponse = Omit<CreateEmployeeRequest, "certification_file"> &
+// `document_id` nulo significa que la certificación no tiene PDF.
+export type CertificationResponse = {
+  name: string;
+  document_id: number | null;
+};
+
+export type EmployeeResponse = Omit<CreateEmployeeRequest, "certifications"> &
   CreateLocationRequest &
   GetEducationResponse & {
     id: number;
@@ -18,7 +32,9 @@ export type EmployeeResponse = Omit<CreateEmployeeRequest, "certification_file">
     available_hours_per_day: number;
     compatible_projects: number | null;
     incompatible_projects: number | null;
-    files: { title: string }[];
+    certifications: CertificationResponse[] | null;
+    // Solo certificados sin certificación asociada, cargados antes de LAB-40.
+    files: ProfileFileResponse[] | null;
   };
 
 export type InternetConnectionTypeRequest =
@@ -91,6 +107,7 @@ export type GetEducationResponse = {
 // `email` es opcional porque el backend lo omite cuando quien lee no es el propio empleado:
 // una recomendación habilita a evaluar a un candidato dentro de la plataforma, no a
 // contactarlo por fuera de ella.
+// `files` contiene solo certificados sin certificación asociada, cargados antes de LAB-40.
 export type ProfileFileResponse = {
   id: number;
   title: string;
@@ -112,7 +129,7 @@ export type EmployeeProfileResponse = {
   position: string;
   role: string;
   years_of_experience: string;
-  certifications: string[] | null;
+  certifications: CertificationResponse[] | null;
   portfolio_url?: string;
   timezone: string;
   os: string;

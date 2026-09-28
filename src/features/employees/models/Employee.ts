@@ -1,9 +1,24 @@
+// Cada certificación lleva, a lo sumo, un PDF propio. `documentId` identifica el PDF ya
+// cargado que se conserva; `document` es un PDF nuevo que lo reemplaza. Sin ninguno de los
+// dos, la certificación queda sin PDF.
+export type Certification = {
+  name: string;
+  documentId: number | null;
+  document?: File;
+};
+
+// Certificado cargado antes de que cada PDF quedara asociado a su certificación. Se muestra
+// y se descarga, pero no se atribuye a ninguna.
+export type UnassignedCertificate = {
+  id: number;
+  title: string;
+};
+
 export type BaseEmployee = {
   position: string;
   role: string;
   yearsOfExperience: string;
-  certifications: string[];
-  certificationFile: File | null;
+  certifications: Certification[];
   portfolioUrl: string | null;
 };
 
@@ -62,4 +77,5 @@ export type Employee = BaseEmployee &
   Availability &
   EducationTitles & {
     id: number;
+    unassignedCertificates: UnassignedCertificate[];
   };

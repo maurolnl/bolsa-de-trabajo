@@ -2,8 +2,9 @@ import { useState } from "react";
 
 import { employeeRepository } from "@/api";
 
-// La descarga de un archivo del candidato es una acción, no un dato: se pide la URL
-// prefirmada en el clic y se consume en el acto.
+// La descarga de un archivo del empleado es una acción, no un dato: se pide la URL
+// prefirmada en el clic y se consume en el acto. La usan el perfil del candidato que ve el
+// empleador y el paso de experiencia del propio empleado.
 //
 // No es un `useQuery` ni pasa por `queryClient.fetchQuery` a propósito. Cualquiera de los dos
 // dejaría la URL en la caché de React Query, sobreviviendo al clic que la justificó, y el
@@ -12,7 +13,7 @@ import { employeeRepository } from "@/api";
 // DOM —por eso la interfaz expone un botón y nunca un `<a href>`—.
 //
 // `expiresAt` no se usa para programar nada: la URL se usa una vez, inmediatamente.
-type DownloadTarget =
+export type DownloadTarget =
   | { kind: "certificate"; employeeId: number; fileId: number }
   | { kind: "education-document"; employeeId: number; educationId: number };
 
@@ -34,7 +35,7 @@ const targetKey = (target: DownloadTarget) =>
     ? `certificate-${target.fileId}`
     : `education-document-${target.educationId}`;
 
-export const useCandidateFileDownload = () => {
+export const useEmployeeFileDownload = () => {
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [failedKey, setFailedKey] = useState<string | null>(null);
 

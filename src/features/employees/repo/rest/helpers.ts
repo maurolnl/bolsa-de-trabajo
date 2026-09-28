@@ -11,6 +11,7 @@ import {
   CreateTech,
 } from "../employee-repository";
 import {
+  CertificationRequest,
   CreateAvailabilityRequest,
   CreateEducationRequest,
   CreateEmployeeRequest,
@@ -87,8 +88,14 @@ export const getEmployeeMapper = (x: EmployeeResponse): Employee => ({
   position: x.position,
   role: x.role,
   yearsOfExperience: mapYearsOfExperience(x.years_of_experience),
-  certifications: x.certifications ?? [],
-  certificationFile: null,
+  certifications: (x.certifications ?? []).map((certification) => ({
+    name: certification.name,
+    documentId: certification.document_id,
+  })),
+  unassignedCertificates: (x.files ?? []).map((file) => ({
+    id: file.id,
+    title: file.title,
+  })),
   portfolioUrl: x.portfolio_url,
   internetConnections: (x.internet_connections ?? []).map((conn) => ({
     type: mapInternetTypeResponse(conn.type),
@@ -107,46 +114,60 @@ export const getEmployeeMapper = (x: EmployeeResponse): Employee => ({
   })),
 });
 
-export const mapEmployee = (e: CreateEmployee): CreateEmployeeRequest => {
-  const yoe: Record<
-    (typeof yearsOfExperienceOptions)[number],
-    CreateEmployeeRequest["years_of_experience"]
-  > = {
-    "Menos de 1 año": "less_1y",
-    "1 año": "1y",
-    "2 a 5 años": "2_to_5y",
-    "5 a 10 años": "5_to_10y",
-    "Mas de 10 años": "more_10y",
-  };
-  return {
-    position: e.position,
-    role: e.role,
-    years_of_experience: yoe[e.yearsOfExperience],
-    certifications: e.certifications,
-    certification_file: e.certificationFile,
-    portfolio_url: e.portfolioUrl,
-  };
+const yearsOfExperienceRequest: Record<
+  (typeof yearsOfExperienceOptions)[number],
+  CreateEmployeeRequest["years_of_experience"]
+> = {
+  "Menos de 1 año": "less_1y",
+  "1 año": "1y",
+  "2 a 5 años": "2_to_5y",
+  "5 a 10 años": "5_to_10y",
+  "Mas de 10 años": "more_10y",
 };
 
+const certificationDocumentFieldName = (index: number) =>
+  `certification_document_${index}`;
+
+// Arma el multipart del paso base. Cada certificación viaja dentro del JSON de
+// `certifications`: con un PDF nuevo referencia la clave del archivo adjunto, con el PDF ya
+// cargado referencia su `document_id`, y sin PDF solo lleva el nombre. Ningún archivo se
+// adjunta sin una certificación que lo referencie: el backend lo rechaza.
 export const mapEmployeeFormData = (e: CreateEmployee): FormData => {
-  const payload = mapEmployee(e);
   const formData = new FormData();
 
-  formData.append("position", payload.position);
-  formData.append("role", payload.role);
-  formData.append("years_of_experience", payload.years_of_experience);
+  formData.append("position", e.position);
+  formData.append("role", e.role);
+  formData.append(
+    "years_of_experience",
+    yearsOfExperienceRequest[
+      e.yearsOfExperience as (typeof yearsOfExperienceOptions)[number]
+    ],
+  );
 
-  if (payload.portfolio_url) {
-    formData.append("portfolio_url", payload.portfolio_url);
+  if (e.portfolioUrl) {
+    formData.append("portfolio_url", e.portfolioUrl);
   }
 
-  payload.certifications.forEach((certification) => {
-    formData.append("certifications[]", certification);
-  });
+  const certifications: CertificationRequest[] = e.certifications.map(
+    (certification, index) => {
+      if (certification.document instanceof File) {
+        const fieldName = certificationDocumentFieldName(index);
+        formData.append(fieldName, certification.document);
+        return { name: certification.name, document: fieldName };
+      }
 
-  if (payload.certification_file) {
-    formData.append("certifications_file", payload.certification_file);
-  }
+      if (certification.documentId !== null) {
+        return {
+          name: certification.name,
+          document_id: certification.documentId,
+        };
+      }
+
+      return { name: certification.name };
+    },
+  );
+
+  formData.append("certifications", JSON.stringify(certifications));
 
   return formData;
 };
