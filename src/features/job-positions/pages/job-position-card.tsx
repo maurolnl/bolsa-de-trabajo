@@ -22,10 +22,25 @@ type JobPositionCardProps = {
   isDeleting: boolean;
 };
 
-const Field = ({ label, value }: { label: string; value: string }) => (
-  <div>
+const Field = ({
+  label,
+  value,
+  truncate = false,
+}: {
+  label: string;
+  value: string;
+  truncate?: boolean;
+}) => (
+  // `min-w-0` deja que la celda del grid se achique por debajo del ancho del texto; sin
+  // eso `truncate` no tiene efecto. El `title` conserva el valor completo al pasar el mouse.
+  <div className="min-w-0">
     <dt className="text-sm text-muted-foreground">{label}</dt>
-    <dd className="text-sm">{value}</dd>
+    <dd
+      className={truncate ? "truncate text-sm" : "text-sm"}
+      title={truncate ? value : undefined}
+    >
+      {value}
+    </dd>
   </div>
 );
 
@@ -68,7 +83,7 @@ export const JobPositionCard = ({
           label="Horas disponibles por día"
           value={String(jobPosition.availableHoursPerDay)}
         />
-        <Field label="Zona horaria" value={jobPosition.timezone} />
+        <Field label="Zona horaria" value={jobPosition.timezone} truncate />
         <div className="sm:col-span-2">
           <Field
             label="Recursos técnicos"
