@@ -77,3 +77,63 @@ export type GetEducationResponse = {
     certification?: string;
   }[];
 };
+
+// ============================== Perfil por identificador de empleado ==============================
+
+// Réplica literal de `EmployeeProfileResponse` y `DownloadURLResponse` en
+// `internal/employee/models.go` del backend.
+//
+// Es un tipo aparte de `EmployeeResponse` a propósito: el perfil direccionado por usuario
+// sigue devolviendo el `object_key` del documento de educación, y unificarlos rompería ese
+// contrato. Acá ningún archivo viaja con su ubicación, solo el identificador con el que se
+// pide su entrega.
+//
+// `email` es opcional porque el backend lo omite cuando quien lee no es el propio empleado:
+// una recomendación habilita a evaluar a un candidato dentro de la plataforma, no a
+// contactarlo por fuera de ella.
+export type ProfileFileResponse = {
+  id: number;
+  title: string;
+};
+
+// `certification_document_id` nulo significa que el título no tiene documento asociado. La
+// ausencia de documento y un documento con identificador cero son cosas distintas.
+export type ProfileEducationResponse = {
+  education_type: string;
+  title: string;
+  status: string;
+  certification_document_id: number | null;
+};
+
+export type EmployeeProfileResponse = {
+  id: number;
+  user_id: number;
+  email?: string;
+  position: string;
+  role: string;
+  years_of_experience: string;
+  certifications: string[] | null;
+  portfolio_url?: string;
+  timezone: string;
+  os: string;
+  paid_software: string[] | null;
+  available_hours_per_day: number;
+  compatible_projects: number | null;
+  incompatible_projects: number | null;
+  internet_connections:
+    | {
+        type: string;
+        speed: string;
+      }[]
+    | null;
+  education: ProfileEducationResponse[] | null;
+  files: ProfileFileResponse[] | null;
+  created_at: string;
+  updated_at: string;
+};
+
+// Sin bucket ni clave de objeto: la URL ya es el único acceso.
+export type DownloadUrlResponse = {
+  url: string;
+  expires_at: string;
+};

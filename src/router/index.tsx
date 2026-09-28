@@ -1,6 +1,5 @@
-import { createBrowserRouter, Link, Navigate, Outlet } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
 
 import { PATHS } from "./paths";
 import { MainLayout } from "@/features/layout/main-layout";
@@ -16,12 +15,12 @@ import {
 import { LoginPage } from "@/features/auth/pages/login-page";
 import { RegisterPage } from "@/features/auth/pages/register-page";
 import { MainResolverPage } from "@/features/app/pages/main-resolver-page";
-import { ContinuityPage } from "@/features/app/pages/continuity-page";
 import { EmployerProfilePage } from "@/features/employers/pages/employer-profile-page";
 import { JobPositionCreatePage } from "@/features/job-positions/pages/job-position-create-page";
 import { JobPositionEditPage } from "@/features/job-positions/pages/job-position-edit-page";
 import { JobPositionsListPage } from "@/features/job-positions/pages/job-positions-list-page";
 import { JobRecommendationsPage } from "@/features/job-recommendations/pages/job-recommendations-page";
+import { EmployeeRecommendationsPage } from "@/features/employee-recommendations/pages/employee-recommendations-page";
 
 export const router = createBrowserRouter([
   {
@@ -119,15 +118,7 @@ export const router = createBrowserRouter([
         path: "employer/jobs/:jobPositionId/candidates",
         element: (
           <RequireRole allowedRoles={["employer"]}>
-            <ContinuityPage
-              title="Candidatos recomendados"
-              description="Las recomendaciones se calculan de forma diferida y todavía no están disponibles para este puesto."
-              action={
-                <Button asChild variant="outline">
-                  <Link to={PATHS.main.employer.jobs}>Volver a mis puestos</Link>
-                </Button>
-              }
-            />
+            <EmployeeRecommendationsPage />
           </RequireRole>
         ),
         errorElement: <MainErrorPage />,

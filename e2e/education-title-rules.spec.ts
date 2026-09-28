@@ -315,5 +315,10 @@ test("conserva el contrato multipart al guardar", async ({ page }) => {
       ],
     }),
   );
-  await expect(page.getByText("Perfil guardado")).toBeVisible();
+  // Exacto porque el toast convive con el anuncio `aria-live` de Radix —«Notification Perfil
+  // guardado»— y sin acotarlo el locator resuelve a dos elementos según el momento en que se
+  // evalúe. Es una carrera preexistente, reproducible en `master` bajo carga.
+  await expect(
+    page.getByText("Perfil guardado", { exact: true }),
+  ).toBeVisible();
 });

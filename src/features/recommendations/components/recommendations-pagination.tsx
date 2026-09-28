@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-import { RecommendationPageInfo } from "../models/job-recommendation";
+import { RecommendationPageInfo } from "../models/recommendation-status";
 
 type RecommendationsPaginationProps = {
   page: RecommendationPageInfo;

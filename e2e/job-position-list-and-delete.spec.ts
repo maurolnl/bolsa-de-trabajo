@@ -123,6 +123,21 @@ const setupJobPositions = async (
         return;
       }
 
+      // El destino de candidatos dejó de ser una pantalla de continuidad y ahora consulta la
+      // API. Acá solo interesa que el listado lleve hasta él; los desenlaces de esa consulta
+      // los cubre `employer-candidate-recommendations.spec.ts`.
+      if (pathname.endsWith("/jobs/50/employee-recommendations")) {
+        await route.fulfill({
+          status: 200,
+          json: {
+            status: "none",
+            items: [],
+            page: { limit: 20, offset: 0, total: 0 },
+          },
+        });
+        return;
+      }
+
       if (pathname.endsWith("/jobs/50") && request.method() === "DELETE") {
         deleteAttempts += 1;
         onDelete?.(request);
@@ -288,12 +303,10 @@ test("abre los candidatos recomendados del puesto", async ({ page }) => {
     .click();
 
   await expect(page).toHaveURL(/\/main\/employer\/jobs\/50\/candidates$/);
-  await expect(page.getByText("Candidatos recomendados")).toBeVisible();
   await expect(
-    page.getByText(/las recomendaciones se calculan de forma diferida/i),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Volver a mis puestos" }),
+    page.getByRole("heading", {
+      name: "Todavía no generamos candidatos para este puesto",
+    }),
   ).toBeVisible();
 });
 

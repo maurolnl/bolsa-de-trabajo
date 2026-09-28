@@ -8,16 +8,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  requiredEducationLevelLabels,
-  requiredExperienceLabels,
-} from "@/features/job-positions/forms/job-position/options";
-
-import { JobRecommendation } from "../models/job-recommendation";
+  labelFor,
+  yearsOfExperienceLabels,
+} from "@/features/employees/utils/profile-labels";
 import { RecommendationScore } from "@/features/recommendations/components/recommendation-score";
 
-type JobRecommendationCardProps = {
-  recommendation: JobRecommendation;
-  onViewDetail: () => void;
+import { EmployeeRecommendation } from "../models/employee-recommendation";
+
+type EmployeeRecommendationCardProps = {
+  recommendation: EmployeeRecommendation;
+  onViewProfile: () => void;
 };
 
 const Field = ({ label, value }: { label: string; value: string }) => (
@@ -27,17 +27,17 @@ const Field = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-// Todos los datos del puesto vienen embebidos en la recomendación, así que la tarjeta no
-// dispara ninguna consulta propia. El detalle tampoco: la lectura de un puesto individual
-// está reservada a su empleador y una sesión `employee` recibiría 403.
+// El resumen del candidato viene embebido en la recomendación, así que la tarjeta no dispara
+// ninguna consulta propia: el listado es útil aunque el empleador no abra ningún perfil. La
+// consulta del perfil completo ocurre recién al abrir el panel.
 //
 // `CardTitle` renderiza un `div`: sin el rol explícito la tarjeta no tendría encabezado ni
 // nombre accesible, igual que en el listado de puestos del empleador.
-export const JobRecommendationCard = ({
+export const EmployeeRecommendationCard = ({
   recommendation,
-  onViewDetail,
-}: JobRecommendationCardProps) => {
-  const titleId = `job-recommendation-${recommendation.recommendationId}-title`;
+  onViewProfile,
+}: EmployeeRecommendationCardProps) => {
+  const titleId = `employee-recommendation-${recommendation.recommendationId}-title`;
 
   return (
     <Card
@@ -64,22 +64,27 @@ export const JobRecommendationCard = ({
       <CardContent className="flex-1">
         <dl className="grid gap-3 sm:grid-cols-2">
           <Field
-            label="Experiencia requerida"
-            value={requiredExperienceLabels[recommendation.requiredExperience]}
+            label="Años de experiencia"
+            value={labelFor(
+              yearsOfExperienceLabels,
+              recommendation.yearsOfExperience,
+            )}
           />
-          <Field
-            label="Nivel educativo pretendido"
-            value={
-              requiredEducationLevelLabels[
-                recommendation.requiredEducationLevel
-              ]
-            }
-          />
+          <div className="sm:col-span-2">
+            <Field
+              label="Certificaciones"
+              value={
+                recommendation.certifications.length > 0
+                  ? recommendation.certifications.join(", ")
+                  : "Sin certificaciones"
+              }
+            />
+          </div>
         </dl>
       </CardContent>
       <CardFooter className="justify-end">
-        <Button variant="outline" onClick={onViewDetail}>
-          Ver detalle
+        <Button variant="outline" onClick={onViewProfile}>
+          Ver perfil
         </Button>
       </CardFooter>
     </Card>

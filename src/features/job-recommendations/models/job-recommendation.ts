@@ -2,23 +2,10 @@ import {
   RequiredEducationLevel,
   RequiredExperience,
 } from "@/features/job-positions/models/job-position";
-
-// Los cinco estados que la API informa. `none` no es un estado de batch: significa que el
-// empleado nunca tuvo una generación solicitada, y por eso el backend lo expone acá pero no
-// en el tipo que replica el esquema de la base.
-export const RECOMMENDATION_STATUSES = [
-  "none",
-  "pending",
-  "processing",
-  "completed",
-  "failed",
-] as const;
-
-export type RecommendationStatus = (typeof RECOMMENDATION_STATUSES)[number];
-
-// Estados que todavía esperan un desenlace. Son los únicos que justifican volver a consultar.
-export const isGenerationInProgress = (status: RecommendationStatus) =>
-  status === "pending" || status === "processing";
+import {
+  RecommendationPageInfo,
+  RecommendationStatus,
+} from "@/features/recommendations/models/recommendation-status";
 
 // El puesto recomendado llega embebido en la respuesta, así que la tarjeta se arma sin una
 // consulta por puesto. `score` es `number | null` y no `number | undefined`: la API lo manda
@@ -38,12 +25,6 @@ export type JobRecommendation = {
   score: number | null;
   publishedAt: string;
   updatedAt: string;
-};
-
-export type RecommendationPageInfo = {
-  limit: number;
-  offset: number;
-  total: number;
 };
 
 // `status` e `items` son dos datos independientes y no se derivan uno del otro: la API toma

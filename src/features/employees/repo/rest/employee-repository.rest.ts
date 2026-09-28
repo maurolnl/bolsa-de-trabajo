@@ -8,6 +8,10 @@ import {
   mapEmployeeTech,
 } from "./helpers";
 import {
+  mapDownloadUrlResponse,
+  mapEmployeeProfileResponse,
+} from "./profile-helpers";
+import {
   CreateEmployee,
   CreateLocation,
   CreateTech,
@@ -21,6 +25,7 @@ import {
   UpdateTech,
 } from "../employee-repository";
 import { Timezone } from "../types";
+import { DownloadUrlResponse, EmployeeProfileResponse } from "./types";
 
 export const employeeRepositoryRest: EmployeeRepository = {
   getAll: async () => {
@@ -72,5 +77,26 @@ export const employeeRepositoryRest: EmployeeRepository = {
   timezones: async () => {
     const { data } = await httpClient.get("timezones");
     return data as Timezone[];
+  },
+  getEmployeeProfileById: async (employeeId) => {
+    const { data } = await httpClient.get<EmployeeProfileResponse>(
+      `employees/${employeeId}`,
+    );
+    return mapEmployeeProfileResponse(data);
+  },
+  // Las dos entregas devuelven la URL sin almacenarla en ningún lado. Quien las llama la
+  // consume dentro del mismo handler: son funciones, no consultas montadas, justamente para
+  // que no exista una caché donde la URL pueda sobrevivir al clic.
+  getCertificateDownloadUrl: async (employeeId, fileId) => {
+    const { data } = await httpClient.get<DownloadUrlResponse>(
+      `employees/${employeeId}/files/${fileId}/download-url`,
+    );
+    return mapDownloadUrlResponse(data);
+  },
+  getEducationDocumentDownloadUrl: async (employeeId, educationId) => {
+    const { data } = await httpClient.get<DownloadUrlResponse>(
+      `employees/${employeeId}/education-documents/${educationId}/download-url`,
+    );
+    return mapDownloadUrlResponse(data);
   },
 };

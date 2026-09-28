@@ -1,11 +1,10 @@
-import { jobRecommendationRepository } from "@/api";
+import { recommendationRepository } from "@/api";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-import {
-  JobRecommendationsPage,
-  isGenerationInProgress,
-} from "../models/job-recommendation";
+import { isGenerationInProgress } from "@/features/recommendations/models/recommendation-status";
+
+import { JobRecommendationsPage } from "../models/job-recommendation";
 
 // El backend acepta `limit` en [1, 100] y responde 400 fuera de ese rango en vez de
 // recortar. 20 es su valor por defecto y no hay requisito de que el empleado elija el
@@ -39,7 +38,7 @@ export const useJobRecommendations = (
   return useQuery({
     queryKey: jobRecommendationKeys.byEmployee(numericEmployeeId, offset),
     queryFn: () =>
-      jobRecommendationRepository.listJobRecommendations(numericEmployeeId, {
+      recommendationRepository.listJobRecommendations(numericEmployeeId, {
         limit: RECOMMENDATIONS_PAGE_SIZE,
         offset,
       }),
