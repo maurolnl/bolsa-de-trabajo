@@ -19,7 +19,7 @@
 
 - [x] 4.1 Actualizar fixtures de `e2e/*.spec.ts` al nuevo contrato y agregar escenarios: dos certificaciones con PDF, certificación sin PDF, conservar PDF en edición, perfil viejo sin asociar; verificar con `yarn test:e2e`
 - [x] 4.2 Ejecutar `yarn lint`, `yarn tsc --noEmit` y `yarn build` en verde
-- [ ] 4.3 Comprobar explícitamente los criterios de aceptación 1, 2, 4 y 6 de LAB-40 contra el backend local
+- [x] 4.3 Comprobar explícitamente los criterios de aceptación 1, 2, 4 y 6 de LAB-40 contra el backend local
 
 ## 5. Docs (carpeta suelta `laburi.to/docs/`)
 
