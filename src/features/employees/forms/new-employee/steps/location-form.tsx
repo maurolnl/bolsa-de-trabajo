@@ -21,6 +21,7 @@ import {
   Form,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-screen";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   internetConnectionOptions,
   internetConnectionTypeOptions,
@@ -182,18 +183,16 @@ export const LocationForm = ({
               <FormItem>
                 <FormLabel>Zona horaria acorde</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Seleccione diferencia horaria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timezones.map((option) => (
-                        <SelectItem key={option.name} value={option.name}>
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    options={timezones.map(({ name }) => ({
+                      label: name,
+                      value: name,
+                    }))}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Seleccione diferencia horaria"
+                    searchPlaceholder="Buscar zona horaria..."
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

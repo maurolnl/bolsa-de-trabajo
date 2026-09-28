@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-screen";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Select,
   SelectContent,
@@ -219,20 +220,18 @@ export const JobPositionForm = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Zona horaria</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione una zona horaria" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {timezones.map((timezone) => (
-                          <SelectItem key={timezone.name} value={timezone.name}>
-                            {timezone.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <SearchableSelect
+                        options={timezones.map(({ name }) => ({
+                          label: name,
+                          value: name,
+                        }))}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Seleccione una zona horaria"
+                        searchPlaceholder="Buscar zona horaria..."
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

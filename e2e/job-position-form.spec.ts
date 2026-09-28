@@ -172,6 +172,24 @@ test("no envía el alta cuando faltan campos obligatorios", async ({ page }) => 
   expect(createAttempts()).toBe(0);
 });
 
+test("filtra las zonas horarias al escribir", async ({ page }) => {
+  await setupJobPositions(page);
+
+  await page.goto("/main/employer/jobs/new");
+  await page.getByRole("combobox", { name: "Zona horaria", exact: true }).click();
+  await page.getByPlaceholder("Buscar zona horaria...").fill("madrid");
+
+  await expect(page.getByRole("option", { name: "Europe/Madrid" })).toBeVisible();
+  await expect(
+    page.getByRole("option", { name: "America/Argentina/Buenos_Aires" }),
+  ).toHaveCount(0);
+
+  await page.getByPlaceholder("Buscar zona horaria...").press("Enter");
+  await expect(
+    page.getByRole("combobox", { name: "Zona horaria", exact: true }),
+  ).toHaveText("Europe/Madrid");
+});
+
 test("publica el puesto con recursos técnicos vacíos como array", async ({
   page,
 }) => {
