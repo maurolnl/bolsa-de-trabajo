@@ -17,30 +17,27 @@ export const LoginPage = () => {
   }
 
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
-          </div>
-          <LoginForm onSubmit={onSubmit} />
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link to={PATHS.auth.register} className="underline">
-              Sign up
-            </Link>
-          </div>
+    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-12">
+      <section className="w-full max-w-md rounded-xl border bg-background p-6 shadow-sm sm:p-8">
+        <div className="mb-6 space-y-2 text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Iniciá sesión</h1>
+          <p className="text-muted-foreground">
+            Ingresá con tu email y contraseña.
+          </p>
         </div>
-      </div>
-      <div className="hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
-    </div>
+
+        <LoginForm onSubmit={onSubmit} />
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          ¿No tenés una cuenta?{" "}
+          <Link
+            className="font-medium text-foreground underline"
+            to={PATHS.auth.register}
+          >
+            Registrate
+          </Link>
+        </p>
+      </section>
+    </main>
   );
 };

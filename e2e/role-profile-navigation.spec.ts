@@ -162,8 +162,8 @@ test("resuelve rol y perfil después del login aunque exista una ubicación guar
   await page.goto("/main/employee/home");
   await expect(page).toHaveURL("/auth/login");
   await page.getByLabel("Email").fill("employee@example.com");
-  await page.getByLabel("Password").fill("valid-password");
-  await page.getByRole("button", { name: "Login", exact: true }).click();
+  await page.getByLabel("Contraseña").fill("valid-password");
+  await page.getByRole("button", { name: "Ingresar", exact: true }).click();
 
   await expect(page).toHaveURL("/main/employee/profile");
   await expect
