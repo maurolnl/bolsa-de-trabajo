@@ -31,11 +31,12 @@ export const singleFileValidation = z.any().refine(
 export const urlValidation = z.string().refine(
   (val) => {
     if (!val) return true;
-    // Divide por comas y valida que cada URL sea válida
+    // Divide por comas y valida que cada URL sea válida. El esquema es obligatorio, igual
+    // que en el validador `url` del backend.
     const urls = val.split(",").map((url) => url.trim());
     const urlRegex =
-      /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+      /^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
     return urls.every((url) => !url || urlRegex.test(url));
   },
-  { message: "Por favor ingrese URLs válidas separadas por comas" },
+  { message: "Ingrese URLs válidas que empiecen con http:// o https://, separadas por comas" },
 );
