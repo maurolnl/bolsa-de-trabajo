@@ -172,6 +172,15 @@ test("no envía el alta cuando faltan campos obligatorios", async ({ page }) => 
   expect(createAttempts()).toBe(0);
 });
 
+test("vuelve a la lista de puestos desde el botón Volver", async ({ page }) => {
+  await setupJobPositions(page);
+
+  await page.goto("/main/employer/jobs/new");
+  await page.getByRole("button", { name: "Volver", exact: true }).click();
+
+  await expect(page).toHaveURL("/main/employer/jobs");
+});
+
 test("filtra las zonas horarias al escribir", async ({ page }) => {
   await setupJobPositions(page);
 

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X } from "lucide-react";
+import { ArrowLeftIcon, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { DefaultValues, useForm } from "react-hook-form";
 
@@ -96,6 +96,17 @@ export const JobPositionForm = ({
     <div className="flex min-h-[calc(100vh-2rem)] items-center justify-center py-8">
       <Card className="w-full max-w-2xl">
         <CardHeader>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="-ml-2 mb-2 w-fit"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            <ArrowLeftIcon size={16} />
+            Volver
+          </Button>
           <CardTitle className="text-2xl">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
