@@ -321,4 +321,5 @@ test("conserva el contrato multipart al guardar", async ({ page }) => {
   await expect(
     page.getByText("Perfil guardado", { exact: true }),
   ).toBeVisible();
+  await expect(page).toHaveURL("/main/employee/home");
 });

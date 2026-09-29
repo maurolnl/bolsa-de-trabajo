@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TypographyP } from "@/components/ui/typography/typography-p";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { PATHS } from "@/router/paths";
 import { toNumber } from "../../utils/utils";
 import {
   AvailabilityFormValues,
@@ -26,6 +29,7 @@ import {
 } from "./initialValues";
 
 export const NewEmployeeWizard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const userID = typeof user.id === "string" ? Number(user.id) : user.id;
   const {
@@ -109,6 +113,11 @@ export const NewEmployeeWizard = () => {
     }
   };
 
+  const finishWizard = () => {
+    toast({ title: "Perfil guardado" });
+    navigate(PATHS.main.employee.home);
+  };
+
   const onSubmitEducation = async (data: EducationFormValues) => {
     if (employeeID) {
       const currentEducation = employee?.educationTitles ?? [];
@@ -116,7 +125,7 @@ export const NewEmployeeWizard = () => {
         JSON.stringify(data.educationTitles) !== JSON.stringify(currentEducation);
 
       if (!hasChanges) {
-        toast({ title: "Perfil guardado" });
+        finishWizard();
         return;
       }
 
@@ -140,7 +149,7 @@ export const NewEmployeeWizard = () => {
       };
 
       await updateEducation(payload);
-      toast({ title: "Perfil guardado" });
+      finishWizard();
     }
   };
 
