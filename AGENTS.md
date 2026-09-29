@@ -44,7 +44,6 @@ Deuda conocida — no arreglar de oficio, pero no ampliar:
   importa nadie. Usar siempre `@/core/services/httpClient`.
 - `src/features/employees/repo/supabase/` es un adaptador legado; el activo es `rest/`.
 - `PATHS_PER_ROLE` en `src/router/paths.ts` está declarado vacío.
-- `App.tsx` crea el `QueryClient` dentro del render.
 
 ## Flujo de datos y contratos
 
