@@ -14,12 +14,12 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-row bg-accent/40 min-h-[100vh] h-full">
       <SidebarProvider>
-        <div className="flex-1 items-center justify-center">
+        <div className="flex flex-1 flex-col">
           {/* <SidebarTrigger /> */}
           <TopBar />
           <Container
             maxWidth={isEmployerJobsList ? "5xl" : "2xl"}
-            className="h-full p-4"
+            className="w-full flex-1 p-4"
           >
             {children}
           </Container>
