@@ -5,10 +5,7 @@ const fillCredentials = async (page: Page, email: string) => {
   await page.getByLabel("Contraseña").fill("valid-password");
 };
 
-for (const role of [
-  { label: "Empleado", value: "employee" },
-  { label: "Empleador", value: "employer" },
-] as const) {
+for (const role of [{ label: "Empleado", value: "employee" }] as const) {
   test(`registra una cuenta con rol ${role.value}`, async ({ page }) => {
     let requestBody: unknown;
     await page.route("**/api/auth/register", async (route) => {
@@ -29,6 +26,19 @@ for (const role of [
     });
   });
 }
+
+test("no permite registrar empleadores mientras el alta está deshabilitada", async ({
+  page,
+}) => {
+  await page.goto("/auth/register");
+
+  await expect(
+    page.getByRole("radio", { name: "Empleador", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByText("El registro de empleadores está deshabilitado temporalmente."),
+  ).toBeVisible();
+});
 
 test("exige seleccionar un rol antes de registrarse", async ({ page }) => {
   let requestCount = 0;

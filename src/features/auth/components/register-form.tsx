@@ -15,7 +15,10 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 
-import { registerFormSchema } from "./register-form-validation";
+import {
+  EMPLOYER_REGISTRATION_ENABLED,
+  registerFormSchema,
+} from "./register-form-validation";
 
 export type RegisterFormType = z.infer<typeof registerFormSchema>;
 
@@ -29,11 +32,15 @@ const roleOptions = [
     value: "employee",
     label: "Empleado",
     description: "Quiero crear mi perfil y encontrar oportunidades.",
+    disabled: false,
   },
   {
     value: "employer",
     label: "Empleador",
-    description: "Quiero representar a una empresa y publicar búsquedas.",
+    description: EMPLOYER_REGISTRATION_ENABLED
+      ? "Quiero representar a una empresa y publicar búsquedas."
+      : "El registro de empleadores está deshabilitado temporalmente.",
+    disabled: !EMPLOYER_REGISTRATION_ENABLED,
   },
 ] as const;
 
@@ -105,17 +112,23 @@ export const RegisterForm = ({ isSubmitting, onSubmit }: Props) => {
                         "flex gap-3 rounded-lg border p-4 transition-colors hover:bg-accent",
                         field.value === option.value &&
                           "border-primary bg-accent",
+                        option.disabled &&
+                          "cursor-not-allowed opacity-60 hover:bg-transparent",
                       )}
                       key={option.value}
                     >
                       <RadioGroupItem
                         aria-label={option.label}
                         className="mt-1 shrink-0"
+                        disabled={option.disabled}
                         id={`role-${option.value}`}
                         value={option.value}
                       />
                       <label
-                        className="cursor-pointer"
+                        className={cn(
+                          "cursor-pointer",
+                          option.disabled && "cursor-not-allowed",
+                        )}
                         htmlFor={`role-${option.value}`}
                       >
                         <span className="block font-medium">{option.label}</span>
