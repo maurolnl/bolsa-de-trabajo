@@ -15,6 +15,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -144,11 +145,12 @@ export const AvailabilityForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Proyectos compatibles{" "}
+                  Cantidad de proyectos compatibles{" "}
                   <span className="text-sm text-muted-foreground font-normal">
                     (Opcional)
                   </span>
                 </FormLabel>
+                <FormDescription>Proyectos que podés seguir trabajando en paralelo a uno nuevo.</FormDescription>
                 <FormControl>
                   <Input
                     {...field}
@@ -168,11 +170,12 @@ export const AvailabilityForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Proyectos incompatibles{" "}
+                  Cantidad de proyectos incompatibles{" "}
                   <span className="text-sm text-muted-foreground font-normal">
                     (Opcional)
                   </span>
                 </FormLabel>
+                <FormDescription>Proyectos que tenés que terminar antes de comenzar uno nuevo.</FormDescription>
                 <FormControl>
                   <Input
                     {...field}
