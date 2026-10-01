@@ -334,3 +334,37 @@ test("conserva el contrato multipart al guardar", async ({ page }) => {
   ).toBeVisible();
   await expect(page).toHaveURL("/main/employee/home");
 });
+
+for (const { name, file, message } of [
+  {
+    name: "un archivo que no es PDF",
+    file: { name: "notas.txt", mimeType: "text/plain", buffer: Buffer.from("texto") },
+    message: "El archivo debe ser un PDF",
+  },
+  {
+    name: "un PDF de más de 5 MB",
+    file: {
+      name: "pesado.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.alloc(5 * 1024 * 1024 + 1, "%PDF-1.4 "),
+    },
+    message: "El archivo no puede superar los 5 MB",
+  },
+]) {
+  test(`rechaza como documentación ${name}`, async ({ page }) => {
+    let requests = 0;
+    await setupPage(page, [], () => {
+      requests += 1;
+    });
+    await openCreateForm(page);
+    await selectOption(page, "Tipo", "Terciario");
+    await selectOption(page, "Título", "Tecnicatura en Ciberseguridad");
+    await selectOption(page, "Estado", "Completado");
+    await page.getByLabel("Certificación").setInputFiles(file);
+    await page.getByRole("button", { name: "Agregar", exact: true }).last().click();
+
+    await expect(page.getByText(message)).toBeVisible();
+    await page.getByRole("button", { name: "Guardar", exact: true }).click();
+    expect(requests).toBe(0);
+  });
+}

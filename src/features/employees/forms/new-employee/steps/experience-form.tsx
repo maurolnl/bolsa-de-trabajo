@@ -212,7 +212,7 @@ export const ExperienceForm = ({
           </Label>
           <p className="text-[0.8rem] text-muted-foreground">
             Certificaciones profesionales obtenidas y, opcionalmente, el PDF de
-            cada una
+            cada una (hasta 5 MB)
           </p>
         </div>
         <div className="flex gap-2">

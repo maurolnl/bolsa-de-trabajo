@@ -198,7 +198,7 @@ export const EducationForm = ({
                       <FormItem>
                         <FormLabel>Certificación</FormLabel>
                         <FormDescription>
-                          Archivo opcional con la documentación.
+                          Archivo opcional con la documentación, en PDF de hasta 5 MB.
                         </FormDescription>
                         <FormControl>
                           <Input

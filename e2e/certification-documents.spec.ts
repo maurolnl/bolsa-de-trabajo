@@ -218,3 +218,25 @@ test("rechaza nombres repetidos y archivos que no son PDF", async ({ page }) => 
   await expect(page.getByText("El archivo debe ser un PDF")).toBeVisible();
   expect(requests).toBe(0);
 });
+
+test("rechaza PDFs de más de 5 MB", async ({ page }) => {
+  let requests = 0;
+  await setupPage(page, {
+    certifications: [{ name: "Scrum Master", document_id: null }],
+    onEmployeeRequest: () => {
+      requests += 1;
+    },
+  });
+
+  await page.getByLabel("PDF de Scrum Master").setInputFiles({
+    name: "pesado.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.alloc(5 * 1024 * 1024 + 1, "%PDF-1.4 "),
+  });
+  await page.getByRole("button", { name: "Siguiente" }).click();
+
+  await expect(
+    page.getByText("El archivo no puede superar los 5 MB"),
+  ).toBeVisible();
+  expect(requests).toBe(0);
+});

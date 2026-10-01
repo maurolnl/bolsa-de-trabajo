@@ -3,7 +3,7 @@ import { z } from "zod";
 export const MAX_PDF_FILE_SIZE = 5 * 1024 * 1024;
 
 export const pdfFileValidation = z
-  .instanceof(File, { message: "Por favor suba un archivo válido" })
+  .instanceof(File, { message: "Archivo no válido" })
   .refine((file) => file.type === "application/pdf", {
     message: "El archivo debe ser un PDF",
   })
@@ -17,7 +17,7 @@ export const multipleFileValidation = z.any().refine(
     const files = Object.values(file) as File[];
     return files.every((file) => file instanceof File);
   },
-  { message: "Por favor suba un archivo válido" },
+  { message: "Archivo no válido" },
 );
 
 export const singleFileValidation = z.any().refine(
@@ -25,7 +25,7 @@ export const singleFileValidation = z.any().refine(
     if (!file) return true;
     return file instanceof File;
   },
-  { message: "Por favor suba un archivo válido" },
+  { message: "Archivo no válido" },
 );
 
 export const urlValidation = z.string().refine(
