@@ -106,3 +106,50 @@ test("avanza el asistente tras corregir un error de creación", async ({ page })
   await expect.poll(() => locationRequests).toBe(1);
   await expect(page).toHaveURL(/step=3/);
 });
+
+test("exige la posición pretendida antes de crear el perfil", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("access-token", JSON.stringify("test-token"));
+  });
+
+  let createAttempts = 0;
+  await page.route(
+    (url) => url.pathname.startsWith("/api/"),
+    async (route) => {
+      const request = route.request();
+      const { pathname } = new URL(request.url());
+
+      if (pathname.endsWith("/auth/me")) {
+        await route.fulfill({
+          json: { ID: 1, Email: "employee@example.com", Role: "employee" },
+        });
+        return;
+      }
+      if (pathname.endsWith("/timezones")) {
+        await route.fulfill({ json: [] });
+        return;
+      }
+      if (pathname.endsWith("/users/1/employee")) {
+        await route.fulfill({ status: 400, json: { error: "employee not found" } });
+        return;
+      }
+      if (pathname.endsWith("/employees") && request.method() === "POST") {
+        createAttempts += 1;
+        await route.fulfill({ status: 201, body: "" });
+        return;
+      }
+
+      await route.fulfill({ status: 404, json: { error: "Unexpected E2E request" } });
+    },
+  );
+
+  await page.goto("/main/employee/profile");
+  await page.getByPlaceholder("FullStack Developer").fill("   ");
+  await page.getByLabel("Adjunto", { exact: true }).check();
+  await page.getByLabel("1 año", { exact: true }).check();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+
+  await expect(page.getByText("Ingrese la posición pretendida")).toBeVisible();
+  expect(createAttempts).toBe(0);
+  await expect(page).not.toHaveURL(/step=2/);
+});

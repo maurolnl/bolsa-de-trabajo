@@ -23,7 +23,10 @@ export const educationStatusOptions = ["in-progress", "completed"] as const;
 const educationDocumentSchema = z.union([pdfFileValidation, z.string()]);
 
 export const experienceSchema = z.object({
-  position: z.string(),
+  position: z
+    .string({ required_error: "Ingrese la posición pretendida" })
+    .trim()
+    .min(1, "Ingrese la posición pretendida"),
   role: z.enum(roleOptions, {
     required_error: "Debe seleccionar un rol",
     invalid_type_error: "Seleccione una opción válida",

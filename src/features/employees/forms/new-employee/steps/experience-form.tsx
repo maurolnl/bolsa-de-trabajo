@@ -110,7 +110,7 @@ export const ExperienceForm = ({
                   <div className="space-y-1">
                     <FormLabel>Posición pretendida</FormLabel>
                     <FormDescription>
-                      Ingrese el nombre de la posición que está buscando
+                      Ingrese el nombre de la posición pretendida
                     </FormDescription>
                   </div>
                   <Input {...field} placeholder="FullStack Developer" />
