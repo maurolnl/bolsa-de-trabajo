@@ -94,6 +94,42 @@ export const EducationForm = ({
               <div className="space-y-4">
                 <FormField
                   control={educationTitleForm.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo</FormLabel>
+                      <Select
+                        onValueChange={(type) => {
+                          if (type !== field.value) {
+                            educationTitleForm.setValue("title", "", {
+                              shouldDirty: true,
+                              shouldValidate: true,
+                            });
+                          }
+                          field.onChange(type);
+                        }}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {availableTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {educationTypeLabels[type]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={educationTitleForm.control}
                   name="title"
                   render={({ field }) => (
                     <FormItem>
@@ -120,73 +156,35 @@ export const EducationForm = ({
                   )}
                 />
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <FormField
-                    control={educationTitleForm.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tipo</FormLabel>
-                        <Select
-                          onValueChange={(type) => {
-                            if (type !== field.value) {
-                              educationTitleForm.setValue("title", "", {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                              });
-                            }
-                            field.onChange(type);
-                          }}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Tipo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {availableTypes.map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {educationTypeLabels[type]}
+                <FormField
+                  control={educationTitleForm.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estado</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Estado" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(educationStatusLabels).map(
+                            ([value, label]) => (
+                              <SelectItem key={value} value={value}>
+                                {label}
                               </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={educationTitleForm.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Estado</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Estado" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {Object.entries(educationStatusLabels).map(
-                              ([value, label]) => (
-                                <SelectItem key={value} value={value}>
-                                  {label}
-                                </SelectItem>
-                              ),
-                            )}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={educationTitleForm.control}

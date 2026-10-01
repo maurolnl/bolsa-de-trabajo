@@ -140,6 +140,17 @@ const expectTitleCatalog = async (page: Page, expectedTitles: string[]) => {
   await page.keyboard.press("Escape");
 };
 
+test("presenta el tipo antes del título que filtra", async ({ page }) => {
+  await setupPage(page);
+  await openCreateForm(page);
+
+  const labels = await page
+    .locator("label")
+    .filter({ hasText: /^(Tipo|Título|Estado)$/ })
+    .allTextContents();
+  expect(labels).toEqual(["Tipo", "Título", "Estado"]);
+});
+
 test("muestra el catálogo correspondiente y reinicia el título al cambiar tipo", async ({
   page,
 }) => {
