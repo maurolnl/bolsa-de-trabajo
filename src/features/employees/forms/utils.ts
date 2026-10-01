@@ -158,6 +158,14 @@ export const operatingSystemOptions = [
   "Otro",
 ] as const;
 
+// Los valores viajan tal cual a la API y ya están persistidos; solo cambia lo que se muestra.
+const operatingSystemLabels: Record<string, string> = {
+  "Linux Distribution": "Distribución de Linux",
+};
+
+export const getOperatingSystemLabel = (operatingSystem: string) =>
+  operatingSystemLabels[operatingSystem] ?? operatingSystem;
+
 export const dedicationTypeOptions = [
   "Full Time (8hs)",
   "Part time (4hs)",

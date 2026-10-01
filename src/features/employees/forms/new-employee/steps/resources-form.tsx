@@ -14,7 +14,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-screen";
-import { haveComputerOptions, operatingSystemOptions } from "../../utils";
+import {
+  getOperatingSystemLabel,
+  haveComputerOptions,
+  operatingSystemOptions,
+} from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
 import { resourcesSchema, ResourcesFormValues } from "../schema";
@@ -101,7 +105,7 @@ export const ResourcesForm = ({
                             <RadioGroupItem value={option} />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            {option}
+                            {getOperatingSystemLabel(option)}
                           </FormLabel>
                         </FormItem>
                       ))}

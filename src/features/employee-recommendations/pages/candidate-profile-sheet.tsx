@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useEmployeeFileDownload } from "@/features/employees/hooks/use-employee-file-download";
 import { EmployeeProfile } from "@/features/employees/models/employee-profile";
+import { getOperatingSystemLabel } from "@/features/employees/forms/utils";
 import {
   educationStatusProfileLabels,
   educationTypeProfileLabels,
@@ -256,7 +257,7 @@ const CandidateProfileDetail = ({ profile }: { profile: EmployeeProfile }) => {
         <dl className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Sistema operativo"
-            value={profile.os || "Sin informar"}
+            value={profile.os ? getOperatingSystemLabel(profile.os) : "Sin informar"}
           />
           <div className="sm:col-span-2">
             <Field
