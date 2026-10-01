@@ -132,13 +132,15 @@ export const ResourcesForm = ({
                         </span>
                       </FormLabel>
                       <FormDescription>
-                        Software que se sabe utilizar
+                        Programas que se saben utilizar y aportan al trabajo. Por
+                        ejemplo: Excel, Photoshop, AutoCAD, Tango Gestión, Premiere o
+                        Visual Studio Code.
                       </FormDescription>
                     </div>
                     <AutocompleteInput
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Nombre del software"
+                      placeholder="Ej. Excel"
                       addButtonLabel="Agregar"
                     />
                   </div>
