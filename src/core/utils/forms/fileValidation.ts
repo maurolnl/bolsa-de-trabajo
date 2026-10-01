@@ -38,5 +38,5 @@ export const urlValidation = z.string().refine(
       /^(https?:\/\/)([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
     return urls.every((url) => !url || urlRegex.test(url));
   },
-  { message: "Ingrese URLs válidas que empiecen con http:// o https://, separadas por comas" },
+  { message: "Las URLs deben empezar con http:// o https:// y separarse por comas" },
 );

@@ -110,7 +110,7 @@ export const ExperienceForm = ({
                   <div className="space-y-1">
                     <FormLabel>Posición pretendida</FormLabel>
                     <FormDescription>
-                      Ingrese el nombre de la posición pretendida
+                      Nombre de la posición pretendida
                     </FormDescription>
                   </div>
                   <Input {...field} placeholder="FullStack Developer" />
@@ -126,9 +126,9 @@ export const ExperienceForm = ({
           render={({ field }) => (
             <FormItem className="space-y-3">
               <div className="mb-4">
-                <FormLabel>Rol que llevó a cabo</FormLabel>
+                <FormLabel>Rol desempeñado</FormLabel>
                 <FormDescription>
-                  Seleccione el rol que llevó a cabo
+                  Rol desempeñado en la experiencia previa
                 </FormDescription>
               </div>
               <FormItem className="flex items-center space-x-2 space-y-0">
@@ -168,7 +168,7 @@ export const ExperienceForm = ({
               <div className="mb-4">
                 <FormLabel>Años de experiencia</FormLabel>
                 <FormDescription>
-                  Años de expereiencia en el rol seleccionado
+                  Años de experiencia en el rol seleccionado
                 </FormDescription>
               </div>
               <FormItem>
@@ -211,8 +211,8 @@ export const ExperienceForm = ({
             </span>
           </Label>
           <p className="text-[0.8rem] text-muted-foreground">
-            Agregue las certificaciones profesionales que posee y, si quiere, el PDF
-            de cada una
+            Certificaciones profesionales obtenidas y, opcionalmente, el PDF de
+            cada una
           </p>
         </div>
         <div className="flex gap-2">
@@ -224,7 +224,7 @@ export const ExperienceForm = ({
               setNewCertificationError(null);
             }}
             onKeyDown={onNewCertificationKeyDown}
-            placeholder="Escriba el título de la certificación"
+            placeholder="Título de la certificación"
             className="flex-1"
           />
           <Button
@@ -419,8 +419,7 @@ export const ExperienceForm = ({
                     </span>
                   </FormLabel>
                   <FormDescription>
-                    Ingrese el link a su portafolio que muestre sus productos
-                    digitales
+                    Link al portafolio con los productos digitales realizados
                   </FormDescription>
                 </div>
                 <Input {...field} placeholder="https://www.my-portfolio.com" />

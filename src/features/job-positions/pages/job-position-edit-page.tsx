@@ -116,7 +116,7 @@ const JobPositionEditForm = ({
 
   return (
     <JobPositionForm
-      title="Editá el puesto de trabajo"
+      title="Editar el puesto de trabajo"
       description="Los cambios reemplazan los datos publicados del puesto."
       submitLabel="Guardar cambios"
       timezones={timezones}

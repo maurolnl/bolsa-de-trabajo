@@ -152,23 +152,23 @@ test("no envía el alta cuando faltan campos obligatorios", async ({ page }) => 
   const { createAttempts } = await setupJobPositions(page);
 
   await page.goto("/main/employer/jobs/new");
-  await expect(page.getByText("Publicá un puesto de trabajo")).toBeVisible();
+  await expect(page.getByText("Publicar un puesto de trabajo")).toBeVisible();
 
   await page.getByLabel("Posición").fill("   ");
   await page.getByRole("button", { name: "Publicar puesto", exact: true }).click();
 
-  await expect(page.getByText("Ingrese la posición")).toBeVisible();
-  await expect(page.getByText("Debe seleccionar un rol")).toBeVisible();
+  await expect(page.getByText("Ingresar la posición")).toBeVisible();
+  await expect(page.getByText("Seleccionar un rol")).toBeVisible();
   await expect(
-    page.getByText("Debe seleccionar la experiencia requerida"),
+    page.getByText("Seleccionar la experiencia requerida"),
   ).toBeVisible();
   await expect(
-    page.getByText("Debe seleccionar el nivel educativo pretendido"),
+    page.getByText("Seleccionar el nivel educativo pretendido"),
   ).toBeVisible();
   await expect(
-    page.getByText("Debe seleccionar las horas disponibles por día"),
+    page.getByText("Seleccionar las horas disponibles por día"),
   ).toBeVisible();
-  await expect(page.getByText("Debe seleccionar una zona horaria")).toBeVisible();
+  await expect(page.getByText("Seleccionar una zona horaria")).toBeVisible();
   expect(createAttempts()).toBe(0);
 });
 
@@ -292,7 +292,7 @@ test("precarga la edición y envía el conjunto completo de campos", async ({
 
   await page.goto("/main/employer/jobs/50/edit");
 
-  await expect(page.getByText("Editá el puesto de trabajo")).toBeVisible();
+  await expect(page.getByText("Editar el puesto de trabajo")).toBeVisible();
   await expect(page.getByLabel("Posición")).toHaveValue("Desarrollador backend");
   await expect(page.getByRole("combobox", { name: "Rol", exact: true })).toHaveText(
     "Adjunto",
@@ -352,5 +352,5 @@ test("redirige al onboarding cuando el empleador todavía no tiene perfil", asyn
   await page.goto("/main/employer/jobs/new");
 
   await expect(page).toHaveURL("/main/employer/profile");
-  await expect(page.getByText("Publicá un puesto de trabajo")).toHaveCount(0);
+  await expect(page.getByText("Publicar un puesto de trabajo")).toHaveCount(0);
 });

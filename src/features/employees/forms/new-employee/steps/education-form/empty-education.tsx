@@ -10,10 +10,10 @@ export const EmptyEducation = () => {
         </div>
         <div className="space-y-1">
           <p className="text-sm font-medium">
-            Aún no agregaste ninguna formación
+            Todavía no hay formaciones cargadas
           </p>
           <p className="text-sm text-muted-foreground">
-            Hacé clic en el botón "+ Agregar" para crear una nueva.
+            Con el botón "+ Agregar" se puede crear una nueva.
           </p>
         </div>
       </CardContent>
