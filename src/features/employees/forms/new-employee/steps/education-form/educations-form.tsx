@@ -96,9 +96,9 @@ export const EducationsForm = ({
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
-              <h3 className="text-xl font-semibold">Titulos academicos</h3>
+              <h3 className="text-xl font-semibold">Títulos académicos</h3>
               <TypographyP className="text-sm text-muted-foreground">
-                Agrega un titulo universitario presionando el boton "+".
+                Con el botón "+ Agregar" se puede sumar un título académico.
               </TypographyP>
             </div>
             <Button type="button" size="default" onClick={handleOpenCreate}>

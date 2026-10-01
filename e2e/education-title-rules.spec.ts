@@ -118,7 +118,7 @@ const setupPage = async (
   });
 
   await page.goto("/main/employee/profile?step=5");
-  await expect(page.getByRole("heading", { name: "Titulos academicos" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Títulos académicos" })).toBeVisible();
 };
 
 const openCreateForm = async (page: Page) => {
