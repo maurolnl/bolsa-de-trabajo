@@ -135,7 +135,7 @@ export const JobPositionForm = ({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione un rol" />
+                          <SelectValue placeholder="Rol" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -159,7 +159,7 @@ export const JobPositionForm = ({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione la experiencia requerida" />
+                          <SelectValue placeholder="Experiencia requerida" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -183,7 +183,7 @@ export const JobPositionForm = ({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione el nivel educativo" />
+                          <SelectValue placeholder="Nivel educativo" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -210,7 +210,7 @@ export const JobPositionForm = ({
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Seleccione las horas por día" />
+                          <SelectValue placeholder="Horas por día" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -239,7 +239,7 @@ export const JobPositionForm = ({
                         }))}
                         value={field.value}
                         onValueChange={field.onChange}
-                        placeholder="Seleccione una zona horaria"
+                        placeholder="Zona horaria"
                         searchPlaceholder="Buscar zona horaria..."
                       />
                     </FormControl>
@@ -254,8 +254,8 @@ export const JobPositionForm = ({
                   <FormItem>
                     <FormLabel>Recursos técnicos</FormLabel>
                     <FormDescription>
-                      Campo opcional. Podés agregar recursos libres o dejar la
-                      lista vacía.
+                      Campo opcional. Se pueden agregar recursos libres o dejar
+                      la lista vacía.
                     </FormDescription>
                     <div className="flex gap-2">
                       <Input

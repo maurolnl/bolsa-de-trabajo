@@ -14,7 +14,7 @@ interface AutocompleteInputProps {
 export const AutocompleteInput = ({
   value = [],
   onChange,
-  placeholder = "Escriba el texto",
+  placeholder = "Texto",
   addButtonLabel = "Agregar",
 }: AutocompleteInputProps) => {
   const [inputValue, setInputValue] = useState("");

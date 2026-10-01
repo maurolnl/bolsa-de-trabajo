@@ -136,9 +136,9 @@ export const NewEmployeeWizard = () => {
       ) {
         toast({
           variant: "destructive",
-          title: "Volvé a adjuntar los certificados",
+          title: "Es necesario volver a adjuntar los certificados",
           description:
-            "Para modificar la educación, reemplazá cada certificado existente por su archivo PDF.",
+            "Para modificar la educación, cada certificado existente debe reemplazarse por su archivo PDF.",
         });
         return;
       }

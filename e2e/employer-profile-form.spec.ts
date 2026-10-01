@@ -123,16 +123,16 @@ test("valida campos obligatorios con espacios y no envía POST", async ({ page }
   const { postAttempts } = await setupEmployerProfile(page);
 
   await page.goto("/main/employer/profile");
-  await expect(page.getByText("Creá tu perfil de empleador")).toBeVisible();
+  await expect(page.getByText("Perfil de empleador", { exact: true })).toBeVisible();
 
   await page.getByLabel("Nombre de la empresa").fill("   ");
   await page.getByLabel("Industria").fill("   ");
   await page.getByLabel("Ubicación").fill("   ");
   await submitForm(page);
 
-  await expect(page.getByText("Ingrese el nombre de la empresa")).toBeVisible();
-  await expect(page.getByText("Ingrese la industria")).toBeVisible();
-  await expect(page.getByText("Ingrese la ubicación")).toBeVisible();
+  await expect(page.getByText("Ingresar el nombre de la empresa")).toBeVisible();
+  await expect(page.getByText("Ingresar la industria")).toBeVisible();
+  await expect(page.getByText("Ingresar la ubicación")).toBeVisible();
   await expect(page).toHaveURL("/main/employer/profile");
   expect(postAttempts()).toBe(0);
 });
@@ -209,7 +209,7 @@ test("muestra carga mientras consulta el perfil", async ({ page }) => {
 
   await expect(page.getByText("Loading...")).toBeVisible();
   await expect(page.getByRole("button", { name: "Crear perfil", exact: true })).toHaveCount(0);
-  await expect(page.getByText("Creá tu perfil de empleador")).toBeVisible();
+  await expect(page.getByText("Perfil de empleador", { exact: true })).toBeVisible();
 });
 
 test("presenta error recuperable al consultar perfil y permite reintentar", async ({
@@ -233,7 +233,7 @@ test("presenta error recuperable al consultar perfil y permite reintentar", asyn
   expect(attempts).toBe(1);
 
   await page.getByRole("button", { name: "Reintentar", exact: true }).click();
-  await expect(page.getByText("Creá tu perfil de empleador")).toBeVisible();
+  await expect(page.getByText("Perfil de empleador", { exact: true })).toBeVisible();
   expect(attempts).toBe(2);
 });
 
@@ -246,7 +246,7 @@ test("redirige a puestos cuando el perfil de empleador ya existe", async ({ page
   await page.goto("/main/employer/profile");
 
   await expect(page).toHaveURL("/main/employer/jobs");
-  await expect(page.getByText("Creá tu perfil de empleador")).toHaveCount(0);
+  await expect(page.getByText("Perfil de empleador", { exact: true })).toHaveCount(0);
 });
 
 test("POST 201 invalida el perfil, vuelve a consultar y redirige a puestos", async ({
@@ -357,5 +357,5 @@ test("bloquea el acceso directo de un empleado al formulario de empleador", asyn
   await page.goto("/main/employer/profile");
 
   await expect(page).toHaveURL("/main/employee/profile");
-  await expect(page.getByText("Creá tu perfil de empleador")).toHaveCount(0);
+  await expect(page.getByText("Perfil de empleador", { exact: true })).toHaveCount(0);
 });

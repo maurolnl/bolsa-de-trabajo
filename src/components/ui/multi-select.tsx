@@ -81,7 +81,7 @@ const SelectOptions = ({
         {searchable && (
           <Input
             type="text"
-            placeholder="Search..."
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyDown={onInputKeyDown}

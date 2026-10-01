@@ -456,6 +456,9 @@ test("el perfil completo se consulta recién al abrirlo", async ({ page }) => {
 
   await expect(page.getByText("Ingenieria")).toBeVisible();
   expect(api.profileRequests()).toBe(1);
+  await expect(
+    page.getByRole("dialog").getByText("Distribución de Linux"),
+  ).toBeVisible();
 });
 
 test("el perfil muestra las cinco secciones y los archivos disponibles", async ({

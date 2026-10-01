@@ -104,7 +104,7 @@ export const EducationForm = ({
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleccione título" />
+                            <SelectValue placeholder="Título" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -141,7 +141,7 @@ export const EducationForm = ({
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleccione tipo" />
+                              <SelectValue placeholder="Tipo" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -169,7 +169,7 @@ export const EducationForm = ({
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleccione estado" />
+                              <SelectValue placeholder="Estado" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -198,7 +198,7 @@ export const EducationForm = ({
                       <FormItem>
                         <FormLabel>Certificación</FormLabel>
                         <FormDescription>
-                          Suba un archivo si desea adjuntar documentación.
+                          Archivo opcional con la documentación.
                         </FormDescription>
                         <FormControl>
                           <Input

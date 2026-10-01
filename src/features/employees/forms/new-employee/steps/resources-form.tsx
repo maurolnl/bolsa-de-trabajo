@@ -14,7 +14,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-screen";
-import { haveComputerOptions, operatingSystemOptions } from "../../utils";
+import {
+  getOperatingSystemLabel,
+  haveComputerOptions,
+  operatingSystemOptions,
+} from "../../utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AutocompleteInput } from "@/components/ui/autocomplete-input";
 import { resourcesSchema, ResourcesFormValues } from "../schema";
@@ -47,7 +51,7 @@ export const ResourcesForm = ({
             render={({ field }) => (
               <FormItem className="space-y-3">
                 <div className="mb-4">
-                  <FormLabel>¿Dispone de una computadora?</FormLabel>
+                  <FormLabel>¿Hay una computadora disponible?</FormLabel>
                 </div>
                 <FormItem className="flex items-center space-x-2 space-y-0">
                   <FormControl>
@@ -83,7 +87,7 @@ export const ResourcesForm = ({
                   <div className="mb-4">
                     <FormLabel>Sistema operativo disponible</FormLabel>
                     <FormDescription>
-                      Seleccione el sistema operativo de la computadora
+                      Sistema operativo de la computadora
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -101,7 +105,7 @@ export const ResourcesForm = ({
                             <RadioGroupItem value={option} />
                           </FormControl>
                           <FormLabel className="font-normal">
-                            {option}
+                            {getOperatingSystemLabel(option)}
                           </FormLabel>
                         </FormItem>
                       ))}
@@ -122,19 +126,19 @@ export const ResourcesForm = ({
                   <div className="space-y-2">
                     <div className="space-y-1">
                       <FormLabel>
-                        Software relevante que conoce{" "}
+                        Software relevante{" "}
                         <span className="text-sm text-muted-foreground font-normal">
                           (Opcional)
                         </span>
                       </FormLabel>
                       <FormDescription>
-                        Agregue el software relevante que conoce
+                        Software que se sabe utilizar
                       </FormDescription>
                     </div>
                     <AutocompleteInput
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Escriba el nombre del software"
+                      placeholder="Nombre del software"
                       addButtonLabel="Agregar"
                     />
                   </div>

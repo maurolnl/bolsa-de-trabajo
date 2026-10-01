@@ -85,7 +85,7 @@ export const LocationForm = ({
                   </Button>
                 </div>
                 <FormDescription>
-                  Presione el boton + para agregar más conexiones
+                  Con el botón + se pueden agregar más conexiones
                 </FormDescription>
                 <div className="space-y-2">
                   {Array.isArray(field.value) && field.value.length > 0
@@ -190,7 +190,7 @@ export const LocationForm = ({
                     }))}
                     value={field.value}
                     onValueChange={field.onChange}
-                    placeholder="Seleccione diferencia horaria"
+                    placeholder="Zona horaria"
                     searchPlaceholder="Buscar zona horaria..."
                   />
                 </FormControl>

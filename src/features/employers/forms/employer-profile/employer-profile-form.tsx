@@ -87,9 +87,9 @@ export const EmployerProfileForm = ({ userId }: EmployerProfileFormProps) => {
     <div className="flex min-h-[calc(100vh-2rem)] items-center justify-center py-8">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Creá tu perfil de empleador</CardTitle>
+          <CardTitle className="text-2xl">Perfil de empleador</CardTitle>
           <CardDescription>
-            Contanos sobre tu empresa para comenzar a publicar puestos de trabajo.
+            Datos de la empresa para comenzar a publicar puestos de trabajo.
           </CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -141,7 +141,7 @@ export const EmployerProfileForm = ({ userId }: EmployerProfileFormProps) => {
                   <FormItem>
                     <FormLabel>Modalidades de contratación</FormLabel>
                     <FormDescription>
-                      Podés agregar modalidades libres o dejar la lista vacía.
+                      Campo opcional. Se pueden agregar modalidades libres o dejar la lista vacía.
                     </FormDescription>
                     <div className="flex gap-2">
                       <Input

@@ -85,14 +85,14 @@ const setupPage = async (page: Page, options: SetupOptions = {}) => {
 
   await page.goto("/main/employee/profile?step=1");
   await expect(
-    page.getByPlaceholder("Escriba el título de la certificación"),
+    page.getByPlaceholder("Título de la certificación"),
   ).toBeVisible();
 
   return { downloadUrls: () => downloadUrls };
 };
 
 const addCertification = async (page: Page, name: string) => {
-  await page.getByPlaceholder("Escriba el título de la certificación").fill(name);
+  await page.getByPlaceholder("Título de la certificación").fill(name);
   await page.getByRole("button", { name: "Agregar", exact: true }).click();
 };
 

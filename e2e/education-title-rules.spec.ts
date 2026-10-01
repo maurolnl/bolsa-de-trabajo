@@ -150,7 +150,7 @@ test("muestra el catálogo correspondiente y reinicia el título al cambiar tipo
   await selectOption(page, "Título", "Ingenieria");
   await selectOption(page, "Tipo", "Posgrado");
   await expect(page.getByRole("combobox", { name: "Título" })).toHaveText(
-    "Seleccione título",
+    "Título",
   );
   await expectTitleCatalog(page, postgraduateTitles);
 
@@ -242,7 +242,7 @@ test("rechaza defensivamente títulos universitarios únicos duplicados", async 
 
   await page.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(
-    page.getByText("Solo puede agregar una formación de Abogacia"),
+    page.getByText("Solo se permite una formación de Abogacia"),
   ).toBeVisible();
 });
 
@@ -264,7 +264,7 @@ test("rechaza defensivamente múltiples orientaciones secundarias", async ({
 
   await page.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(
-    page.getByText("Solo puede agregar una orientación secundaria"),
+    page.getByText("Solo se permite una orientación secundaria"),
   ).toBeVisible();
 });
 
@@ -279,7 +279,7 @@ test("rechaza defensivamente títulos fuera del catálogo", async ({ page }) => 
 
   await page.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(
-    page.getByText("Seleccione un título válido para el tipo elegido"),
+    page.getByText("El título no corresponde al tipo elegido"),
   ).toBeVisible();
 });
 

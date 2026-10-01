@@ -95,8 +95,8 @@ const JobPositionCreateForm = ({
 
   return (
     <JobPositionForm
-      title="Publicá un puesto de trabajo"
-      description="El puesto queda publicado apenas lo creás."
+      title="Publicar un puesto de trabajo"
+      description="El puesto queda publicado apenas se crea."
       submitLabel="Publicar puesto"
       timezones={timezones}
       defaultValues={emptyJobPositionValues}

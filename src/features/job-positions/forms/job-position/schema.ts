@@ -13,23 +13,23 @@ import {
 const requiredText = (message: string) => z.string().trim().min(1, message);
 
 export const jobPositionSchema = z.object({
-  position: requiredText("Ingrese la posición"),
+  position: requiredText("Ingresar la posición"),
   role: z.enum(roleOptions, {
-    required_error: "Debe seleccionar un rol",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar un rol",
+    invalid_type_error: "Opción no válida",
   }),
   requiredExperience: z.enum(requiredExperienceValues, {
-    required_error: "Debe seleccionar la experiencia requerida",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar la experiencia requerida",
+    invalid_type_error: "Opción no válida",
   }),
   requiredEducationLevel: z.enum(educationTypeOptions, {
-    required_error: "Debe seleccionar el nivel educativo pretendido",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar el nivel educativo pretendido",
+    invalid_type_error: "Opción no válida",
   }),
   availableHoursPerDay: z
     .number({
-      required_error: "Debe seleccionar las horas disponibles por día",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Seleccionar las horas disponibles por día",
+      invalid_type_error: "Opción no válida",
     })
     .int("Las horas disponibles deben ser un número entero")
     .min(
@@ -42,11 +42,11 @@ export const jobPositionSchema = z.object({
     ),
   timezone: z
     .string({
-      required_error: "Debe seleccionar una zona horaria",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Seleccionar una zona horaria",
+      invalid_type_error: "Opción no válida",
     })
     .trim()
-    .min(1, "Debe seleccionar una zona horaria"),
+    .min(1, "Seleccionar una zona horaria"),
   technicalResources: z.array(
     requiredText("Los recursos técnicos no pueden estar vacíos"),
   ),

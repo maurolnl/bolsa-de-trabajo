@@ -51,7 +51,7 @@ test("exige seleccionar un rol antes de registrarse", async ({ page }) => {
   await fillCredentials(page, "without-role@example.com");
   await page.getByRole("button", { name: "Crear cuenta" }).click();
 
-  await expect(page.getByText("Seleccioná un rol")).toBeVisible();
+  await expect(page.getByText("Seleccionar un rol")).toBeVisible();
   expect(requestCount).toBe(0);
   await expect(page).toHaveURL("/auth/register");
 });

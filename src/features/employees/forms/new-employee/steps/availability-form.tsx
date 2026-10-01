@@ -61,7 +61,7 @@ export const AvailabilityForm = ({
       case flexibleDedication:
         setValue("availableHoursPerDay", "");
         setError("availableHoursPerDay", {
-          message: "Debe ingresar una cantidad de horas",
+          message: "Ingresar una cantidad de horas",
         });
         break;
       case fullTimeDedication:
@@ -95,7 +95,7 @@ export const AvailabilityForm = ({
                   value={field.value}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione tipo de dedicación" />
+                    <SelectValue placeholder="Tipo de dedicación" />
                   </SelectTrigger>
                   <SelectContent>
                     {dedicationTypeOptions.map((option) => (
@@ -150,13 +150,13 @@ export const AvailabilityForm = ({
                     (Opcional)
                   </span>
                 </FormLabel>
-                <FormDescription>Proyectos que podés seguir trabajando en paralelo a uno nuevo.</FormDescription>
+                <FormDescription>Proyectos que se pueden trabajar en paralelo a uno nuevo.</FormDescription>
                 <FormControl>
                   <Input
                     {...field}
                     type="number"
                     min="0"
-                    placeholder="Ingrese cantidad"
+                    placeholder="Cantidad"
                   />
                 </FormControl>
                 <FormMessage />
@@ -175,13 +175,13 @@ export const AvailabilityForm = ({
                     (Opcional)
                   </span>
                 </FormLabel>
-                <FormDescription>Proyectos que tenés que terminar antes de comenzar uno nuevo.</FormDescription>
+                <FormDescription>Proyectos a terminar antes de comenzar uno nuevo.</FormDescription>
                 <FormControl>
                   <Input
                     {...field}
                     type="number"
                     min="0"
-                    placeholder="Ingrese cantidad"
+                    placeholder="Cantidad"
                   />
                 </FormControl>
                 <FormMessage />

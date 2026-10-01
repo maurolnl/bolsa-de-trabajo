@@ -90,7 +90,7 @@ test("avanza el asistente tras corregir un error de creación", async ({ page })
   await page.getByRole("button", { name: "Siguiente", exact: true }).click();
   await expect(
     page.getByText(
-      "Ingrese URLs válidas que empiecen con http:// o https://, separadas por comas",
+      "Las URLs deben empezar con http:// o https:// y separarse por comas",
     ),
   ).toBeVisible();
   expect(createAttempts).toBe(0);
@@ -149,7 +149,7 @@ test("exige la posición pretendida antes de crear el perfil", async ({ page }) 
   await page.getByLabel("1 año", { exact: true }).check();
   await page.getByRole("button", { name: "Siguiente", exact: true }).click();
 
-  await expect(page.getByText("Ingrese la posición pretendida")).toBeVisible();
+  await expect(page.getByText("Ingresar la posición pretendida")).toBeVisible();
   expect(createAttempts).toBe(0);
   await expect(page).not.toHaveURL(/step=2/);
 });

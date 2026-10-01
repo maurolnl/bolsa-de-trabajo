@@ -84,7 +84,7 @@ export const RegisterForm = ({ isSubmitting, onSubmit }: Props) => {
               <FormControl>
                 <Input
                   autoComplete="new-password"
-                  placeholder="Ingresá una contraseña"
+                  placeholder="Mínimo 8 caracteres"
                   type="password"
                   {...field}
                 />
@@ -99,7 +99,7 @@ export const RegisterForm = ({ isSubmitting, onSubmit }: Props) => {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>¿Cómo vas a usar Laburi.to?</FormLabel>
+              <FormLabel>Tipo de cuenta</FormLabel>
               <FormControl>
                 <RadioGroup
                   className="grid gap-3 sm:grid-cols-2"

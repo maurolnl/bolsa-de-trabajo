@@ -60,7 +60,7 @@ export const LoginForm: React.FC<Props> = ({ onSubmit }) => {
               <FormControl>
                 <Input
                   autoComplete="current-password"
-                  placeholder="Ingresá tu contraseña"
+                  placeholder="Contraseña"
                   required
                   type="password"
                   {...field}

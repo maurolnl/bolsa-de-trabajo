@@ -24,16 +24,16 @@ const educationDocumentSchema = z.union([pdfFileValidation, z.string()]);
 
 export const experienceSchema = z.object({
   position: z
-    .string({ required_error: "Ingrese la posición pretendida" })
+    .string({ required_error: "Ingresar la posición pretendida" })
     .trim()
-    .min(1, "Ingrese la posición pretendida"),
+    .min(1, "Ingresar la posición pretendida"),
   role: z.enum(roleOptions, {
-    required_error: "Debe seleccionar un rol",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar un rol",
+    invalid_type_error: "Opción no válida",
   }),
   yearsOfExperience: z.enum(yearsOfExperienceOptions, {
-    required_error: "Debe seleccionar una opción",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar una opción",
+    invalid_type_error: "Opción no válida",
   }),
   certifications: z
     .array(
@@ -68,28 +68,28 @@ export const locationSchema = z.object({
   internetConnections: z.array(
     z.object({
       speed: z.enum(internetConnectionOptions, {
-        required_error: "Debe seleccionar una velocidad de conexión",
-        invalid_type_error: "Seleccione una opción válida",
+        required_error: "Seleccionar una velocidad de conexión",
+        invalid_type_error: "Opción no válida",
       }),
       type: z.enum(internetConnectionTypeOptions, {
-        required_error: "Debe seleccionar un tipo de conexión",
-        invalid_type_error: "Seleccione una opción válida",
+        required_error: "Seleccionar un tipo de conexión",
+        invalid_type_error: "Opción no válida",
       }),
     }),
   ),
   timezoneCompatibility: z
     .string({
-      required_error: "Debe seleccionar una zona horaria",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Seleccionar una zona horaria",
+      invalid_type_error: "Opción no válida",
     })
-    .min(1, "Debe seleccionar una zona horaria"),
+    .min(1, "Seleccionar una zona horaria"),
 });
 
 export const resourcesSchema = z
   .object({
     hasComputer: z.enum(haveComputerOptions, {
-      required_error: "Debe indicar si dispone de computadora",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Indicar si hay una computadora disponible",
+      invalid_type_error: "Opción no válida",
     }),
     operatingSystem: z.enum(operatingSystemOptions).optional(),
     paidSoftware: z.array(z.string()).optional(),
@@ -99,15 +99,15 @@ export const resourcesSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["operatingSystem"],
-        message: "Debe seleccionar un sistema operativo",
+        message: "Seleccionar un sistema operativo",
       });
     }
   });
 
 export const availabilitySchema = z.object({
   dedicationType: z.enum(dedicationTypeOptions, {
-    required_error: "Debe seleccionar un tipo de dedicación",
-    invalid_type_error: "Seleccione una opción válida",
+    required_error: "Seleccionar un tipo de dedicación",
+    invalid_type_error: "Opción no válida",
   }),
   availableHoursPerDay: z
     .string()
@@ -145,12 +145,12 @@ export const educationTitleSchema = z
   .object({
     title: z.string().min(2, "El título debe tener al menos 2 caracteres"),
     type: z.enum(educationTypeOptions, {
-      required_error: "Debe seleccionar un tipo",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Seleccionar un tipo",
+      invalid_type_error: "Opción no válida",
     }),
     status: z.enum(educationStatusOptions, {
-      required_error: "Debe seleccionar un estado",
-      invalid_type_error: "Seleccione una opción válida",
+      required_error: "Seleccionar un estado",
+      invalid_type_error: "Opción no válida",
     }),
     document: educationDocumentSchema.optional(),
   })
@@ -159,7 +159,7 @@ export const educationTitleSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["title"],
-        message: "Seleccione un título válido para el tipo elegido",
+        message: "El título no corresponde al tipo elegido",
       });
     }
   });
@@ -167,7 +167,7 @@ export const educationTitleSchema = z
 export const educationSchema = z.object({
   educationTitles: z
     .array(educationTitleSchema)
-    .min(1, "Debe agregar al menos un título académico")
+    .min(1, "Agregar al menos un título académico")
     .superRefine((educationTitles, ctx) => {
       const usedUniqueTitles = new Set<string>();
 
@@ -177,7 +177,7 @@ export const educationSchema = z.object({
         if (usedUniqueTitles.has(title)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: `Solo puede agregar una formación de ${title}`,
+            message: `Solo se permite una formación de ${title}`,
           });
         }
 
@@ -191,7 +191,7 @@ export const educationSchema = z.object({
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Solo puede agregar una orientación secundaria",
+          message: "Solo se permite una orientación secundaria",
         });
       }
     }),
