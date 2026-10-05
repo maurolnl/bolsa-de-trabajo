@@ -24,6 +24,7 @@ export const useLoginMutation = () => {
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) =>
       authRepository.login(credentials),
+    meta: { errorMessages: { 401: "Email o contraseña incorrectos" } },
   });
 };
 
